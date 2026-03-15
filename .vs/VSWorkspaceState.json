@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\AnuncieCompre.Domain",
+    "\\AnuncieCompre.Domain\\Aggregates",
+    "\\AnuncieCompre.Domain\\Aggregates\\ConversationAggregate",
+    "\\AnuncieCompre.UseCase",
+    "\\AnuncieCompre.UseCase\\ProcessMessageUseCase",
+    "\\AnuncieCompre.Web"
+  ],
+  "SelectedNode": "\\AnuncieCompre.Domain\\Aggregates\\ConversationAggregate\\Conversation.cs",
+  "PreviewInSolutionExplorer": false
+}
