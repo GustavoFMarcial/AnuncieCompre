@@ -73,7 +73,7 @@ public class Conversation : BaseEntity
                 $"""
                 Olá, bem-vindo novamente {user.Name!.FullName}! 
                 
-                Não implementado ainda funcionalidades para fornecedores, volte em breve.
+                Não foi implementado ainda funcionalidades para fornecedores, volte em breve.
                 """
             }.AsReadOnly();
         }
