@@ -16,17 +16,14 @@ public class ProcessIncomingMessageUseCase(IConversationRepository _conversation
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
         Conversation? conversation = await conversationRepository.GetConversationByPhoneAsync(incomingMessage.SenderPhone);
-        User? user = await userRepository.GetUserByPhoneAsync(incomingMessage.SenderPhone);
 
-        if (conversation is null || user is null)
+        if (conversation is null)
         {
             conversation = Conversation.Create(VOPhone.Create(incomingMessage.SenderPhone).Value);
-            user = User.Create(VOPhone.Create(incomingMessage.SenderPhone).Value);
             conversationRepository.Add(conversation);
-            userRepository.Add(user);
         }
 
-        ReadOnlyCollection<string> response = conversation.HandleMessage(incomingMessage, user);
+        ReadOnlyCollection<string> response = conversation.HandleMessage(incomingMessage);
 
         await unitOfWork.SaveChangesAsync();
 

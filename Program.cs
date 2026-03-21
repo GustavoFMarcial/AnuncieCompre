@@ -11,7 +11,7 @@ using AnuncieCompre.Infra.Repositories.VendorRepo;
 using AnuncieCompre.UseCase.Dispatcher;
 using AnuncieCompre.UseCase.DomainEventHandler;
 using AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
-using AnuncieCompre.UseCase.DomainEventHandler.Order;
+using AnuncieCompre.UseCase.DomainEventHandler.OrderDomainEventHandler;
 using AnuncieCompre.UseCase.Interfaces;
 using AnuncieCompre.UseCase.ProcessMessageUseCase;
 using Microsoft.EntityFrameworkCore;

@@ -2,7 +2,7 @@ using AnuncieCompre.Domain.Aggregates.OrderAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.UseCase.Interfaces;
 
-namespace AnuncieCompre.UseCase.DomainEventHandler.Order;
+namespace AnuncieCompre.UseCase.DomainEventHandler.OrderDomainEventHandler;
 
 public class OrderCreatedDomainEventHandler(IMessageSender _messageSender, IVendorRepository _vendorRepository) : IDomainEventHandler<OrderCreatedDomainEvent>
 {

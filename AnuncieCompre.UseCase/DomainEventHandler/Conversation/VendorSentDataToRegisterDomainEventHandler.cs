@@ -4,14 +4,18 @@ using AnuncieCompre.UseCase.Interfaces;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class VendorSentDataToRegisterDomainEventHandler(IVendorRepository _vendorRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<VendorSentDataToRegisterDomainEvent>
+public class VendorSentDataToRegisterDomainEventHandler(IUserRepository _userRepository, IVendorRepository _vendorRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<VendorSentDataToRegisterDomainEvent>
 {
+    private readonly IUserRepository userRepository = _userRepository;
     private readonly IVendorRepository vendorRepository = _vendorRepository;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
     public async Task HandleAsync(VendorSentDataToRegisterDomainEvent domainEvent)
     {
-        Vendor vendor = Vendor.Create(domainEvent.User, domainEvent.CNPJ, domainEvent.CompanyCategory);
+        User user = User.Create(domainEvent.Phone!, domainEvent.Name!, domainEvent.Email!, domainEvent.UserType);
+        userRepository.Add(user);
+
+        Vendor vendor = Vendor.Create(user, domainEvent.CNPJ, domainEvent.CompanyCategory);
         vendorRepository.Add(vendor);
 
         await unitOfWork.SaveChangesAsync();

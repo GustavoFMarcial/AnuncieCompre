@@ -12,14 +12,17 @@ public class User : BaseEntity
 
     private User(){}
 
-    private User(VOPhone phone)
+    private User(VOPhone phone, VOName name, VOEmail email, UserType userType)
     {
         Phone = phone;
+        Name = name;
+        Email = email;
+        Type = userType;
     }
 
-    public static User Create(VOPhone phone)
+    public static User Create(VOPhone phone, VOName name, VOEmail email, UserType userType)
     {
-        return new User(phone);
+        return new User(phone, name, email, userType);
     }
 
     public User SetName(VOName name)

@@ -19,7 +19,6 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
         modelBuilder.Entity<Conversation>(c =>
         {
             c.ComplexProperty(cp => cp.UserPhone);
-            c.ComplexProperty(cp => cp.TempData).ToJson();
         });
 
         modelBuilder.Entity<User>(u =>
