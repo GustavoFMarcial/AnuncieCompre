@@ -1,10 +1,12 @@
 namespace AnuncieCompre.Domain.Common;
 
-public class Result<T>
+public class Result<T> : IResultUntyped
 {
     public bool IsSuccess { get; private set; }
-    public string Message  { get; private set; } = string.Empty;
+    public string Message  { get; private set; } = default!;
     public T Value { get; private set; } = default!;
+    object? IResultUntyped.Value => Value;
+    public Type ValueType => typeof(T);
 
     private Result(){}
 

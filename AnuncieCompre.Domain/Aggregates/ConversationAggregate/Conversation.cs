@@ -1,18 +1,19 @@
 using System.Collections.ObjectModel;
-using AnuncieCompre.Domain.Enums;
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
+using System.Reflection;
+using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
+using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
 public class Conversation : BaseEntity
 {
     public VOPhone UserPhone { get; private set; } = default!;
-    public ConversationNode ConversationNode { get; private set; } = ConversationFlow.Build();
-    public Dictionary<string, ValueObject> TempDataa { get; private set; } = new();
+    public ConversationNode AwaitingResponseNode { get; private set; } = default!;
+    public ConversationNode ActiveNode { get; private set; } = ConversationFlow.Build();
+    public Dictionary<string, ValueObject> TempData { get; private set; } = new();
 
     private Conversation() {}
 
@@ -23,15 +24,17 @@ public class Conversation : BaseEntity
 
     public static Conversation Create(VOPhone userPhone)
     {
-        return new Conversation(userPhone);
+        Conversation conversation = new Conversation(userPhone);
+
+        var domainEvent = new ConversationCreatedDomainEvent(conversation);
+        conversation.AddDomainEvent(domainEvent);
+
+        return conversation;
     }
 
-    public ReadOnlyCollection<string> HandleMessage(IncomingMessageRequest message)
+    public ReadOnlyCollection<string> HandleMessage(IncomingMessageRequest message, bool messageValidation)
     {
-        if (ConversationNode.HasValidation)
-        {
-            
-        }
+        if (!messageValidation) return ["Opção inválida, escolha novamente."];
 
         return ["a"];
     }

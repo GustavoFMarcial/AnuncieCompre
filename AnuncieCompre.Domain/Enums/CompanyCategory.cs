@@ -31,4 +31,11 @@ public static class CompanyCategoryExtensions
         Enum.GetValues<CompanyCategory>();
         return Enum.GetNames<CompanyCategory>().Length;
     }
+
+    public static string[] ToStringArray()
+    {
+        return Enum.GetValues<CompanyCategory>()
+            .Select(c => ((int)c).ToString())
+            .ToArray();
+    }
 }

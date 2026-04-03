@@ -3,7 +3,7 @@ using AnuncieCompre.Domain.Enums;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
-public static class ConversationFlow
+public class ConversationFlow()
 {
     public static ConversationNode Build()
     {
@@ -30,6 +30,7 @@ public static class ConversationFlow
 
         var askAnotherOrder = new ConversationNode
         {
+            Options = ["1", "2"],
             Message =
                 """
                 Pedido criado com sucesso!
@@ -42,18 +43,16 @@ public static class ConversationFlow
 
         var askQuantity = new ConversationNode
         {
-            HasValidation = true,
-            ValidationType = typeof(VOQuantity),
-            HasTempData = true,
+            Options = null!,
+            Validate = VOQuantity.Create,
             TempDataType = "Quantity",
             Message = "Qual quantia deseja comprar?"
         };
 
         var askProduct = new ConversationNode
         {
-            HasValidation = true,
-            ValidationType = typeof(VOProduct),
-            HasTempData = true,
+            Options = null!,
+            Validate = VOProduct.Create,
             TempDataType = "Product",
             Message = "Qual produto deseja comprar?"
         };
@@ -67,6 +66,8 @@ public static class ConversationFlow
 
         var askCompanyCategory = new ConversationNode
         {
+            Options = CompanyCategoryExtensions.ToStringArray(),
+            TempDataType = "Category",
             Message =
                 $"""
                 Qual categoria de produto deseja comprar?
@@ -82,6 +83,7 @@ public static class ConversationFlow
 
         var customerRegistered = new ConversationNode
         {
+            Options = ["1", "2"],
             Message =
                 """
                 Obrigado por se registrar no AnuncieCompre!
@@ -97,9 +99,8 @@ public static class ConversationFlow
 
         var askCPF = new ConversationNode
         {
-            HasValidation = true,
-            ValidationType = typeof(VOCPF),
-            HasTempData = true,
+            Options = null!,
+            Validate = VOCPF.Create,
             TempDataType = "CPF",
             Message = "Qual seu CPF?"
         };
@@ -110,9 +111,8 @@ public static class ConversationFlow
 
         var askCNPJ = new ConversationNode
         {
-            HasValidation = true,
-            ValidationType = typeof(VOCNPJ),
-            HasTempData = true,
+            Options = null!,
+            Validate = VOCNPJ.Create,
             TempDataType = "CNPJ",
             Message = "Qual o CNPJ da empresa?"
         };
@@ -123,18 +123,16 @@ public static class ConversationFlow
 
         var askEmailCustomer = new ConversationNode
         {
-            HasValidation = true,
-            ValidationType = typeof(VOEmail),
-            HasTempData = true,
+            Options = null!,
+            Validate = VOEmail.Create,
             TempDataType = "Email",
             Message = "Qual email para cadastro?"
         };
 
         var askEmailVendor = new ConversationNode
         {
-            HasValidation = true,
-            ValidationType = typeof(VOEmail),
-            HasTempData = true,
+            Options = null!,
+            Validate = VOEmail.Create,
             TempDataType = "Email",
             Message = "Qual email para cadastro?"
         };
@@ -146,6 +144,8 @@ public static class ConversationFlow
 
         var askCompanyCategoryVendor = new ConversationNode
         {
+            Options = CompanyCategoryExtensions.ToStringArray(),
+            TempDataType = "Category",
             Message =
                 $"""
                 Qual o ramo da empresa?
@@ -156,18 +156,16 @@ public static class ConversationFlow
 
         var askCompanyName = new ConversationNode
         {
-            HasValidation = true,
-            ValidationType = typeof(VOName),
-            HasTempData = true,
+            Options = null!,
+            Validate = VOName.Create,
             TempDataType = "Name",
             Message = "Qual o nome da empresa?"
         };
 
         var askFullName = new ConversationNode
         {
-            HasValidation = true,
-            ValidationType = typeof(VOName),
-            HasTempData = true,
+            Options = null!,
+            Validate = VOName.Create,
             TempDataType = "Name",
             Message = "Qual seu nome completo?"
         };
@@ -180,6 +178,7 @@ public static class ConversationFlow
 
         var askUserType = new ConversationNode
         {
+            Options = ["1", "2"],
             Message =
                 """
                 Você deseja usar nosso sistema como cliente ou como fornecedor?
@@ -196,6 +195,7 @@ public static class ConversationFlow
 
         var start = new ConversationNode
         {
+            Options = ["1", "2"],
             Message =
                 """
                 Olá, bem-vindo! Vimos que é novo por aqui.
