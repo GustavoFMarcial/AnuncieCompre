@@ -5,6 +5,7 @@ using AnuncieCompre.Domain.Common;
 using System.Reflection;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
+using AnuncieCompre.Domain.Services;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
@@ -24,7 +25,7 @@ public class Conversation : BaseEntity
 
     public static Conversation Create(VOPhone userPhone)
     {
-        Conversation conversation = new Conversation(userPhone);
+        var conversation = new Conversation(userPhone);
 
         var domainEvent = new ConversationCreatedDomainEvent(conversation);
         conversation.AddDomainEvent(domainEvent);
@@ -32,10 +33,22 @@ public class Conversation : BaseEntity
         return conversation;
     }
 
-    public ReadOnlyCollection<string> HandleMessage(IncomingMessageRequest message, bool messageValidation)
+    public ReadOnlyCollection<string> HandleMessage(string message)
     {
-        if (!messageValidation) return ["Opção inválida, escolha novamente."];
+        if (AwaitingResponseNode is null)
+        {
+            AwaitingResponseNode = ActiveNode;
+            return [ActiveNode.Message];
+        }
 
-        return ["a"];
+        NodeResult result = ValidateMessage.Handle(AwaitingResponseNode, ActiveNode, message);
+
+        if (result.IsSuccess)
+        {
+            AwaitingResponseNode = ActiveNode;
+            ActiveNode = ActiveNode.Transitions[result.NextStep!];
+        }
+
+        return [result.Message];
     }
 }

@@ -1,5 +1,6 @@
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Enums;
+using AnuncieCompre.Domain.Services;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
@@ -66,7 +67,8 @@ public class ConversationFlow()
 
         var askCompanyCategory = new ConversationNode
         {
-            Options = CompanyCategoryExtensions.ToStringArray(),
+            Options = null!,
+            Validate = ValidateCompanyCategory.Validate,
             TempDataType = "Category",
             Message =
                 $"""
@@ -144,7 +146,8 @@ public class ConversationFlow()
 
         var askCompanyCategoryVendor = new ConversationNode
         {
-            Options = CompanyCategoryExtensions.ToStringArray(),
+            Options = null!,
+            Validate = ValidateCompanyCategory.Validate,
             TempDataType = "Category",
             Message =
                 $"""

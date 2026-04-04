@@ -11,5 +11,4 @@ public class ConversationNode
     public Func<string, IResultUntyped> Validate = default!;
     public IDomainEvent DomainEventType { get; set; } = default!;
     public string TempDataType { get; set; } = default!;
-    
 }
