@@ -1,33 +1,29 @@
 using System.Text.RegularExpressions;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Domain.Aggregates.ValueObjects;
 
-public partial class VOCNPJ : ValueObject
+public partial class CNPJ : ValueObject
 {
-    public string CNPJ { get; private set; } = default!;
+    public string Value { get; private set; } = default!;
 
-    private VOCNPJ(){}
-    private VOCNPJ(string cnpj)
+    private CNPJ(){}
+    private CNPJ(string cnpj)
     {
-        CNPJ = cnpj;
+        Value = cnpj;
     }
 
-    public static Result<VOCNPJ> Create(string document)
+    public static Result<CNPJ> Create(string document)
     {
-        if (!CNPJIsValid(document)) return Result<VOCNPJ>.Failure("CNPJ inválido");
+        if (!CNPJIsValid(document)) return Result<CNPJ>.Failure("CNPJ inválido");
 
-        return Result<VOCNPJ>.Success(new VOCNPJ(document), "VOCNPJ criado com sucesso");
+        return Result<CNPJ>.Success(new CNPJ(document), "VOCNPJ criado com sucesso");
     }
 
     private static readonly Regex CnpjRegex = MyRegex();
 
     public static bool CNPJIsValid(string cnpj)
     {
-        if (string.IsNullOrWhiteSpace(cnpj))
-            return false;
-
         if (!CnpjRegex.IsMatch(cnpj))
             return false;
 

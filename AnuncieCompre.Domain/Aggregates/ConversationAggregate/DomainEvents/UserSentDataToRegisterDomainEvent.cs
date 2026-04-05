@@ -4,10 +4,10 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 
-public class UserSentDataToRegisterDomainEvent(int userId, VOName name, VOEmail email, UserType userType) : IDomainEvent
+public class UserSentDataToRegisterDomainEvent(Phone phone, Name name, Email email, UserType userType) : IDomainEvent
 {
-    public int UserId { get; set; } = userId;
-    public VOName? Name { get; set; } = name;
-    public VOEmail? Email { get; set; } = email;
+    public Phone? Phone { get; set; } = phone;
+    public Name? Name { get; set; } = name;
+    public Email? Email { get; set; } = email;
     public UserType UserType { get; set; } = userType;
 }

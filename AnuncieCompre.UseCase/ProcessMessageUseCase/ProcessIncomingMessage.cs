@@ -13,7 +13,7 @@ public class ProcessIncomingMessageUseCase(IConversationRepository _conversation
     
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
-        Conversation? conversation = await conversationRepository.GetConversationByPhoneAsync(incomingMessage.SenderPhone) ?? Conversation.Create(VOPhone.Create(incomingMessage.SenderPhone).Value);
+        Conversation? conversation = await conversationRepository.GetConversationByPhoneAsync(incomingMessage.SenderPhone) ?? Conversation.Create(Phone.Create(incomingMessage.SenderPhone).Value);
 
         ReadOnlyCollection<string> response = conversation.HandleMessage(incomingMessage.Content);
 

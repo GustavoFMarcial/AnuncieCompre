@@ -4,10 +4,10 @@ using AnuncieCompre.Domain.Enums;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 
-public class CustomerSentDataToOrderDomainEvent(VOPhone phone, VOProduct product, VOQuantity quantity, CompanyCategory category) : IDomainEvent
+public class CustomerSentDataToOrderDomainEvent(Phone phone, Product product, Quantity quantity, CompanyCategory category) : IDomainEvent
 {
-    public VOPhone UserPhone { get; set; } = phone;
-    public VOProduct Product { get; set; } = product;
-    public VOQuantity Quantity { get; set; } = quantity;
+    public Phone UserPhone { get; set; } = phone;
+    public Product Product { get; set; } = product;
+    public Quantity Quantity { get; set; } = quantity;
     public CompanyCategory Category { get; set; } = category;
 }

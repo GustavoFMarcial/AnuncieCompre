@@ -10,7 +10,7 @@ public class OrderRepository(AnuncieCompreContext _context) : BaseRepository<Ord
     public async Task<Order?> GetLastOrderByPhoneAsync(string phone)
     {
         return await context.Set<Order>()
-            .Where(o => o.UserPhone.Number == phone)
+            .Where(o => o.UserPhone.Value == phone)
             .OrderByDescending(o => o.Id)
             .FirstOrDefaultAsync();
     }

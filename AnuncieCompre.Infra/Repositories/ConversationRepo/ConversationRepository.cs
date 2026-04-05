@@ -10,6 +10,6 @@ public class ConversationRepository(AnuncieCompreContext _context) : BaseReposit
 {
     public async Task<Conversation?> GetConversationByPhoneAsync(string userPhone)
     {
-        return await context.Set<Conversation>().FirstOrDefaultAsync(c => c.UserPhone.Number == userPhone);
+        return await context.Set<Conversation>().FirstOrDefaultAsync(c => c.UserPhone.Value == userPhone);
     }
 }

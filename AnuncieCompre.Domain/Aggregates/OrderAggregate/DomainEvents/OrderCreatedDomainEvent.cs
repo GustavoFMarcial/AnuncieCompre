@@ -4,10 +4,10 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Aggregates.OrderAggregate.DomainEvents;
 
-public class OrderCreatedDomainEvent(VOPhone userPhone, VOProduct product, VOQuantity quantity, CompanyCategory category) : IDomainEvent
+public class OrderCreatedDomainEvent(Phone userPhone, Product product, Quantity quantity, CompanyCategory category) : IDomainEvent
 {
-    public VOPhone UserPhone { get; set; } = userPhone;
-    public VOProduct Product { get; set; } = product;
-    public VOQuantity Quantity { get; set; } = quantity;
+    public Phone UserPhone { get; set; } = userPhone;
+    public Product Product { get; set; } = product;
+    public Quantity Quantity { get; set; } = quantity;
     public CompanyCategory Category { get; set; } = category;
 }

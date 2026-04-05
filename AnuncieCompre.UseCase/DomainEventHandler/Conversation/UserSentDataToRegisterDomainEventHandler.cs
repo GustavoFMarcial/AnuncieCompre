@@ -11,7 +11,7 @@ public class UserSentDataToRegisterDomainEventHandler(IUserRepository _userRepos
 
     public async Task HandleAsync(UserSentDataToRegisterDomainEvent domainEvent)
     {
-        User? user = await userRepository.GetByIdAsync(domainEvent.UserId);
+        User? user = await userRepository.GetUserByPhoneAsync(domainEvent.Phone!.Value);
 
         if (user is null) return;
 

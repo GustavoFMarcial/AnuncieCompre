@@ -1,12 +1,11 @@
 namespace AnuncieCompre.Domain.Common;
 
-public class Result<T> : IResultUntyped
+public class Result<T> : IResultValueObject where T : ValueObject
 {
-    public bool IsSuccess { get; protected set; }
-    public string Message  { get; protected set; } = default!;
-    public T Value { get; protected set; } = default!;
-    object? IResultUntyped.Value => Value;
-    public Type ValueType => typeof(T);
+    public bool IsSuccess { get; private set; }
+    public string Message  { get; private set; } = default!;
+    public T Value { get; private set; } = default!;
+    ValueObject? IResultValueObject.Value => Value;
 
     protected Result(){}
 

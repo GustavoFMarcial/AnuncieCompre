@@ -3,30 +3,27 @@ using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Domain.Aggregates.ValueObjects;
 
-public partial class VOCPF : ValueObject
+public partial class CPF : ValueObject
 {
-    public string CPF { get; private set; } = default!;
+    public string Value { get; private set; } = default!;
 
-    private VOCPF(){}
-    private VOCPF(string cpf)
+    private CPF(){}
+    private CPF(string cpf)
     {
-        CPF = cpf;
+        Value = cpf;
     }
 
-    public static Result<VOCPF> Create(string document)
+    public static Result<CPF> Create(string document)
     {
-        if (!CPFIsValid(document)) return Result<VOCPF>.Failure("CPF inválido");
+        if (!CPFIsValid(document)) return Result<CPF>.Failure("CPF inválido");
         
-        return Result<VOCPF>.Success(new VOCPF(document), "VODocument criado com sucesso");
+        return Result<CPF>.Success(new CPF(document), "VODocument criado com sucesso");
     }
 
     private static readonly Regex CpfRegex = MyRegex();
 
     public static bool CPFIsValid(string cpf)
     {
-        if (string.IsNullOrWhiteSpace(cpf))
-            return false;
-
         if (!CpfRegex.IsMatch(cpf))
             return false;
 

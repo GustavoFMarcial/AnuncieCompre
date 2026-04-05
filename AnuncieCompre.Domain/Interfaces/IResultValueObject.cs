@@ -1,9 +1,8 @@
 namespace AnuncieCompre.Domain.Common;
 
-public interface IResultUntyped
+public interface IResultValueObject
 {
     public bool IsSuccess { get; }
     public string Message { get; }
-    public object? Value { get; }
-    public Type ValueType { get; }
+    public ValueObject? Value { get; }
 }

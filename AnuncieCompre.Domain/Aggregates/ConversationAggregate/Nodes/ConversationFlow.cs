@@ -1,13 +1,20 @@
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Enums;
-using AnuncieCompre.Domain.Services;
+using AnuncieCompre.Domain.Interfaces;
+using AnuncieCompre.Domain.Services.ValueObjectValidator;
 
-namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
+namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 
 public class ConversationFlow()
 {
     public static ConversationNode Build()
     {
+        IValidator cnpjValidator = new CnpjValidator();
+        IValidator cpfValidator = new CpfValidator();
+        IValidator emailValidator = new EmailValidator();
+        IValidator nameValidator = new NameValidator();
+        IValidator productValidator = new ProductValidator();
+        IValidator quantityValidator = new QuantityValidator();
         // ─── Fim ──────────────────────────────────────────────────────────────
 
         var finish = new ConversationNode
@@ -32,6 +39,7 @@ public class ConversationFlow()
         var askAnotherOrder = new ConversationNode
         {
             Options = ["1", "2"],
+            NodeValidator = new OptionValidator(["1", "2"]),
             Message =
                 """
                 Pedido criado com sucesso!
@@ -45,15 +53,15 @@ public class ConversationFlow()
         var askQuantity = new ConversationNode
         {
             Options = null!,
-            Validate = VOQuantity.Create,
+            NodeValidator = quantityValidator,
             TempDataType = "Quantity",
             Message = "Qual quantia deseja comprar?"
         };
 
-        var askProduct = new ConversationNode
+        var askProduct = new ConversationNode()
         {
             Options = null!,
-            Validate = VOProduct.Create,
+            NodeValidator = productValidator,
             TempDataType = "Product",
             Message = "Qual produto deseja comprar?"
         };
@@ -67,8 +75,8 @@ public class ConversationFlow()
 
         var askCompanyCategory = new ConversationNode
         {
-            Options = null!,
-            Validate = ValidateCompanyCategory.Validate,
+            Options = CompanyCategoryExtensions.ToStringArray(),
+            NodeValidator = new OptionValidator(CompanyCategoryExtensions.ToStringArray()),
             TempDataType = "Category",
             Message =
                 $"""
@@ -86,6 +94,7 @@ public class ConversationFlow()
         var customerRegistered = new ConversationNode
         {
             Options = ["1", "2"],
+            NodeValidator = new OptionValidator(["1", "2"]),
             Message =
                 """
                 Obrigado por se registrar no AnuncieCompre!
@@ -102,7 +111,7 @@ public class ConversationFlow()
         var askCPF = new ConversationNode
         {
             Options = null!,
-            Validate = VOCPF.Create,
+            NodeValidator = cpfValidator,
             TempDataType = "CPF",
             Message = "Qual seu CPF?"
         };
@@ -114,7 +123,7 @@ public class ConversationFlow()
         var askCNPJ = new ConversationNode
         {
             Options = null!,
-            Validate = VOCNPJ.Create,
+            NodeValidator = cnpjValidator,
             TempDataType = "CNPJ",
             Message = "Qual o CNPJ da empresa?"
         };
@@ -126,7 +135,7 @@ public class ConversationFlow()
         var askEmailCustomer = new ConversationNode
         {
             Options = null!,
-            Validate = VOEmail.Create,
+            NodeValidator = emailValidator,
             TempDataType = "Email",
             Message = "Qual email para cadastro?"
         };
@@ -134,7 +143,7 @@ public class ConversationFlow()
         var askEmailVendor = new ConversationNode
         {
             Options = null!,
-            Validate = VOEmail.Create,
+            NodeValidator = emailValidator,
             TempDataType = "Email",
             Message = "Qual email para cadastro?"
         };
@@ -146,8 +155,8 @@ public class ConversationFlow()
 
         var askCompanyCategoryVendor = new ConversationNode
         {
-            Options = null!,
-            Validate = ValidateCompanyCategory.Validate,
+            Options = CompanyCategoryExtensions.ToStringArray(),
+            NodeValidator = new OptionValidator(CompanyCategoryExtensions.ToStringArray()),
             TempDataType = "Category",
             Message =
                 $"""
@@ -160,7 +169,7 @@ public class ConversationFlow()
         var askCompanyName = new ConversationNode
         {
             Options = null!,
-            Validate = VOName.Create,
+            NodeValidator = nameValidator,
             TempDataType = "Name",
             Message = "Qual o nome da empresa?"
         };
@@ -168,7 +177,7 @@ public class ConversationFlow()
         var askFullName = new ConversationNode
         {
             Options = null!,
-            Validate = VOName.Create,
+            NodeValidator = nameValidator,
             TempDataType = "Name",
             Message = "Qual seu nome completo?"
         };
@@ -182,6 +191,7 @@ public class ConversationFlow()
         var askUserType = new ConversationNode
         {
             Options = ["1", "2"],
+            NodeValidator = new OptionValidator(["1", "2"]),
             Message =
                 """
                 Você deseja usar nosso sistema como cliente ou como fornecedor?
@@ -199,6 +209,7 @@ public class ConversationFlow()
         var start = new ConversationNode
         {
             Options = ["1", "2"],
+            NodeValidator = new OptionValidator(["1", "2"]),
             Message =
                 """
                 Olá, bem-vindo! Vimos que é novo por aqui.

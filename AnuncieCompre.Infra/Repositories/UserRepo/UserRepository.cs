@@ -10,7 +10,7 @@ public class UserRepository(AnuncieCompreContext _context) : BaseRepository<User
 {
     public async Task<User?> GetUserByPhoneAsync(string userPhone)
     {
-        var user = await context.Set<User>().FirstOrDefaultAsync(u => u.Phone.Number == userPhone);
+        var user = await context.Set<User>().FirstOrDefaultAsync(u => u.Phone.Value == userPhone);
 
         return user;
     }

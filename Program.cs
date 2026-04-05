@@ -1,4 +1,3 @@
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.OrderAggregate.DomainEvents;
 using AnuncieCompre.Infra.Data;
@@ -16,7 +15,6 @@ using AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 using AnuncieCompre.UseCase.DomainEventHandler.OrderDomainEventHandler;
 using AnuncieCompre.UseCase.Interfaces;
 using AnuncieCompre.UseCase.ProcessMessageUseCase;
-using AnuncieCompre.UseCase.Services;
 using Microsoft.EntityFrameworkCore;
 using Twilio;
 
@@ -35,7 +33,6 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCase>();
-builder.Services.AddScoped<ValidateUserMessage, ValidateUserMessage>();
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
 builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 builder.Services.AddScoped<IDomainEventHandler<ConversationCreatedDomainEvent>, ConversationCreatedDomainEventHandler>();

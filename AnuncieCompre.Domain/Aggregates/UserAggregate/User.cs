@@ -5,14 +5,14 @@ namespace AnuncieCompre.Domain.Aggregates.UserAggregate;
 
 public class User : BaseEntity
 {
-    public VOPhone Phone { get; private set; } = default!;
-    public VOName? Name { get; private set; } = default!;
-    public VOEmail? Email { get; private set; } = default!;
+    public Phone Phone { get; private set; } = default!;
+    public Name? Name { get; private set; } = default!;
+    public Email? Email { get; private set; } = default!;
     public UserType? Type { get; private set; } = UserType.Unknown;
 
     private User(){}
 
-    private User(VOPhone phone, VOName name, VOEmail email, UserType userType)
+    private User(Phone phone, Name name, Email email, UserType userType)
     {
         Phone = phone;
         Name = name;
@@ -20,18 +20,18 @@ public class User : BaseEntity
         Type = userType;
     }
 
-    public static User Create(VOPhone phone, VOName name, VOEmail email, UserType userType)
+    public static User Create(Phone phone, Name name, Email email, UserType userType)
     {
         return new User(phone, name, email, userType);
     }
 
-    public User SetName(VOName name)
+    public User SetName(Name name)
     {
         Name = name;
         return this;
     }
 
-    public User SetEmail(VOEmail email)
+    public User SetEmail(Email email)
     {
         Email = email;
         return this;

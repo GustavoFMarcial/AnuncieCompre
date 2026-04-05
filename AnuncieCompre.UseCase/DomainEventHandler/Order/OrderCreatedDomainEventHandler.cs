@@ -18,16 +18,16 @@ public class OrderCreatedDomainEventHandler(IMessageSender _messageSender, IVend
             try
             {
                 await messageSender.SendMessageAsync(
-                    v.User.Phone.Number,
+                    v.User.Phone.Value,
                     $"""
-                    Olá! Recebemos um pedido de {domainEvent.Quantity.Quantity} de {domainEvent.Product.Description} na sua região.
+                    Olá! Recebemos um pedido de {domainEvent.Quantity.Value} de {domainEvent.Product.Value} na sua região.
 
                     Gostaria de receber os detalhes para avaliar se consegue atender?
                     """);
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Falha ao enviar mensagem via whatsapp para {domainEvent.UserPhone.Number}");
+                Console.WriteLine($"Falha ao enviar mensagem via whatsapp para {domainEvent.UserPhone.Value}");
                 Console.WriteLine(e.Message);
             }
         }
