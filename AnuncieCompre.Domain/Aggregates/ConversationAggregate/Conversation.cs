@@ -3,6 +3,7 @@ using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
+using AnuncieCompre.Domain.Services.ConversationNodeValidator;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
@@ -38,6 +39,14 @@ public class Conversation : BaseEntity
             return [ActiveNode.Message];
         }
 
-        return [message];
+        NodeResult result = NodeValidator.Validate(AwaitingResponseNode, ActiveNode, message);
+
+        if (result.IsSuccess)
+        {
+            AwaitingResponseNode = ActiveNode;
+            ActiveNode = ActiveNode.Transitions[result.NextStep!];
+        }
+
+        return [result.Message];
     }
 }

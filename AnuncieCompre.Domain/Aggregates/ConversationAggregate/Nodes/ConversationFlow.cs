@@ -9,12 +9,12 @@ public class ConversationFlow()
 {
     public static ConversationNode Build()
     {
-        IValidator cnpjValidator = new CnpjValidator();
-        IValidator cpfValidator = new CpfValidator();
-        IValidator emailValidator = new EmailValidator();
-        IValidator nameValidator = new NameValidator();
-        IValidator productValidator = new ProductValidator();
-        IValidator quantityValidator = new QuantityValidator();
+        IValueObjectValidator cnpjValidator = new CnpjValidator();
+        IValueObjectValidator cpfValidator = new CpfValidator();
+        IValueObjectValidator emailValidator = new EmailValidator();
+        IValueObjectValidator nameValidator = new NameValidator();
+        IValueObjectValidator productValidator = new ProductValidator();
+        IValueObjectValidator quantityValidator = new QuantityValidator();
         // ─── Fim ──────────────────────────────────────────────────────────────
 
         var finish = new ConversationNode
@@ -39,7 +39,7 @@ public class ConversationFlow()
         var askAnotherOrder = new ConversationNode
         {
             Options = ["1", "2"],
-            NodeValidator = new OptionValidator(["1", "2"]),
+            ValueObjectValidator = new OptionValidator(["1", "2"]),
             Message =
                 """
                 Pedido criado com sucesso!
@@ -53,7 +53,7 @@ public class ConversationFlow()
         var askQuantity = new ConversationNode
         {
             Options = null!,
-            NodeValidator = quantityValidator,
+            ValueObjectValidator = quantityValidator,
             TempDataType = "Quantity",
             Message = "Qual quantia deseja comprar?"
         };
@@ -61,7 +61,7 @@ public class ConversationFlow()
         var askProduct = new ConversationNode()
         {
             Options = null!,
-            NodeValidator = productValidator,
+            ValueObjectValidator = productValidator,
             TempDataType = "Product",
             Message = "Qual produto deseja comprar?"
         };
@@ -75,8 +75,8 @@ public class ConversationFlow()
 
         var askCompanyCategory = new ConversationNode
         {
-            Options = CompanyCategoryExtensions.ToStringArray(),
-            NodeValidator = new OptionValidator(CompanyCategoryExtensions.ToStringArray()),
+            Options = null!,
+            ValueObjectValidator = new OptionValidator(CompanyCategoryExtensions.ToStringArray()),
             TempDataType = "Category",
             Message =
                 $"""
@@ -94,7 +94,7 @@ public class ConversationFlow()
         var customerRegistered = new ConversationNode
         {
             Options = ["1", "2"],
-            NodeValidator = new OptionValidator(["1", "2"]),
+            ValueObjectValidator = new OptionValidator(["1", "2"]),
             Message =
                 """
                 Obrigado por se registrar no AnuncieCompre!
@@ -111,7 +111,7 @@ public class ConversationFlow()
         var askCPF = new ConversationNode
         {
             Options = null!,
-            NodeValidator = cpfValidator,
+            ValueObjectValidator = cpfValidator,
             TempDataType = "CPF",
             Message = "Qual seu CPF?"
         };
@@ -123,7 +123,7 @@ public class ConversationFlow()
         var askCNPJ = new ConversationNode
         {
             Options = null!,
-            NodeValidator = cnpjValidator,
+            ValueObjectValidator = cnpjValidator,
             TempDataType = "CNPJ",
             Message = "Qual o CNPJ da empresa?"
         };
@@ -135,7 +135,7 @@ public class ConversationFlow()
         var askEmailCustomer = new ConversationNode
         {
             Options = null!,
-            NodeValidator = emailValidator,
+            ValueObjectValidator = emailValidator,
             TempDataType = "Email",
             Message = "Qual email para cadastro?"
         };
@@ -143,7 +143,7 @@ public class ConversationFlow()
         var askEmailVendor = new ConversationNode
         {
             Options = null!,
-            NodeValidator = emailValidator,
+            ValueObjectValidator = emailValidator,
             TempDataType = "Email",
             Message = "Qual email para cadastro?"
         };
@@ -155,8 +155,8 @@ public class ConversationFlow()
 
         var askCompanyCategoryVendor = new ConversationNode
         {
-            Options = CompanyCategoryExtensions.ToStringArray(),
-            NodeValidator = new OptionValidator(CompanyCategoryExtensions.ToStringArray()),
+            Options = null!,
+            ValueObjectValidator = new OptionValidator(CompanyCategoryExtensions.ToStringArray()),
             TempDataType = "Category",
             Message =
                 $"""
@@ -169,7 +169,7 @@ public class ConversationFlow()
         var askCompanyName = new ConversationNode
         {
             Options = null!,
-            NodeValidator = nameValidator,
+            ValueObjectValidator = nameValidator,
             TempDataType = "Name",
             Message = "Qual o nome da empresa?"
         };
@@ -177,7 +177,7 @@ public class ConversationFlow()
         var askFullName = new ConversationNode
         {
             Options = null!,
-            NodeValidator = nameValidator,
+            ValueObjectValidator = nameValidator,
             TempDataType = "Name",
             Message = "Qual seu nome completo?"
         };
@@ -191,7 +191,7 @@ public class ConversationFlow()
         var askUserType = new ConversationNode
         {
             Options = ["1", "2"],
-            NodeValidator = new OptionValidator(["1", "2"]),
+            ValueObjectValidator = new OptionValidator(["1", "2"]),
             Message =
                 """
                 Você deseja usar nosso sistema como cliente ou como fornecedor?
@@ -209,7 +209,7 @@ public class ConversationFlow()
         var start = new ConversationNode
         {
             Options = ["1", "2"],
-            NodeValidator = new OptionValidator(["1", "2"]),
+            ValueObjectValidator = new OptionValidator(["1", "2"]),
             Message =
                 """
                 Olá, bem-vindo! Vimos que é novo por aqui.

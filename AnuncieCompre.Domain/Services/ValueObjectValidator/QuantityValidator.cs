@@ -4,7 +4,7 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Services.ValueObjectValidator;
 
-public class QuantityValidator : IValidator
+public class QuantityValidator : IValueObjectValidator
 {
     public IResultValueObject Validate(string input)
     {
