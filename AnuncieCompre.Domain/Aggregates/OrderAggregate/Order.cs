@@ -9,11 +9,11 @@ public class Order : BaseEntity
     public Phone UserPhone { get; private set; } = default!;
     public Product Product { get; private set; } = default!;
     public Quantity Quantity  { get; private set; } = default!;
-    public CompanyCategory Category { get; private set; }
+    public ValueObjects.CompanyCategory Category { get; private set; } = default!;
 
     private Order(){}
 
-    private Order(Phone userPhone, Product product, Quantity quantity, CompanyCategory category)
+    private Order(Phone userPhone, Product product, Quantity quantity, ValueObjects.CompanyCategory category)
     {
         UserPhone = userPhone;
         Product = product;
@@ -21,7 +21,7 @@ public class Order : BaseEntity
         Category = category;
     }
 
-    public static Order Create(Phone userPhone, Product product, Quantity quantity, CompanyCategory category)
+    public static Order Create(Phone userPhone, Product product, Quantity quantity, ValueObjects.CompanyCategory category)
     {
         var order = new Order(userPhone, product, quantity, category);
 

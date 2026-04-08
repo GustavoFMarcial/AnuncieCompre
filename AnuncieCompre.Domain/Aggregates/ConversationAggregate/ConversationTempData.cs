@@ -13,7 +13,7 @@ public class ConversationTempData
     public CNPJ? CNPJ { get; private set; } = default!;
     public Product? Product { get; private set; } = default!;
     public Quantity? Quantity { get; private set; } = default!;
-    public CompanyCategory Category { get; private set; }
+    public Enums.CompanyCategory Category { get; private set; }
 
     public void SetUserType(UserType type) => UserType = type;
     public void SetName(Name name) => Name = name;
@@ -22,7 +22,7 @@ public class ConversationTempData
     public void SetCNPJ(CNPJ cnpj) => CNPJ = cnpj;
     public void SetProduct(Product product) => Product = product;
     public void SetQuantity(Quantity quantity) => Quantity = quantity;
-    public void SetCompanyCategory(CompanyCategory category) => Category = category;
+    public void SetCompanyCategory(Enums.CompanyCategory category) => Category = category;
     
     public void Clear()
     {

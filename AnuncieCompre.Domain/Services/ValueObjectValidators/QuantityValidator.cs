@@ -2,7 +2,7 @@ using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Interfaces;
 
-namespace AnuncieCompre.Domain.Services.ValueObjectValidator;
+namespace AnuncieCompre.Domain.Services.ValueObjectValidators;
 
 public class QuantityValidator : IValueObjectValidator
 {

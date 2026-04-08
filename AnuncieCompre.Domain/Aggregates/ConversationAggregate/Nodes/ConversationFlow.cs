@@ -1,7 +1,7 @@
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Domain.Interfaces;
-using AnuncieCompre.Domain.Services.ValueObjectValidator;
+using AnuncieCompre.Domain.Services.ValueObjectValidators;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 
@@ -78,7 +78,7 @@ public class ConversationFlow()
         {
             Options = null!,
             ValueObjectValidator = companyCategoryValidator,
-            TempDataType = "Category",
+            TempDataType = "CompanyCategory",
             Message =
                 $"""
                 Qual categoria de produto deseja comprar?
@@ -158,7 +158,7 @@ public class ConversationFlow()
         {
             Options = null!,
             ValueObjectValidator = companyCategoryValidator,
-            TempDataType = "Category",
+            TempDataType = "CompanyCategory",
             Message =
                 $"""
                 Qual o ramo da empresa?

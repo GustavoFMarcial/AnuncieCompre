@@ -11,7 +11,7 @@ public class OrderCreatedDomainEventHandler(IMessageSender _messageSender, IVend
 
     public async Task HandleAsync(OrderCreatedDomainEvent domainEvent)
     {
-        List<Vendor> vendors = await vendorRepository.GetVendorsByCategoryAsync(domainEvent.Category);
+        List<Vendor> vendors = await vendorRepository.GetVendorsByCategoryAsync(domainEvent.Category.Value);
 
         foreach (Vendor v in vendors)
         {
