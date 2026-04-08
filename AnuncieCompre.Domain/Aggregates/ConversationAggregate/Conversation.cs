@@ -3,7 +3,6 @@ using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
-using AnuncieCompre.Domain.Services.ConversationNodeValidator;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
@@ -45,6 +44,11 @@ public class Conversation : BaseEntity
         {
             AwaitingResponseNode = ActiveNode;
             ActiveNode = ActiveNode.Transitions[result.NextStep!];
+
+            if (AwaitingResponseNode.TempDataType is not null)
+            {
+                TempData.Add(AwaitingResponseNode.TempDataType, result.Value);
+            }
         }
 
         return [result.Message];

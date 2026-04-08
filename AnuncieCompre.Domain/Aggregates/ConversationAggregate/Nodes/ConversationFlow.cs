@@ -15,6 +15,7 @@ public class ConversationFlow()
         IValueObjectValidator nameValidator = new NameValidator();
         IValueObjectValidator productValidator = new ProductValidator();
         IValueObjectValidator quantityValidator = new QuantityValidator();
+        IValueObjectValidator companyCategoryValidator = new CompanyCategoryValidator();
         // ─── Fim ──────────────────────────────────────────────────────────────
 
         var finish = new ConversationNode
@@ -76,7 +77,7 @@ public class ConversationFlow()
         var askCompanyCategory = new ConversationNode
         {
             Options = null!,
-            ValueObjectValidator = new OptionValidator(CompanyCategoryExtensions.ToStringArray()),
+            ValueObjectValidator = companyCategoryValidator,
             TempDataType = "Category",
             Message =
                 $"""
@@ -156,7 +157,7 @@ public class ConversationFlow()
         var askCompanyCategoryVendor = new ConversationNode
         {
             Options = null!,
-            ValueObjectValidator = new OptionValidator(CompanyCategoryExtensions.ToStringArray()),
+            ValueObjectValidator = companyCategoryValidator,
             TempDataType = "Category",
             Message =
                 $"""
