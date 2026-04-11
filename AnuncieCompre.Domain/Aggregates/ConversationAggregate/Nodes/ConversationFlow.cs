@@ -16,6 +16,7 @@ public class ConversationFlow()
         IValueObjectValidator productValidator = new ProductValidator();
         IValueObjectValidator quantityValidator = new QuantityValidator();
         IValueObjectValidator companyCategoryValidator = new CompanyCategoryValidator();
+        IValueObjectValidator userTypeValidator = new UserTypeValidator();
         // ─── Fim ──────────────────────────────────────────────────────────────
 
         var finish = new ConversationNode
@@ -191,8 +192,8 @@ public class ConversationFlow()
 
         var askUserType = new ConversationNode
         {
-            Options = ["1", "2"],
-            ValueObjectValidator = new OptionValidator(["1", "2"]),
+            ValueObjectValidator = userTypeValidator,
+            TempDataType = "UserType",
             Message =
                 """
                 Você deseja usar nosso sistema como cliente ou como fornecedor?

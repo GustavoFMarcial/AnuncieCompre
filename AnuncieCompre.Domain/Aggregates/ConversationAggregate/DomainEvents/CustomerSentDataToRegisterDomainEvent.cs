@@ -1,6 +1,5 @@
 using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 

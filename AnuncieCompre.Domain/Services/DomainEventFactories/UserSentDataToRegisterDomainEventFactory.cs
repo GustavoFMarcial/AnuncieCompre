@@ -5,14 +5,13 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Services.DomainEventFactories;
 
-public class CustomerSentDataToOrderDomainEventFactory : IDomainEventFactory
+public class UserSentDataToRegisterDomainEventFactory : IDomainEventFactory
 {
     public IDomainEvent Handle(Phone userPhone, Dictionary<string, ValueObject> tempData)
     {
-        
-        if (tempData["Product"] is Product product && tempData["Quantity"] is Quantity quantity && tempData["CompanyCategory"] is CompanyCategory companyCategory)
+        if (tempData["Name"] is Name name && tempData["Email"] is Email email && tempData["UserType"] is UserType userType)
         {
-            return new CustomerSentDataToOrderDomainEvent(userPhone, product, quantity, companyCategory);
+            return new UserSentDataToRegisterDomainEvent(userPhone, name, email, userType);
         }
 
         throw new NotImplementedException();
