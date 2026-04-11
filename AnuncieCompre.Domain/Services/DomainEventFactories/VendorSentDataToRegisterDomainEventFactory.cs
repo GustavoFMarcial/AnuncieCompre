@@ -9,9 +9,9 @@ public class VendorSentDataToRegisterDomainEventFactory : IDomainEventFactory
 {
     public IDomainEvent Handle(Phone userPhone, Dictionary<string, ValueObject> tempData)
     {
-        if (tempData["Name"] is Name name && tempData["Email"] is Email email && tempData["UserType"] is UserType userType && tempData["CompanyCategory"] is CompanyCategory companyCategory && tempData["CNPJ"] is CNPJ cnpj)
+        if (tempData["CompanyCategory"] is CompanyCategory companyCategory && tempData["CNPJ"] is CNPJ cnpj)
         {
-            return new VendorSentDataToRegisterDomainEvent(userPhone, name, email, userType, companyCategory, cnpj);
+            return new VendorSentDataToRegisterDomainEvent(userPhone, companyCategory, cnpj);
         }
 
         throw new NotImplementedException();

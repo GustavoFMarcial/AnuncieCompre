@@ -12,10 +12,11 @@ public class CustomerSentDataToRegisterDomainEventHandler(IUserRepository _userR
 
     public async Task HandleAsync(CustomerSentDataToRegisterDomainEvent domainEvent)
     {
-        User user = User.Create(domainEvent.Phone!, domainEvent.Name!, domainEvent.Email!, domainEvent.UserType);
-        userRepository.Add(user);
+        // User user = User.Create(domainEvent.Phone!, domainEvent.Name!, domainEvent.Email!, domainEvent.UserType);
+        // userRepository.Add(user);
+        User? user = await userRepository.GetUserByPhoneAsync(domainEvent.Phone!.Value);
         
-        Customer client = Customer.Create(user, domainEvent.CPF);
+        Customer client = Customer.Create(user!, domainEvent.CPF);
         customerRepository.Add(client);
 
         await unitOfWork.SaveChangesAsync();

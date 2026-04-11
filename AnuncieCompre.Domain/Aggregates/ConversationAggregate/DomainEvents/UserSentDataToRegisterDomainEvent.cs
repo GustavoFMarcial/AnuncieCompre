@@ -1,4 +1,3 @@
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Interfaces;
 

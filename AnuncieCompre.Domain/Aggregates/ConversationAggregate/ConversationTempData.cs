@@ -1,4 +1,3 @@
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Enums;
 
@@ -6,7 +5,7 @@ namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
 public class ConversationTempData
 {
-    public UserType UserType { get; private set;}
+    public ValueObjects.UserType UserType { get; private set; } = default!;
     public Name? Name { get; private set; } = default!;
     public Email? Email { get; private set; } = default!;
     public CPF? CPF { get; private set; } = default!;
@@ -15,7 +14,7 @@ public class ConversationTempData
     public Quantity? Quantity { get; private set; } = default!;
     public Enums.CompanyCategory Category { get; private set; }
 
-    public void SetUserType(UserType type) => UserType = type;
+    public void SetUserType(ValueObjects.UserType type) => UserType = type;
     public void SetName(Name name) => Name = name;
     public void SetEmail(Email email) => Email = email;
     public void SetCPF(CPF cpf) => CPF = cpf;

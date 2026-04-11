@@ -3,6 +3,7 @@ using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
+using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
@@ -48,6 +49,13 @@ public class Conversation : BaseEntity
             if (AwaitingResponseNode.TempDataType is not null)
             {
                 TempData.Add(AwaitingResponseNode.TempDataType, result.Value);
+            }
+
+            if (AwaitingResponseNode.DomainEventFactory is not null)
+            {
+                var domainEvent = AwaitingResponseNode.DomainEventFactory.Handle(UserPhone, TempData);
+                AddDomainEvent(domainEvent);
+                TempData.Clear();
             }
         }
 

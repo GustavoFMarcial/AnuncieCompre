@@ -11,14 +11,8 @@ public class UserSentDataToRegisterDomainEventHandler(IUserRepository _userRepos
 
     public async Task HandleAsync(UserSentDataToRegisterDomainEvent domainEvent)
     {
-        User? user = await userRepository.GetUserByPhoneAsync(domainEvent.Phone!.Value);
-
-        if (user is null) return;
-
-        user
-            .SetName(domainEvent.Name!)
-            .SetEmail(domainEvent.Email!)
-            .SetType(domainEvent.UserType);
+        User user = User.Create(domainEvent.Phone!, domainEvent.Name!, domainEvent.Email!, domainEvent.UserType);
+        userRepository.Add(user);
 
         await unitOfWork.SaveChangesAsync();
     }

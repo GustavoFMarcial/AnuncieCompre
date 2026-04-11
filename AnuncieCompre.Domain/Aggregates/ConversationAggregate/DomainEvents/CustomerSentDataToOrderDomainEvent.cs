@@ -1,13 +1,12 @@
 using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
-using AnuncieCompre.Domain.Enums;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 
-public class CustomerSentDataToOrderDomainEvent(Phone phone, Product product, Quantity quantity, ValueObjects.CompanyCategory category) : IDomainEvent
+public class CustomerSentDataToOrderDomainEvent(Phone phone, Product product, Quantity quantity, CompanyCategory category) : IDomainEvent
 {
     public Phone UserPhone { get; set; } = phone!;
     public Product Product { get; set; } = product!;
     public Quantity Quantity { get; set; } = quantity!;
-    public ValueObjects.CompanyCategory Category { get; set; } = category!;
+    public CompanyCategory Category { get; set; } = category!;
 }
