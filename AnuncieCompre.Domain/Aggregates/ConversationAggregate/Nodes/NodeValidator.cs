@@ -1,12 +1,11 @@
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 using AnuncieCompre.Domain.Common;
-using AnuncieCompre.Domain.Interfaces;
+using AnuncieCompre.Domain.Services.ValueObjectValidators;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 
 public class NodeValidator
 {
-    public static NodeResult Validate(ConversationNode awaitingResponseNode, ConversationNode activeNode, string message)
+    public static NodeResult Validate(ConversationNode awaitingResponseNode, string message)
     {
         IResultValueObject result = awaitingResponseNode.ValueObjectValidator.Validate(message);
 
@@ -15,6 +14,9 @@ public class NodeValidator
             return (NodeResult)NodeResult.Failure(result.Message);
         }
 
-        return NodeResult.Success(result.Value!, activeNode.Message, awaitingResponseNode.Options == null ? "next" : message);
+        string nextStepId = awaitingResponseNode.Transitions[awaitingResponseNode.ValueObjectValidator is OptionValidator ? message : "next"].Id;
+        string nextMessage = awaitingResponseNode.Transitions[nextStepId].Message;
+        
+        return NodeResult.Success(result.Value!, nextMessage, nextStepId);
     }
 }

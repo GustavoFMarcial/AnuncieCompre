@@ -4,16 +4,16 @@ namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 
 public class NodeResult : Result<ValueObject>
 {
-    public string? NextStep { get; set; }
+    public string? NextStepId { get; set; }
 
-    public static NodeResult Success(ValueObject value, string message, string nextStep)
+    public static NodeResult Success(ValueObject value, string message, string nextStepId)
     {
         NodeResult result = new()
         {
             IsSuccess = true,
             Message = message,
             Value = value,
-            NextStep = nextStep,
+            NextStepId = nextStepId,
         };
 
         return result;

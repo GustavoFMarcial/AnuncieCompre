@@ -3,15 +3,13 @@ using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
-using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
 public class Conversation : BaseEntity
 {
     public Phone UserPhone { get; private set; } = default!;
-    public ConversationNode AwaitingResponseNode { get; private set; } = default!;
-    public ConversationNode ActiveNode { get; private set; } = ConversationFlow.Build();
+    public string AwaitingResponseNodeId { get; private set; } = default!;
     public Dictionary<string, ValueObject> TempData { get; private set; } = new();
 
     private Conversation() {}
@@ -31,31 +29,30 @@ public class Conversation : BaseEntity
         return conversation;
     }
 
-    public ReadOnlyCollection<string> HandleMessage(string message)
+    public ReadOnlyCollection<string> HandleMessage(string message, ConversationNode awaitingResponseNode)
     {
-        if (AwaitingResponseNode is null)
+        if (AwaitingResponseNodeId is null)
         {
-            AwaitingResponseNode = ActiveNode;
-            return [ActiveNode.Message];
+            AwaitingResponseNodeId = awaitingResponseNode.Id;
+            return [awaitingResponseNode.Message];
         }
 
-        NodeResult result = NodeValidator.Validate(AwaitingResponseNode, ActiveNode, message);
+        NodeResult result = NodeValidator.Validate(awaitingResponseNode, message);
 
         if (result.IsSuccess)
         {
-            AwaitingResponseNode = ActiveNode;
-            ActiveNode = ActiveNode.Transitions[result.NextStep!];
+            AwaitingResponseNodeId = result.NextStepId!;
 
-            if (AwaitingResponseNode.TempDataType is not null)
+            if (awaitingResponseNode.TempDataType is not null)
             {
-                TempData.Add(AwaitingResponseNode.TempDataType, result.Value);
+                TempData.Add(awaitingResponseNode.TempDataType, result.Value);
             }
 
-            if (AwaitingResponseNode.DomainEventFactory is not null)
+            if (awaitingResponseNode.DomainEventFactory is not null)
             {
-                var domainEvent = AwaitingResponseNode.DomainEventFactory.Handle(UserPhone, TempData);
+                var domainEvent = awaitingResponseNode.DomainEventFactory.Handle(UserPhone, TempData);
                 AddDomainEvent(domainEvent);
-                TempData.Clear();
+                // TempData.Clear();
             }
         }
 

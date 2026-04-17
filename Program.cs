@@ -2,6 +2,7 @@ using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.OrderAggregate.DomainEvents;
 using AnuncieCompre.Infra.Data;
 using AnuncieCompre.Infra.MessageSender;
+using AnuncieCompre.Infra.Providers;
 using AnuncieCompre.Infra.Repositories;
 using AnuncieCompre.Infra.Repositories.ConversationRepo;
 using AnuncieCompre.Infra.Repositories.CustomerRepo;
@@ -41,6 +42,7 @@ builder.Services.AddScoped<IDomainEventHandler<CustomerSentDataToRegisterDomainE
 builder.Services.AddScoped<IDomainEventHandler<VendorSentDataToRegisterDomainEvent>, VendorSentDataToRegisterDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<CustomerSentDataToOrderDomainEvent>, CustomerSentDataToOrderDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
+builder.Services.AddSingleton<ConversationFlowProvider, ConversationFlowProvider>();
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string 'AnuncieCompreContext' not found.");
 builder.Services.AddDbContext<AnuncieCompreContext>(options =>
