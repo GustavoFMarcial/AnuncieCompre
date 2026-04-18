@@ -16,7 +16,7 @@ public class VendorSentDataToRegisterDomainEventHandler(IUserRepository _userRep
         // userRepository.Add(user);
         User? user = await userRepository.GetUserByPhoneAsync(domainEvent.Phone!.Value);
 
-        Vendor vendor = Vendor.Create(user!, domainEvent.CNPJ, domainEvent.CompanyCategory.Value);
+        Vendor vendor = Vendor.Create(user!, domainEvent.CNPJ, domainEvent.CompanyCategory);
         vendorRepository.Add(vendor);
 
         await unitOfWork.SaveChangesAsync();

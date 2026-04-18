@@ -9,11 +9,11 @@ public class Vendor : BaseEntity
     public int UserId { get; private set; }
     public User User { get; private set; } = default!;
     public CNPJ CNPJ { get; private set; } = default!;
-    public Enums.CompanyCategory Category { get; private set; }
+    public ValueObjects.CompanyCategory Category { get; private set; } = default!;
 
     private Vendor(){}
 
-    private Vendor(User user, CNPJ cnpj, Enums.CompanyCategory category)
+    private Vendor(User user, CNPJ cnpj, ValueObjects.CompanyCategory category)
     {
         UserId = user.Id;
         User = user;
@@ -21,7 +21,7 @@ public class Vendor : BaseEntity
         Category = category;
     }
 
-    public static Vendor Create(User user, CNPJ cnpj, Enums.CompanyCategory category)
+    public static Vendor Create(User user, CNPJ cnpj, ValueObjects.CompanyCategory category)
     {
         return new Vendor(user, cnpj, category);
     }

@@ -23,22 +23,4 @@ public class User : BaseEntity
     {
         return new User(phone, name, email, userType);
     }
-
-    public User SetName(Name name)
-    {
-        Name = name;
-        return this;
-    }
-
-    public User SetEmail(Email email)
-    {
-        Email = email;
-        return this;
-    }
-
-    public User SetType(UserType userType)
-    {
-        Type = userType;
-        return this;
-    }
 }

@@ -10,6 +10,6 @@ public class VendorRepository(AnuncieCompreContext _context) : BaseRepository<Ve
 {
     public async Task<List<Vendor>> GetVendorsByCategoryAsync(CompanyCategory category)
     {
-        return await context.Set<Vendor>().Where(v => v.Category == category).ToListAsync();
+        return await context.Set<Vendor>().Where(v => v.Category.Value == category).ToListAsync();
     }
 }

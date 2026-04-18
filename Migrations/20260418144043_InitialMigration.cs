@@ -18,10 +18,9 @@ namespace AnuncieCompre.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CurrentStep = table.Column<int>(type: "integer", nullable: false),
-                    UserPhone_Number = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    TempData = table.Column<string>(type: "jsonb", nullable: false)
+                    AwaitingResponseNodeId = table.Column<string>(type: "text", nullable: false),
+                    UserPhone_Value = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -34,10 +33,10 @@ namespace AnuncieCompre.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Category = table.Column<int>(type: "integer", nullable: false),
-                    Product_Description = table.Column<string>(type: "text", nullable: false),
-                    Quantity_Quantity = table.Column<string>(type: "text", nullable: false),
-                    UserPhone_Number = table.Column<string>(type: "text", nullable: false),
+                    Category_Value = table.Column<int>(type: "integer", nullable: false),
+                    Product_Value = table.Column<string>(type: "text", nullable: false),
+                    Quantity_Value = table.Column<string>(type: "text", nullable: false),
+                    UserPhone_Value = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -51,10 +50,10 @@ namespace AnuncieCompre.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Type = table.Column<int>(type: "integer", nullable: true),
-                    Email_Email = table.Column<string>(type: "text", nullable: true),
-                    Name_FullName = table.Column<string>(type: "text", nullable: true),
-                    Phone_Number = table.Column<string>(type: "text", nullable: false),
+                    Email_Value = table.Column<string>(type: "text", nullable: true),
+                    Name_Value = table.Column<string>(type: "text", nullable: true),
+                    Phone_Value = table.Column<string>(type: "text", nullable: false),
+                    Type_Value = table.Column<int>(type: "integer", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -69,7 +68,7 @@ namespace AnuncieCompre.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    CPF_CPF = table.Column<string>(type: "text", nullable: false),
+                    CPF_Value = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -90,8 +89,8 @@ namespace AnuncieCompre.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    Category = table.Column<int>(type: "integer", nullable: false),
-                    CNPJ_CNPJ = table.Column<string>(type: "text", nullable: false),
+                    CNPJ_Value = table.Column<string>(type: "text", nullable: false),
+                    Category_Value = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>

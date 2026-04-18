@@ -19,10 +19,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
         modelBuilder.Entity<Conversation>(c =>
         {
             c.ComplexProperty(cp => cp.UserPhone);
-            c.OwnsOne(c => c.TempData, builder =>
-            {
-                builder.ToJson();
-            });
+            c.Ignore(c => c.TempData);
         });
 
         modelBuilder.Entity<User>(u =>
@@ -30,6 +27,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
             u.ComplexProperty(cp => cp.Phone);
             u.ComplexProperty(cp => cp.Name);
             u.ComplexProperty(cp => cp.Email);
+            u.ComplexProperty(cp => cp.Type);
         });
 
         modelBuilder.Entity<Customer>(s =>
@@ -40,6 +38,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
         modelBuilder.Entity<Vendor>(s =>
         {
             s.ComplexProperty(cp => cp.CNPJ);
+            s.ComplexProperty(cp => cp.Category);
         });
 
         modelBuilder.Entity<Order>(o =>
@@ -47,6 +46,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
             o.ComplexProperty(cp => cp.UserPhone);
             o.ComplexProperty(cp => cp.Product);
             o.ComplexProperty(cp => cp.Quantity);
+            o.ComplexProperty(cp => cp.Category);
         });
     }
 
