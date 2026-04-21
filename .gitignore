@@ -1,2 +1,32 @@
+# .NET
 bin/
 obj/
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Config sensível
+appsettings.Development.json
+.env
+.env.*
+
+# Node / Vite / Bun
+node_modules/
+dist/
+build/
+
+# Banco
+*.sql
+*.dump
+*.backup
+
+# Logs
+*.log
+logs/
+tmp/
+temp/
