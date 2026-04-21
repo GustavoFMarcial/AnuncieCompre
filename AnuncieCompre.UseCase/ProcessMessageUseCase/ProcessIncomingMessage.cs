@@ -16,7 +16,14 @@ public class ProcessIncomingMessageUseCase(IConversationRepository _conversation
     
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
-        Conversation? conversation = await conversationRepository.GetConversationByPhoneAsync(incomingMessage.SenderPhone) ?? Conversation.Create(Phone.Create(incomingMessage.SenderPhone).Value);
+        Conversation? conversation = await conversationRepository.GetConversationByPhoneAsync(incomingMessage.SenderPhone);
+
+        if (conversation is null)
+        {
+            conversation = Conversation.Create(Phone.Create(incomingMessage.SenderPhone).Value);
+            conversationRepository.Add(conversation);
+        }
+
         ConversationNode awaitingRespondeNode = conversationFlowProvider.GetById(conversation.AwaitingResponseNodeId);
 
         ReadOnlyCollection<string> response = conversation.HandleMessage(incomingMessage.Content, awaitingRespondeNode);

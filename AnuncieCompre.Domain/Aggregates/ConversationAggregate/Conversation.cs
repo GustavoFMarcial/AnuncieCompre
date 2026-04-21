@@ -21,12 +21,7 @@ public class Conversation : BaseEntity
 
     public static Conversation Create(Phone userPhone)
     {
-        var conversation = new Conversation(userPhone);
-
-        var domainEvent = new ConversationCreatedDomainEvent(conversation);
-        conversation.AddDomainEvent(domainEvent);
-
-        return conversation;
+        return new Conversation(userPhone);
     }
 
     public ReadOnlyCollection<string> HandleMessage(string message, ConversationNode awaitingResponseNode)

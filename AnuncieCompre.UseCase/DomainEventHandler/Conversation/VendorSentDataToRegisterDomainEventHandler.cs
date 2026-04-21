@@ -12,8 +12,6 @@ public class VendorSentDataToRegisterDomainEventHandler(IUserRepository _userRep
 
     public async Task HandleAsync(VendorSentDataToRegisterDomainEvent domainEvent)
     {
-        // User user = User.Create(domainEvent.Phone!, domainEvent.Name!, domainEvent.Email!, domainEvent.UserType);
-        // userRepository.Add(user);
         User? user = await userRepository.GetUserByPhoneAsync(domainEvent.Phone!.Value);
 
         Vendor vendor = Vendor.Create(user!, domainEvent.CNPJ, domainEvent.CompanyCategory);

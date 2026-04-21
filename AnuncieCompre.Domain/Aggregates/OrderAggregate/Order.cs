@@ -30,16 +30,4 @@ public class Order : BaseEntity
 
         return order;
     }
-
-    public Order SetProduct(Product product)
-    {
-        Product = product;
-        return this;
-    }
-
-    public Order SetQuantity(Quantity quantity)
-    {
-        Quantity = quantity;
-        return this;
-    }
 }

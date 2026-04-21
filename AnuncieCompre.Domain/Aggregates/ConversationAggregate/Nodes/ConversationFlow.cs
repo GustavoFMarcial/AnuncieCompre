@@ -1,5 +1,3 @@
-// :contentReference[oaicite:0]{index=0}
-
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Domain.Interfaces;
@@ -77,7 +75,7 @@ public class ConversationFlow()
         var askCompanyCategory = new ConversationNode
         {
             Id = "6",
-            Options = null!,
+            Options = CompanyCategoryExtensions.ToStringArray(),
             ValueObjectValidator = companyCategoryValidator,
             TempDataType = "CompanyCategory",
             Message =
@@ -146,7 +144,7 @@ public class ConversationFlow()
         var askCompanyCategoryVendor = new ConversationNode
         {
             Id = "12",
-            Options = null!,
+            Options = CompanyCategoryExtensions.ToStringArray(),
             ValueObjectValidator = companyCategoryValidator,
             TempDataType = "CompanyCategory",
             Message =
@@ -178,6 +176,7 @@ public class ConversationFlow()
         var askUserType = new ConversationNode
         {
             Id = "15",
+            Options = ["1", "2"],
             ValueObjectValidator = userTypeValidator,
             TempDataType = "UserType",
             Message =

@@ -18,4 +18,16 @@ public class NodeResult : Result<ValueObject>
 
         return result;
     }
+
+    public new static NodeResult Failure(string message)
+    {
+        NodeResult result = new()
+        {
+            IsSuccess = false,
+            Message = message,
+            Value = default!,
+        };
+
+        return result;
+    }
 }
