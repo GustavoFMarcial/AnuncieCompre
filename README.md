@@ -2,9 +2,6 @@
 
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
 
-Este projeto ainda não está finalizado e novas funcionalidades estão sendo implementadas.
-Algumas partes podem mudar ou não estar completas.
-
 Chatbot backend para coleta estruturada de pedidos via WhatsApp, integrado com Twilio.  
 O sistema guia o usuário por um fluxo de conversa, validando dados e gerando pedidos automaticamente, utilizando uma arquitetura baseada em estados (Conversation Flow) e princípios de Domain-Driven Design (DDD).
 
