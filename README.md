@@ -1,5 +1,7 @@
 # 🤖 AnuncieCompre - Chatbot de Pedidos via WhatsApp
 
+![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
+
 🚧 **Status: Em desenvolvimento**
 
 Este projeto ainda não está finalizado e novas funcionalidades estão sendo implementadas.
