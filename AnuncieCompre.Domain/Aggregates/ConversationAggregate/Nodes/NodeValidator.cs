@@ -7,6 +7,8 @@ public class NodeValidator
 {
     public static NodeResult Validate(ConversationNode awaitingResponseNode, string message)
     {
+        if (awaitingResponseNode.Options is null && awaitingResponseNode.ValueObjectValidator is null) return NodeResult.Success(awaitingResponseNode.Transitions["next"].Message, "next");
+
         IResultValueObject result = awaitingResponseNode.ValueObjectValidator.Validate(message);
         string nextStepId;
         string nextMessage;

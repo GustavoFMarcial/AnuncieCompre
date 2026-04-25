@@ -19,6 +19,18 @@ public class NodeResult : Result<ValueObject>
         return result;
     }
 
+    public static NodeResult Success(string message, string nextStepId)
+    {
+        NodeResult result = new()
+        {
+            IsSuccess = true,
+            Message = message,
+            NextStepId = nextStepId,
+        };
+
+        return result;
+    }
+
     public new static NodeResult Failure(string message)
     {
         NodeResult result = new()

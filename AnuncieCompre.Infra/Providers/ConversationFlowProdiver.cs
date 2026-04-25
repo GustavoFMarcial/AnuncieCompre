@@ -1,17 +1,23 @@
+using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Flows;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 
 namespace AnuncieCompre.Infra.Providers;
 
 public class ConversationFlowProvider
 {
-    private Dictionary<string, ConversationNode> Flow { get; init; } = ConversationFlow.Build();
+    private Dictionary<string, ConversationNode> InitialRegistration { get; init; } = InitialRegistrationFlow.Build();
+    private Dictionary<string, ConversationNode> Customer { get; init; } = CustomerFlow.Build();
+    private Dictionary<string, ConversationNode> Vendor { get; init; } = VendorFlow.Build();
 
     public ConversationNode GetById(string? id)
     {
-        if (id is null) return Flow["16"];
+        if (id is null) return InitialRegistration["initial_start"];
+        ConversationNode? conversationNode;
 
-        if (!Flow.TryGetValue(id, out ConversationNode? conversationNode)) throw new ArgumentException("Id do ConversationNode inválido");
+        if (InitialRegistration.TryGetValue(id, out conversationNode)) return conversationNode;
+        if (Customer.TryGetValue(id, out conversationNode)) return conversationNode;
+        if (Vendor.TryGetValue(id, out conversationNode)) return conversationNode;
 
-        return conversationNode;
+        throw new KeyNotFoundException();
     }
 }

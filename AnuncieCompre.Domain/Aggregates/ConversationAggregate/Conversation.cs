@@ -3,6 +3,7 @@ using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
+using AnuncieCompre.Domain.Aggregates.UserAggregate;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
@@ -24,7 +25,7 @@ public class Conversation : BaseEntity
         return new Conversation(userPhone);
     }
 
-    public ReadOnlyCollection<string> HandleMessage(string message, ConversationNode awaitingResponseNode)
+    public ReadOnlyCollection<string> HandleMessage(string message, ConversationNode awaitingResponseNode, User user)
     {
         if (AwaitingResponseNodeId is null)
         {

@@ -11,16 +11,34 @@ public class User : BaseEntity
 
     private User(){}
 
-    private User(Phone phone, Name name, Email email, UserType userType)
+    private User(Phone phone/*, Name name, Email email, UserType userType*/)
     {
         Phone = phone;
-        Name = name;
-        Email = email;
-        Type = userType;
+        // Name = name;
+        // Email = email;
+        // Type = userType;
     }
 
-    public static User Create(Phone phone, Name name, Email email, UserType userType)
+    public static User Create(Phone phone/*, Name name, Email email, UserType userType*/)
     {
-        return new User(phone, name, email, userType);
+        return new User(phone/*, name, email, userType*/);
+    }
+
+    public User SetName(Name name)
+    {
+        Name = name;
+        return this;
+    }
+
+    public User SetEmail(Email email)
+    {
+        Email = email;
+        return this;
+    }
+
+    public User SetUserType(UserType userType)
+    {
+        Type = userType;
+        return this;
     }
 }
