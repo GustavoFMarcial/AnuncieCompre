@@ -17,6 +17,7 @@ using AnuncieCompre.UseCase.DomainEventHandler.OrderDomainEventHandler;
 using AnuncieCompre.UseCase.Interfaces;
 using AnuncieCompre.UseCase.ProcessMessageUseCase;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using Twilio;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +45,9 @@ builder.Services.AddDbContext<AnuncieCompreContext>(options =>
     options.UseNpgsql(connectionString));
 // builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect("localhost:6379")
+);
 
 TwilioClient.Init(
     builder.Configuration["Twilio:AccountSid"],
