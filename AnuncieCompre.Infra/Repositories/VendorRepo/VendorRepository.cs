@@ -8,6 +8,11 @@ namespace AnuncieCompre.Infra.Repositories.VendorRepo;
 
 public class VendorRepository(AnuncieCompreContext _context) : BaseRepository<Vendor>(_context), IVendorRepository
 {
+    public async Task<Vendor?> GetVendorByPhoneAsync(string userPhone)
+    {
+        return await context.Set<Vendor>().FirstOrDefaultAsync(c => c.User.Phone.Value == userPhone);
+    }
+
     public async Task<List<Vendor>> GetVendorsByCategoryAsync(CompanyCategory category)
     {
         return await context.Set<Vendor>().Where(v => v.Category.Value == category).ToListAsync();

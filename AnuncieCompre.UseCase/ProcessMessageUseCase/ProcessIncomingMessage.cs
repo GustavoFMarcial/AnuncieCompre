@@ -6,6 +6,7 @@ using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Infra.Providers;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
+using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.UseCase.ProcessMessageUseCase;
 
@@ -19,7 +20,7 @@ public class ProcessIncomingMessageUseCase(IConversationRepository _conversation
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
         Conversation? conversation = await conversationRepository.GetConversationByPhoneAsync(incomingMessage.SenderPhone);
-        User ? user = await userRepository.GetUserByPhoneAsync(incomingMessage.SenderPhone);
+        User? user = await userRepository.GetUserByPhoneAsync(incomingMessage.SenderPhone);
 
         if (conversation is null || user is null)
         {
@@ -29,9 +30,9 @@ public class ProcessIncomingMessageUseCase(IConversationRepository _conversation
             userRepository.Add(user);
         }
 
-        ConversationNode awaitingRespondeNode = conversationFlowProvider.GetById(conversation.AwaitingResponseNodeId);
+        IConversationNode awaitingRespondeNode = conversationFlowProvider.GetById(conversation.AwaitingResponseNodeId);
 
-        ReadOnlyCollection<string> response = conversation.HandleMessage(incomingMessage.Content, awaitingRespondeNode, user);
+        ReadOnlyCollection<string> response = conversation.HandleMessage(awaitingRespondeNode, incomingMessage.Content, user);
 
         await unitOfWork.SaveChangesAsync();
 

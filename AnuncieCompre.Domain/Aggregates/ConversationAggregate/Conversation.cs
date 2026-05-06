@@ -4,6 +4,7 @@ using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
+using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
@@ -25,7 +26,7 @@ public class Conversation : BaseEntity
         return new Conversation(userPhone);
     }
 
-    public ReadOnlyCollection<string> HandleMessage(string message, ConversationNode awaitingResponseNode, User user)
+    public ReadOnlyCollection<string> HandleMessage(IConversationNode awaitingResponseNode, string message, User user)
     {
         if (AwaitingResponseNodeId is null)
         {
@@ -33,20 +34,21 @@ public class Conversation : BaseEntity
             return [awaitingResponseNode.Message];
         }
 
-        NodeResult result = NodeValidator.Validate(awaitingResponseNode, message);
+        // NodeResult result = NodeValidator.Validate(awaitingResponseNode, message);
+        NodeResult result = awaitingResponseNode.NodeValidator.Validate(awaitingResponseNode, message);
 
         if (result.IsSuccess)
         {
             AwaitingResponseNodeId = result.NextStepId!;
 
-            if (awaitingResponseNode.TempDataType is not null)
-            {
-                TempData.Add(awaitingResponseNode.TempDataType, result.Value);
-            }
+            // if (awaitingResponseNode.TempDataType is not null)
+            // {
+            //     TempData.Add(awaitingResponseNode.TempDataType, result.Value);
+            // }
 
             if (awaitingResponseNode.DomainEventFactory is not null)
             {
-                var domainEvent = awaitingResponseNode.DomainEventFactory.Handle(UserPhone, TempData);
+                var domainEvent = awaitingResponseNode.DomainEventFactory.Handle(user, result.Value);
                 AddDomainEvent(domainEvent);
                 // TempData.Clear();
             }

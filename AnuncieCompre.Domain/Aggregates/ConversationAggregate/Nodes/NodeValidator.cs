@@ -1,34 +1,35 @@
-using AnuncieCompre.Domain.Common;
-using AnuncieCompre.Domain.Services.ValueObjectValidators;
+// using AnuncieCompre.Domain.Common;
+// using AnuncieCompre.Domain.Interfaces;
+// using AnuncieCompre.Domain.Services.ValueObjectValidators;
 
-namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
+// namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 
-public class NodeValidator
-{
-    public static NodeResult Validate(ConversationNode awaitingResponseNode, string message)
-    {
-        if (awaitingResponseNode.Options is null && awaitingResponseNode.ValueObjectValidator is null) return NodeResult.Success(awaitingResponseNode.Transitions["next"].Message, "next");
+// public class NodeValidator
+// {
+//     public static NodeResult Validate(IConversationNode awaitingResponseNode, string message)
+//     {
+//         if (awaitingResponseNode.Options is null && awaitingResponseNode.ValueObjectValidator is null) return NodeResult.Success(awaitingResponseNode.Transitions["next"].Message, "next");
 
-        IResultValueObject result = awaitingResponseNode.ValueObjectValidator.Validate(message);
-        string nextStepId;
-        string nextMessage;
+//         IResultValueObject result = awaitingResponseNode.ValueObjectValidator.Validate(message);
+//         string nextStepId;
+//         string nextMessage;
 
-        if (!result.IsSuccess)
-        {
-            return NodeResult.Failure(result.Message);
-        }
+//         if (!result.IsSuccess)
+//         {
+//             return NodeResult.Failure(result.Message);
+//         }
 
-        if (awaitingResponseNode.ValueObjectValidator is UserTypeValidator)
-        {
-            nextStepId = awaitingResponseNode.Transitions[message].Id;
-            nextMessage = awaitingResponseNode.Transitions[message].Message;
-        }
-        else
-        {
-            nextStepId = awaitingResponseNode.Transitions[awaitingResponseNode.ValueObjectValidator is OptionValidator ? message : "next"].Id;
-            nextMessage = awaitingResponseNode.Transitions[awaitingResponseNode.ValueObjectValidator is OptionValidator ? message : "next"].Message;
-        }
+//         if (awaitingResponseNode.ValueObjectValidator is UserTypeValidator)
+//         {
+//             nextStepId = awaitingResponseNode.Transitions[message].Id;
+//             nextMessage = awaitingResponseNode.Transitions[message].Message;
+//         }
+//         else
+//         {
+//             nextStepId = awaitingResponseNode.Transitions[awaitingResponseNode.ValueObjectValidator is OptionValidator ? message : "next"].Id;
+//             nextMessage = awaitingResponseNode.Transitions[awaitingResponseNode.ValueObjectValidator is OptionValidator ? message : "next"].Message;
+//         }
         
-        return NodeResult.Success(result.Value!, nextMessage, nextStepId);
-    }
-}
+//         return NodeResult.Success(result.Value!, nextMessage, nextStepId);
+//     }
+// }

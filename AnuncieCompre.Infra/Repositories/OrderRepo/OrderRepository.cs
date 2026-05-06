@@ -7,10 +7,10 @@ namespace AnuncieCompre.Infra.Repositories.OrderRepo;
 
 public class OrderRepository(AnuncieCompreContext _context) : BaseRepository<Order>(_context), IOrderRepository
 {
-    public async Task<Order?> GetLastOrderByPhoneAsync(string phone)
+    public async Task<Order?> GetLastOrderByCustomerId(int customerId)
     {
         return await context.Set<Order>()
-            .Where(o => o.UserPhone.Value == phone)
+            .Where(o => o.CustomerId == customerId)
             .OrderByDescending(o => o.Id)
             .FirstOrDefaultAsync();
     }

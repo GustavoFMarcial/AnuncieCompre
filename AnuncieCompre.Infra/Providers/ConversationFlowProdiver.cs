@@ -1,18 +1,25 @@
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Flows;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
+using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Infra.Providers;
 
 public class ConversationFlowProvider
 {
-    private Dictionary<string, ConversationNode> InitialRegistration { get; init; } = InitialRegistrationFlow.Build();
-    private Dictionary<string, ConversationNode> Customer { get; init; } = CustomerFlow.Build();
-    private Dictionary<string, ConversationNode> Vendor { get; init; } = VendorFlow.Build();
+    private readonly IReadOnlyDictionary<string, IConversationNode> InitialRegistration = InitialRegistrationFlow.Build();
+    private readonly IReadOnlyDictionary<string, IConversationNode> Customer = CustomerFlow.Build();
+    private readonly IReadOnlyDictionary<string, IConversationNode> Vendor = VendorFlow.Build();
 
-    public ConversationNode GetById(string? id)
+    public ConversationFlowProvider()
+    {
+        InitialRegistration["initial_ask_user_type"].Transitions["1"] = Customer["customer_ask_cpf"];
+        InitialRegistration["initial_ask_user_type"].Transitions["2"] = Customer["vendor_ask_company_category"];
+    }
+    
+    public IConversationNode GetById(string? id)
     {
         if (id is null) return InitialRegistration["initial_start"];
-        ConversationNode? conversationNode;
+        IConversationNode? conversationNode;
 
         if (InitialRegistration.TryGetValue(id, out conversationNode)) return conversationNode;
         if (Customer.TryGetValue(id, out conversationNode)) return conversationNode;

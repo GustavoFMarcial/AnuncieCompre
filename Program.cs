@@ -1,4 +1,5 @@
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
+using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Flows;
 using AnuncieCompre.Domain.Aggregates.OrderAggregate.DomainEvents;
 using AnuncieCompre.Infra.Data;
 using AnuncieCompre.Infra.MessageSender;
@@ -35,10 +36,6 @@ builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCase>();
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
 builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
-builder.Services.AddScoped<IDomainEventHandler<UserSentDataToRegisterDomainEvent>, UserSentDataToRegisterDomainEventHandler>();
-builder.Services.AddScoped<IDomainEventHandler<CustomerSentDataToRegisterDomainEvent>, CustomerSentDataToRegisterDomainEventHandler>();
-builder.Services.AddScoped<IDomainEventHandler<VendorSentDataToRegisterDomainEvent>, VendorSentDataToRegisterDomainEventHandler>();
-builder.Services.AddScoped<IDomainEventHandler<CustomerSentDataToOrderDomainEvent>, CustomerSentDataToOrderDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 builder.Services.AddSingleton<ConversationFlowProvider, ConversationFlowProvider>();
 

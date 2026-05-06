@@ -6,5 +6,6 @@ namespace AnuncieCompre.UseCase.Interfaces;
 
 public interface IVendorRepository : IBaseRepository<Vendor>
 {
+    public Task<Vendor?> GetVendorByPhoneAsync(string userId);
     public Task<List<Vendor>> GetVendorsByCategoryAsync(CompanyCategory category);
 }
