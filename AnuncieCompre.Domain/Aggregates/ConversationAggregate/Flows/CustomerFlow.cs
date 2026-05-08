@@ -8,15 +8,14 @@ using AnuncieCompre.Domain.Services.ValueObjectValidators;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.Flows;
 
-public static class CustomerFlow
+public class CustomerFlow
 {
-    public static IReadOnlyDictionary<string, IConversationNode> Build()
+    public static IReadOnlyDictionary<string, IConversationNode> Build(IReadOnlyDictionary<string, IConversationNode> conversationflow)
     {
         IValueObjectValidator cpfValidator = new CpfValidator();
         IValueObjectValidator companyCategoryValidator = new CompanyCategoryValidator();
         IValueObjectValidator quantityValidator = new QuantityValidator();
         IValueObjectValidator productValidator = new ProductValidator();
-        // IValueObjectValidator optionValidator = new OptionValidator(["1", "2"]);
 
         INodeValidator finishValidator = new FinalNodeValidator();
         INodeValidator askAnotherOrderValidator = new OptionNodeValidator(["1", "2"]);
@@ -26,9 +25,8 @@ public static class CustomerFlow
         INodeValidator customerRegisteredValidator = new OptionNodeValidator(["1", "2"]);
         INodeValidator askOrderValidator = new OptionNodeValidator(["1", "2"]);
         INodeValidator askCpf = new ValidationNodeValidator(cpfValidator);
-
-        // IDomainEventFactory customerSentDataToRegisterDomainEventFactory = new CustomerSentDataToRegisterDomainEventFactory();
-        // IDomainEventFactory customerSentDataToOrderDomainEventFactory = new CustomerSentDataToOrderDomainEventFactory();
+        INodeValidator askConfirmationValidator = new OptionNodeValidator(["1", "2"]); 
+;
         IDomainEventFactory customerSentCpfDomainEventFactory = new CustomerSentCpfDomainEventFactory();
         IDomainEventFactory customerSentCompanyCategoryDomainEventFactory = new CustomerSentCompanyCategoryDomainEventFactory();
         IDomainEventFactory customerSentProductDomainEventFactory = new CustomerSentProductDomainEventFactory();
@@ -44,8 +42,6 @@ public static class CustomerFlow
         var askAnotherOrder = new OptionNode
         {
             Id = "customer_ask_another_order",
-            // Options = ["1", "2"],
-            // ValueObjectValidator = optionValidator,
             Message =
                 """
                 Pedido criado com sucesso!
@@ -60,9 +56,6 @@ public static class CustomerFlow
         var askQuantity = new ValidationNode
         {
             Id = "customer_ask_quantity",
-            // Options = null!,
-            // ValueObjectValidator = quantityValidator,
-            // TempDataType = "Quantity",
             Message = "Qual quantia deseja comprar?",
             NodeValidator = askQuantityValidator,
             DomainEventFactory = customerSentQuantityDomainEventFactory,
@@ -71,9 +64,6 @@ public static class CustomerFlow
         var askProduct = new ValidationNode
         {
             Id = "customer_ask_product",
-            // Options = null!,
-            // ValueObjectValidator = productValidator,
-            // TempDataType = "Product",
             Message = "Qual produto deseja comprar?",
             NodeValidator = askProductValidator,
             DomainEventFactory = customerSentProductDomainEventFactory,
@@ -82,9 +72,6 @@ public static class CustomerFlow
         var askCompanyCategory = new ValidationNode
         {
             Id = "customer_ask_company_category",
-            // Options = CompanyCategoryExtensions.ToStringArray(),
-            // ValueObjectValidator = companyCategoryValidator,
-            // TempDataType = "CompanyCategory",
             Message =
                 $"""
                 Qual categoria de produto deseja comprar?
@@ -112,8 +99,6 @@ public static class CustomerFlow
         var customerRegistered = new OptionNode
         {
             Id = "customer_registered",
-            // Options = ["1", "2"],
-            // ValueObjectValidator = optionValidator,
             Message =
                 """
                 Obrigado por se registrar no AnuncieCompre!
@@ -128,13 +113,28 @@ public static class CustomerFlow
         var askCPF = new ValidationNode
         {
             Id = "customer_ask_cpf",
-            // Options = null!,
-            // ValueObjectValidator = cpfValidator,
-            // TempDataType = "CPF",
             Message = "Qual seu CPF?",
             NodeValidator = askCpf,
             DomainEventFactory = customerSentCpfDomainEventFactory,
         };
+
+        var askConfirmation = new OptionNode
+        {
+            Id = "initial_ask_confirmation",
+            Message =
+                """
+                Os dados passados estão corretos para que possamos te registrar?
+
+                1 - Sim.
+                2 - Não, passar dados novamente.
+                """,
+            NodeValidator = askConfirmationValidator,
+        };
+
+        conversationflow["initial_ask_user_type"].Transitions["1"] = askConfirmation;
+
+        askConfirmation.Transitions["1"] = askCPF;
+        askConfirmation.Transitions["2"] = conversationflow["initial_ask_name"];
 
         askCPF.Transitions["next"] = customerRegistered;
 

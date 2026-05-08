@@ -6,13 +6,20 @@ namespace AnuncieCompre.Infra.Providers;
 
 public class ConversationFlowProvider
 {
-    private readonly IReadOnlyDictionary<string, IConversationNode> InitialRegistration = InitialRegistrationFlow.Build();
-    private readonly IReadOnlyDictionary<string, IConversationNode> Customer = CustomerFlow.Build();
-    private readonly IReadOnlyDictionary<string, IConversationNode> Vendor = VendorFlow.Build();
+    private readonly IReadOnlyDictionary<string, IConversationNode> InitialRegistration;
+    private readonly IReadOnlyDictionary<string, IConversationNode> Customer;
+    private readonly IReadOnlyDictionary<string, IConversationNode> Vendor;
 
     public ConversationFlowProvider()
     {
-        InitialRegistration["initial_ask_user_type"].Transitions["1"] = Customer["customer_ask_cpf"];
+        InitialRegistration = InitialRegistrationFlow.Build();
+        Customer = CustomerFlow.Build(InitialRegistration);
+        Vendor = VendorFlow.Build(InitialRegistration);
+
+
+
+
+        InitialRegistration["initial_ask_confirmation"].Transitions["1"] = Customer["customer_ask_cpf"];
         InitialRegistration["initial_ask_user_type"].Transitions["2"] = Customer["vendor_ask_company_category"];
     }
     

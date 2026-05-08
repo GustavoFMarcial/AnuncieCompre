@@ -8,8 +8,4 @@ public class CustomerSentCompanyCategoryDomainEvent(User user, CompanyCategory c
 {
     public User User { get; set; } = user;
     public CompanyCategory CompanyCategory { get; set; } = companyCategory;
-    // public Name Name { get; set; } = name;
-    // public Email Email { get; set; } = email;
-    // // public UserType UserType { get; set; } = userType;
-    // public CPF CPF { get; set; } = cpf;
 }

@@ -8,9 +8,4 @@ public class CustomerSentQuantityDomainEvent(User user, Quantity quantity) : IDo
 {
     public User User { get; set; } = user;
     public Quantity Quantity { get; set; } = quantity;
-    // public Product product { get; set; } = product;
-    // public Name Name { get; set; } = name;
-    // public Email Email { get; set; } = email;
-    // // public UserType UserType { get; set; } = userType;
-    // public CPF CPF { get; set; } = cpf;
 }

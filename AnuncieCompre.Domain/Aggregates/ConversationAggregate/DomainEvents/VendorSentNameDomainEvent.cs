@@ -8,7 +8,4 @@ public class VendorSentNameDomainEvent(User user, Name name) : IDomainEvent
 {
     public User User { get; set; } = user;
     public Name Name { get; set; } = name;
-    // public Email? Email { get; set; } = email;
-    // // public UserType UserType { get; set; } = userType;
-    // public CPF CPF { get; set; } = cpf;
 }

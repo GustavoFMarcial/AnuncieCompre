@@ -1,21 +1,25 @@
+using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
+using AnuncieCompre.Infra.Repositories.RedisRepo;
 using AnuncieCompre.UseCase.Interfaces;
+using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class UserSentTypeDomainEventHandler(/*IUserRepository _userRepository,*/ IUnitOfWork _unitOfWork) : IDomainEventHandler<UserSentTypeDomainEvent>
+public class UserSentTypeDomainEventHandler(RedisRepository _redisRepository) : IDomainEventHandler<UserSentTypeDomainEvent>
 {
-    // private readonly IUserRepository userRepository = _userRepository;
-    private readonly IUnitOfWork unitOfWork = _unitOfWork;
+    private readonly RedisRepository redisRepository = _redisRepository;
 
     public async Task HandleAsync(UserSentTypeDomainEvent domainEvent)
     {
-        // User? user = await userRepository.GetByIdAsync(domainEvent.User.Id);
+        var json = JsonSerializer.Serialize(domainEvent.UserType);
+        string key = $"user:{domainEvent.User.Phone.Value}";
 
-        // if (user is null) return;
-        
-        domainEvent.User.SetUserType(domainEvent.UserType);
-        await unitOfWork.SaveChangesAsync();
+        var hash = new HashEntry[]
+        {
+            new("type", json),
+        };
+
+        await redisRepository.Db.HashSetAsync(key, hash);
     }
 }

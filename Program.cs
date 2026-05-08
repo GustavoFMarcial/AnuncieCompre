@@ -8,6 +8,7 @@ using AnuncieCompre.Infra.Repositories;
 using AnuncieCompre.Infra.Repositories.ConversationRepo;
 using AnuncieCompre.Infra.Repositories.CustomerRepo;
 using AnuncieCompre.Infra.Repositories.OrderRepo;
+using AnuncieCompre.Infra.Repositories.RedisRepo;
 using AnuncieCompre.Infra.Repositories.UserRepo;
 using AnuncieCompre.Infra.Repositories.VendorRepo;
 using AnuncieCompre.UseCase.Dispatcher;
@@ -38,6 +39,7 @@ builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCas
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
 builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
+builder.Services.AddScoped<RedisRepository>();
 builder.Services.AddSingleton<ConversationFlowProvider, ConversationFlowProvider>();
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string 'AnuncieCompreContext' not found.");

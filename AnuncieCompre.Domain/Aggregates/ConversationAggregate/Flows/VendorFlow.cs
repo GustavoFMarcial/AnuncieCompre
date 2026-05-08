@@ -7,9 +7,9 @@ using AnuncieCompre.Domain.Services.ValueObjectValidators;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.Flows;
 
-public static class VendorFlow
+public class VendorFlow
 {
-    public static IReadOnlyDictionary<string, IConversationNode> Build()
+    public static IReadOnlyDictionary<string, IConversationNode> Build(IReadOnlyDictionary<string, IConversationNode> conversationflow)
     {
         IValueObjectValidator cnpjValidator = new CnpjValidator();
         IValueObjectValidator nameValidator = new NameValidator();
@@ -18,8 +18,8 @@ public static class VendorFlow
         INodeValidator askCnpjValidator = new ValidationNodeValidator(cnpjValidator);
         INodeValidator askCompanyNameValidator = new ValidationNodeValidator(nameValidator);
         INodeValidator askCompanyCategoryValidator = new ValidationNodeValidator(companyCategoryValidator);
+        INodeValidator askConfirmationValidator = new OptionNodeValidator(["1", "2"]);
 
-        // IDomainEventFactory vendorSentDataToRegisterDomainEventFactory = new VendorSentDataToRegisterDomainEventFactory();
         IDomainEventFactory vendorSentCompanyCategoryDomainEventFactory = new VendorSentCompanyCategoryDomainEventFactory();
         IDomainEventFactory vendorSentNameDomainEventFactory = new VendorSentNameDomainEventFactory();
         IDomainEventFactory vendorSentCnpjDomainEventFactory = new VendorSentCnpjDomainEventFactory();
@@ -38,9 +38,6 @@ public static class VendorFlow
         var askCNPJ = new ValidationNode
         {
             Id = "vendor_ask_cnpj",
-            // Options = null!,
-            // ValueObjectValidator = cnpjValidator,
-            // TempDataType = "CNPJ",
             Message = "Qual o CNPJ da empresa?",
             NodeValidator = askCnpjValidator,
             DomainEventFactory = vendorSentCnpjDomainEventFactory,
@@ -49,9 +46,6 @@ public static class VendorFlow
         var askCompanyName = new ValidationNode
         {
             Id = "vendor_ask_company_name",
-            // Options = null!,
-            // ValueObjectValidator = nameValidator,
-            // TempDataType = "CompanyName",
             NodeValidator = askCompanyNameValidator,
             Message = "Qual o nome da empresa?",
             DomainEventFactory = vendorSentNameDomainEventFactory,
@@ -60,9 +54,6 @@ public static class VendorFlow
         var askCompanyCategory = new ValidationNode
         {
             Id = "vendor_ask_company_category",
-            // Options = CompanyCategoryExtensions.ToStringArray(),
-            // ValueObjectValidator = companyCategoryValidator,
-            // TempDataType = "CompanyCategory",
             Message =
                 $"""
                 Qual o ramo da empresa?
@@ -72,6 +63,24 @@ public static class VendorFlow
             NodeValidator = askCompanyCategoryValidator,
             DomainEventFactory = vendorSentCompanyCategoryDomainEventFactory,
         };
+
+        var askConfirmation = new OptionNode
+        {
+            Id = "initial_ask_confirmation",
+            Message =
+                """
+                Os dados passados estão corretos para que possamos te registrar?
+
+                1 - Sim.
+                2 - Não, passar dados novamente.
+                """,
+            NodeValidator = askConfirmationValidator,
+        };
+
+        conversationflow["initial_ask_user_type"].Transitions["2"] = askConfirmation;
+
+        askConfirmation.Transitions["1"] = askCNPJ;
+        askConfirmation.Transitions["2"] = conversationflow["initial_ask_name"];
 
         askCompanyCategory.Transitions["next"] = askCompanyName;
         askCompanyName.Transitions["next"] = askCNPJ;

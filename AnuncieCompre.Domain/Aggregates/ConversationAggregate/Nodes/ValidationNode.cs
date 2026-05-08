@@ -7,9 +7,6 @@ public class ValidationNode : IConversationNode
     public string Id { get; set; } = default!;
     public string Message { get; set; } = default!;
     public Dictionary<string, IConversationNode> Transitions { get; set ; } = [];
-    // public IValueObjectValidator ValueObjectValidator { get; set; } = default!;
     public IDomainEventFactory DomainEventFactory { get; set; } = default!;
     public INodeValidator NodeValidator { get; set; } = default!;
-    // public string[] Options { get; set; } = default!;
-    // public string TempDataType { get; set; } = default!;
 }

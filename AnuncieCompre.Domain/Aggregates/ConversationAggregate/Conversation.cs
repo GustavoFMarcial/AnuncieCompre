@@ -12,7 +12,6 @@ public class Conversation : BaseEntity
 {
     public Phone UserPhone { get; private set; } = default!;
     public string AwaitingResponseNodeId { get; private set; } = default!;
-    public Dictionary<string, ValueObject> TempData { get; private set; } = new();
 
     private Conversation() {}
 
@@ -34,23 +33,16 @@ public class Conversation : BaseEntity
             return [awaitingResponseNode.Message];
         }
 
-        // NodeResult result = NodeValidator.Validate(awaitingResponseNode, message);
         NodeResult result = awaitingResponseNode.NodeValidator.Validate(awaitingResponseNode, message);
 
         if (result.IsSuccess)
         {
             AwaitingResponseNodeId = result.NextStepId!;
 
-            // if (awaitingResponseNode.TempDataType is not null)
-            // {
-            //     TempData.Add(awaitingResponseNode.TempDataType, result.Value);
-            // }
-
             if (awaitingResponseNode.DomainEventFactory is not null)
             {
                 var domainEvent = awaitingResponseNode.DomainEventFactory.Handle(user, result.Value);
                 AddDomainEvent(domainEvent);
-                // TempData.Clear();
             }
         }
 
