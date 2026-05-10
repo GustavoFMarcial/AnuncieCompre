@@ -4,7 +4,6 @@ using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.UseCase.Interfaces;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Infra.Providers;
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Interfaces;
 

@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Interfaces;
+using AnuncieCompre.Domain.Conversation.Nodes;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 

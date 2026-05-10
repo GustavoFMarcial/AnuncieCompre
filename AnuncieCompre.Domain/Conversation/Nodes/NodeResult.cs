@@ -1,6 +1,6 @@
 using AnuncieCompre.Domain.Common;
 
-namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
+namespace AnuncieCompre.Domain.Conversation.Nodes;
 
 public class NodeResult : Result<ValueObject>
 {

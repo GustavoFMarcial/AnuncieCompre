@@ -1,6 +1,6 @@
 using AnuncieCompre.Domain.Interfaces;
 
-namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
+namespace AnuncieCompre.Domain.Conversation.Nodes;
 
 public class FinalNode : IConversationNode
 {

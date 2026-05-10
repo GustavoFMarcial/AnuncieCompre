@@ -1,11 +1,11 @@
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.NodeValidators;
+using AnuncieCompre.Domain.Conversation.Nodes;
+using AnuncieCompre.Domain.Conversation.NodeValidators;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Domain.Services.DomainEventFactories;
 using AnuncieCompre.Domain.Services.ValueObjectValidators;
 
-namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.Flows;
+namespace AnuncieCompre.Domain.Conversation.Flows;
 
 public class InitialRegistrationFlow
 {

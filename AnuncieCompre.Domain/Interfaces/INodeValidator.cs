@@ -1,4 +1,4 @@
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
+using AnuncieCompre.Domain.Conversation.Nodes;
 
 namespace AnuncieCompre.Domain.Interfaces;
 

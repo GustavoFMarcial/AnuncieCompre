@@ -1,5 +1,4 @@
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Flows;
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
+using AnuncieCompre.Domain.Conversation.Flows;
 using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Infra.Providers;

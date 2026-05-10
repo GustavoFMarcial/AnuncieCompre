@@ -1,8 +1,8 @@
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 using AnuncieCompre.Domain.Common;
+using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Interfaces;
 
-namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.NodeValidators;
+namespace AnuncieCompre.Domain.Conversation.NodeValidators;
 
 public class ValidationNodeValidator(IValueObjectValidator valueObjectValidator) : INodeValidator
 {
