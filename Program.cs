@@ -1,6 +1,3 @@
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Flows;
 using AnuncieCompre.Domain.Aggregates.OrderAggregate.DomainEvents;
 using AnuncieCompre.Infra.Data;
 using AnuncieCompre.Infra.MessageSender;
@@ -12,8 +9,6 @@ using AnuncieCompre.Infra.Repositories.OrderRepo;
 using AnuncieCompre.Infra.Repositories.UserRepo;
 using AnuncieCompre.Infra.Repositories.VendorRepo;
 using AnuncieCompre.UseCase.Dispatcher;
-using AnuncieCompre.UseCase.DomainEventHandler;
-using AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 using AnuncieCompre.UseCase.DomainEventHandler.OrderDomainEventHandler;
 using AnuncieCompre.UseCase.Interfaces;
 using AnuncieCompre.UseCase.ProcessMessageUseCase;
@@ -40,18 +35,16 @@ builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
 builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 builder.Services.AddSingleton<ConversationFlowProvider, ConversationFlowProvider>();
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect("localhost:6379")
+);
+builder.Services.AddSingleton(sp =>
+    sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string 'AnuncieCompreContext' not found.");
 builder.Services.AddDbContext<AnuncieCompreContext>(options =>
     options.UseNpgsql(connectionString));
 // builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect("localhost:6379")
-);
-
-builder.Services.AddSingleton(sp =>
-    sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
 
 TwilioClient.Init(
     builder.Configuration["Twilio:AccountSid"],

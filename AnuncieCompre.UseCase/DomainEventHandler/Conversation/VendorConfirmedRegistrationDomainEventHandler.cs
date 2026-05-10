@@ -15,7 +15,7 @@ public class VendorConfirmedRegistrationDomainEventHandler(IDatabase _db, IVendo
 
     public async Task HandleAsync(VendorConfirmedRegistrationDomainEvent domainEvent)
     {
-        string key = $"user{domainEvent.User.Phone.Value}";
+        string key = $"user:{domainEvent.User.Phone.Value}";
         var entries = await db.HashGetAllAsync(key);
 
         var data = entries.ToDictionary(

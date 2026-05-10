@@ -21,7 +21,7 @@ public class CustomerSentProductDomainEventHandler(ICustomerRepository _customer
 
         if (order is null) return;
 
-        order.SetProduct(domainEvent.product);
+        order.SetProduct(domainEvent.Product);
         await unitOfWork.SaveChangesAsync();
     }
 }

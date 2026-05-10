@@ -15,7 +15,7 @@ public class CustomerConfirmedRegistrationDomainEventHandler(IDatabase _db, ICus
 
     public async Task HandleAsync(CustomerConfirmedRegistrationDomainEvent domainEvent)
     {
-        string key = $"user{domainEvent.User.Phone.Value}";
+        string key = $"user:{domainEvent.User.Phone.Value}";
         var entries = await db.HashGetAllAsync(key);
 
         var data = entries.ToDictionary(

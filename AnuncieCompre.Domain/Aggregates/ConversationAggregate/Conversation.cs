@@ -1,7 +1,5 @@
 using System.Collections.ObjectModel;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
-using AnuncieCompre.Domain.Common;
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Nodes;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Interfaces;
