@@ -1,21 +1,24 @@
+using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.UseCase.Interfaces;
+using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class VendorSentCnpjDomainEventFactory(IVendorRepository _vendorRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<VendorSentCnpjDomainEvent>
+public class VendorSentCnpjDomainEventFactory(IDatabase _db) : IDomainEventHandler<VendorSentCnpjDomainEvent>
 {
-    private readonly IVendorRepository vendorRepository = _vendorRepository;
-    private readonly IUnitOfWork unitOfWork = _unitOfWork;
+    private readonly IDatabase db = _db;
 
     public async Task HandleAsync(VendorSentCnpjDomainEvent domainEvent)
-    {
-        Vendor? vendor = await vendorRepository.GetVendorByPhoneAsync(domainEvent.User.Phone.Value);
+    {  
+        var json = JsonSerializer.Serialize(domainEvent.CNPJ);
+        string key = $"user:{domainEvent.User.Phone.Value}";
 
-        if (vendor is null) return;
-        
-        vendor.SetCNPJ(domainEvent.CNPJ);
-        await unitOfWork.SaveChangesAsync();
+        var hash = new HashEntry[]
+        {
+            new("cnpj", json),
+        };
+
+        await db.HashSetAsync(key, hash);
     }
 }

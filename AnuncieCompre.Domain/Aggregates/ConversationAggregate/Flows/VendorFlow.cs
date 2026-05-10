@@ -18,11 +18,12 @@ public class VendorFlow
         INodeValidator askCnpjValidator = new ValidationNodeValidator(cnpjValidator);
         INodeValidator askCompanyNameValidator = new ValidationNodeValidator(nameValidator);
         INodeValidator askCompanyCategoryValidator = new ValidationNodeValidator(companyCategoryValidator);
-        INodeValidator askConfirmationValidator = new OptionNodeValidator(["1", "2"]);
+        // INodeValidator askConfirmationValidator = new OptionNodeValidator(["1", "2"]);
 
         IDomainEventFactory vendorSentCompanyCategoryDomainEventFactory = new VendorSentCompanyCategoryDomainEventFactory();
-        IDomainEventFactory vendorSentNameDomainEventFactory = new VendorSentNameDomainEventFactory();
+        IDomainEventFactory vendorSentCompanyNameDomainEventFactory = new VendorSentCompanyNameDomainEventFactory();
         IDomainEventFactory vendorSentCnpjDomainEventFactory = new VendorSentCnpjDomainEventFactory();
+        IDomainEventFactory vendorConfirmedRegistrationDomainEventFactory = new VendorConfirmedRegistrationDomainEventFactory();
 
         var vendorRegistered = new FinalNode
         {
@@ -40,7 +41,7 @@ public class VendorFlow
             Id = "vendor_ask_cnpj",
             Message = "Qual o CNPJ da empresa?",
             NodeValidator = askCnpjValidator,
-            DomainEventFactory = vendorSentCnpjDomainEventFactory,
+            DomainEventFactory = [vendorSentCnpjDomainEventFactory, vendorConfirmedRegistrationDomainEventFactory],
         };
 
         var askCompanyName = new ValidationNode
@@ -48,7 +49,7 @@ public class VendorFlow
             Id = "vendor_ask_company_name",
             NodeValidator = askCompanyNameValidator,
             Message = "Qual o nome da empresa?",
-            DomainEventFactory = vendorSentNameDomainEventFactory,
+            DomainEventFactory = [vendorSentCompanyNameDomainEventFactory],
         };
 
         var askCompanyCategory = new ValidationNode
@@ -61,26 +62,26 @@ public class VendorFlow
                 {CompanyCategoryExtensions.PrintNames()}
                 """,
             NodeValidator = askCompanyCategoryValidator,
-            DomainEventFactory = vendorSentCompanyCategoryDomainEventFactory,
+            DomainEventFactory = [vendorSentCompanyCategoryDomainEventFactory],
         };
 
-        var askConfirmation = new OptionNode
-        {
-            Id = "initial_ask_confirmation",
-            Message =
-                """
-                Os dados passados estão corretos para que possamos te registrar?
+        // var askConfirmation = new OptionNode
+        // {
+        //     Id = "initial_vendor_ask_confirmation",
+        //     Message =
+        //         """
+        //         Os dados passados estão corretos para que possamos te registrar?
 
-                1 - Sim.
-                2 - Não, passar dados novamente.
-                """,
-            NodeValidator = askConfirmationValidator,
-        };
+        //         1 - Sim.
+        //         2 - Não, passar dados novamente.
+        //         """,
+        //     NodeValidator = askConfirmationValidator,
+        // };
 
-        conversationflow["initial_ask_user_type"].Transitions["2"] = askConfirmation;
+        conversationflow["initial_ask_user_type"].Transitions["2"] = askCNPJ;
 
-        askConfirmation.Transitions["1"] = askCNPJ;
-        askConfirmation.Transitions["2"] = conversationflow["initial_ask_name"];
+        // askConfirmation.Transitions["1"] = askCNPJ;
+        // askConfirmation.Transitions["2"] = conversationflow["initial_ask_name"];
 
         askCompanyCategory.Transitions["next"] = askCompanyName;
         askCompanyName.Transitions["next"] = askCNPJ;

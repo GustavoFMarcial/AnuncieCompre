@@ -1,23 +1,24 @@
+using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.UseCase.Interfaces;
+using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class CustomerSentCpfDomainEventHandler(ICustomerRepository _customerRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<CustomerSentCpfDomainEvent>
+public class CustomerSentCpfDomainEventHandler(IDatabase _db) : IDomainEventHandler<CustomerSentCpfDomainEvent>
 {
-    private readonly ICustomerRepository customerRepository = _customerRepository;
-    private readonly IUnitOfWork unitOfWork = _unitOfWork;
+    private readonly IDatabase db = _db;
 
     public async Task HandleAsync(CustomerSentCpfDomainEvent domainEvent)
     {
-        // User? user = await userRepository.GetByIdAsync(domainEvent.User.Id);
+        var json = JsonSerializer.Serialize(domainEvent.CPF);
+        string key = $"user:{domainEvent.User.Phone.Value}";
 
-        // if (user is null) return;
+        var hash = new HashEntry[]
+        {
+            new("cpf", json),
+        };
 
-        Customer customer = Customer.Create(domainEvent.User, domainEvent.CPF);
-        
-        customerRepository.Add(customer);
-        await unitOfWork.SaveChangesAsync();
+        await db.HashSetAsync(key, hash);
     }
 }

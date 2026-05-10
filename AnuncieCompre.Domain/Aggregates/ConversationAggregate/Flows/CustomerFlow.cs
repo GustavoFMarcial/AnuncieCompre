@@ -25,12 +25,13 @@ public class CustomerFlow
         INodeValidator customerRegisteredValidator = new OptionNodeValidator(["1", "2"]);
         INodeValidator askOrderValidator = new OptionNodeValidator(["1", "2"]);
         INodeValidator askCpf = new ValidationNodeValidator(cpfValidator);
-        INodeValidator askConfirmationValidator = new OptionNodeValidator(["1", "2"]); 
+        // INodeValidator askConfirmationValidator = new OptionNodeValidator(["1", "2"]); 
 ;
         IDomainEventFactory customerSentCpfDomainEventFactory = new CustomerSentCpfDomainEventFactory();
         IDomainEventFactory customerSentCompanyCategoryDomainEventFactory = new CustomerSentCompanyCategoryDomainEventFactory();
         IDomainEventFactory customerSentProductDomainEventFactory = new CustomerSentProductDomainEventFactory();
         IDomainEventFactory customerSentQuantityDomainEventFactory = new CustomerSentQuantityDomainEventFactory();
+        IDomainEventFactory customerConfirmedRegistrationDomainEventFactory = new CustomerConfirmedRegistrationDomainEventFactory();
 
         var finish = new FinalNode
         {
@@ -58,7 +59,7 @@ public class CustomerFlow
             Id = "customer_ask_quantity",
             Message = "Qual quantia deseja comprar?",
             NodeValidator = askQuantityValidator,
-            DomainEventFactory = customerSentQuantityDomainEventFactory,
+            DomainEventFactory = [customerSentQuantityDomainEventFactory],
         };
 
         var askProduct = new ValidationNode
@@ -66,7 +67,7 @@ public class CustomerFlow
             Id = "customer_ask_product",
             Message = "Qual produto deseja comprar?",
             NodeValidator = askProductValidator,
-            DomainEventFactory = customerSentProductDomainEventFactory,
+            DomainEventFactory = [customerSentProductDomainEventFactory],
         };
 
         var askCompanyCategory = new ValidationNode
@@ -79,7 +80,7 @@ public class CustomerFlow
                 {CompanyCategoryExtensions.PrintNames()}
                 """,
             NodeValidator = askCompanyCategoryValidator,
-            DomainEventFactory = customerSentCompanyCategoryDomainEventFactory,
+            DomainEventFactory = [customerSentCompanyCategoryDomainEventFactory],
         };
 
         var askOrder = new OptionNode
@@ -115,26 +116,26 @@ public class CustomerFlow
             Id = "customer_ask_cpf",
             Message = "Qual seu CPF?",
             NodeValidator = askCpf,
-            DomainEventFactory = customerSentCpfDomainEventFactory,
+            DomainEventFactory = [customerSentCpfDomainEventFactory, customerConfirmedRegistrationDomainEventFactory],
         };
 
-        var askConfirmation = new OptionNode
-        {
-            Id = "initial_ask_confirmation",
-            Message =
-                """
-                Os dados passados estão corretos para que possamos te registrar?
+        // var askConfirmation = new OptionNode
+        // {
+        //     Id = "initial_customer_ask_confirmation",
+        //     Message =
+        //         """
+        //         Os dados passados estão corretos para que possamos te registrar?
 
-                1 - Sim.
-                2 - Não, passar dados novamente.
-                """,
-            NodeValidator = askConfirmationValidator,
-        };
+        //         1 - Sim.
+        //         2 - Não, passar dados novamente.
+        //         """,
+        //     NodeValidator = askConfirmationValidator,
+        // };
 
-        conversationflow["initial_ask_user_type"].Transitions["1"] = askConfirmation;
+        conversationflow["initial_ask_user_type"].Transitions["1"] = askCPF;
 
-        askConfirmation.Transitions["1"] = askCPF;
-        askConfirmation.Transitions["2"] = conversationflow["initial_ask_name"];
+        // askConfirmation.Transitions["1"] = askCPF;
+        // askConfirmation.Transitions["2"] = conversationflow["initial_ask_name"];
 
         askCPF.Transitions["next"] = customerRegistered;
 

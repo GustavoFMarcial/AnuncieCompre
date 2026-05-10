@@ -1,3 +1,4 @@
+using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.Flows;
 using AnuncieCompre.Domain.Aggregates.OrderAggregate.DomainEvents;
@@ -8,7 +9,6 @@ using AnuncieCompre.Infra.Repositories;
 using AnuncieCompre.Infra.Repositories.ConversationRepo;
 using AnuncieCompre.Infra.Repositories.CustomerRepo;
 using AnuncieCompre.Infra.Repositories.OrderRepo;
-using AnuncieCompre.Infra.Repositories.RedisRepo;
 using AnuncieCompre.Infra.Repositories.UserRepo;
 using AnuncieCompre.Infra.Repositories.VendorRepo;
 using AnuncieCompre.UseCase.Dispatcher;
@@ -39,7 +39,6 @@ builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCas
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
 builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
-builder.Services.AddScoped<RedisRepository>();
 builder.Services.AddSingleton<ConversationFlowProvider, ConversationFlowProvider>();
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string 'AnuncieCompreContext' not found.");
@@ -50,6 +49,9 @@ builder.Services.AddDbContext<AnuncieCompreContext>(options =>
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379")
 );
+
+builder.Services.AddSingleton(sp =>
+    sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
 
 TwilioClient.Init(
     builder.Configuration["Twilio:AccountSid"],

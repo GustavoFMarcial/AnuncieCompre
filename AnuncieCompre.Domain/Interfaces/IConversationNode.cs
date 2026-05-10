@@ -6,5 +6,5 @@ public interface IConversationNode
     public string Message { get; set; }
     public Dictionary<string, IConversationNode> Transitions { get; set; }
     public INodeValidator NodeValidator { get; set; }
-    public IDomainEventFactory DomainEventFactory { get; set; }
+    public List<IDomainEventFactory> DomainEventFactory { get; set; }
 }

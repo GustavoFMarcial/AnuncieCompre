@@ -1,14 +1,13 @@
 using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.Infra.Repositories.RedisRepo;
 using AnuncieCompre.UseCase.Interfaces;
 using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class UserSentTypeDomainEventHandler(RedisRepository _redisRepository) : IDomainEventHandler<UserSentTypeDomainEvent>
+public class UserSentTypeDomainEventHandler(IDatabase _db) : IDomainEventHandler<UserSentTypeDomainEvent>
 {
-    private readonly RedisRepository redisRepository = _redisRepository;
+    private readonly IDatabase db = _db;
 
     public async Task HandleAsync(UserSentTypeDomainEvent domainEvent)
     {
@@ -20,6 +19,6 @@ public class UserSentTypeDomainEventHandler(RedisRepository _redisRepository) : 
             new("type", json),
         };
 
-        await redisRepository.Db.HashSetAsync(key, hash);
+        await db.HashSetAsync(key, hash);
     }
 }

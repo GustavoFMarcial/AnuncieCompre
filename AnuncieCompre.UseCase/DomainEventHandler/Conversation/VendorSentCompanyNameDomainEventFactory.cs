@@ -5,18 +5,18 @@ using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class UserSentEmailDomainEventHandler(IDatabase _db) : IDomainEventHandler<UserSentEmailDomainEvent>
+public class VendorSentCompanyNameDomainEventFactory(IDatabase _db) : IDomainEventHandler<VendorSentCompanyNameDomainEvent>
 {
     private readonly IDatabase db = _db;
 
-    public async Task HandleAsync(UserSentEmailDomainEvent domainEvent)
-    {
-        var json = JsonSerializer.Serialize(domainEvent.Email);
+    public async Task HandleAsync(VendorSentCompanyNameDomainEvent domainEvent)
+    {  
+        var json = JsonSerializer.Serialize(domainEvent.Name);
         string key = $"user:{domainEvent.User.Phone.Value}";
 
         var hash = new HashEntry[]
         {
-            new("email", json),
+            new("companyName", json),
         };
 
         await db.HashSetAsync(key, hash);

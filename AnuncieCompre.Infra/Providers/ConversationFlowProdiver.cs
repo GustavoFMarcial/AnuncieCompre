@@ -15,12 +15,6 @@ public class ConversationFlowProvider
         InitialRegistration = InitialRegistrationFlow.Build();
         Customer = CustomerFlow.Build(InitialRegistration);
         Vendor = VendorFlow.Build(InitialRegistration);
-
-
-
-
-        InitialRegistration["initial_ask_confirmation"].Transitions["1"] = Customer["customer_ask_cpf"];
-        InitialRegistration["initial_ask_user_type"].Transitions["2"] = Customer["vendor_ask_company_category"];
     }
     
     public IConversationNode GetById(string? id)

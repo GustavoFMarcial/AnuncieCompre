@@ -39,10 +39,12 @@ public class Conversation : BaseEntity
         {
             AwaitingResponseNodeId = result.NextStepId!;
 
-            if (awaitingResponseNode.DomainEventFactory is not null)
+            if (awaitingResponseNode.DomainEventFactory.Count > 0)
             {
-                var domainEvent = awaitingResponseNode.DomainEventFactory.Handle(user, result.Value);
-                AddDomainEvent(domainEvent);
+                foreach (var domainEventFactory in awaitingResponseNode.DomainEventFactory)
+                {
+                    AddDomainEvent(domainEventFactory.Handle(user, result.Value));
+                }
             }
         }
 

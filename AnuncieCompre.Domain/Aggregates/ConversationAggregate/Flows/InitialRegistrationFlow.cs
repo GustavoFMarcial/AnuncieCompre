@@ -41,7 +41,7 @@ public class InitialRegistrationFlow
                 1 - Cliente
                 2 - Fornecedor
                 """,
-            DomainEventFactory = userSentTypeDomainEventFactory,
+            DomainEventFactory = [userSentTypeDomainEventFactory],
         };
 
         var askEmail = new ValidationNode
@@ -49,7 +49,7 @@ public class InitialRegistrationFlow
             Id = "initial_ask_email",
             Message = "Qual email para cadastro?",
             NodeValidator = askEmailValidator,
-            DomainEventFactory = userSentEmailDomainEventFactory,
+            DomainEventFactory = [userSentEmailDomainEventFactory],
         };
 
         var askName = new ValidationNode
@@ -57,7 +57,7 @@ public class InitialRegistrationFlow
             Id = "initial_ask_name",
             Message = "Qual seu nome?",
             NodeValidator = askNameValidator,
-            DomainEventFactory = userSentNameDomainEventFactory,
+            DomainEventFactory = [userSentNameDomainEventFactory],
         };
 
         var start = new OptionNode
