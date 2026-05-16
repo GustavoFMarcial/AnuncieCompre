@@ -4,7 +4,7 @@ namespace AnuncieCompre.Domain.Conversation.Nodes;
 
 public class NodeResult : Result<ValueObject>
 {
-    public string? NextStepId { get; set; }
+    public string NextStepId { get; set; } = default!;
 
     public static NodeResult Success(ValueObject value, string message, string nextStepId)
     {
@@ -31,13 +31,14 @@ public class NodeResult : Result<ValueObject>
         return result;
     }
 
-    public new static NodeResult Failure(string message)
+    public static NodeResult Failure(string message, string nextStepId)
     {
         NodeResult result = new()
         {
             IsSuccess = false,
             Message = message,
             Value = default!,
+            NextStepId = nextStepId,
         };
 
         return result;

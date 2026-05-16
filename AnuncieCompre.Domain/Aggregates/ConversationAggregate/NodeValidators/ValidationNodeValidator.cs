@@ -14,7 +14,7 @@ public class ValidationNodeValidator(IValueObjectValidator valueObjectValidator)
 
         if (!result.IsSuccess)
         {
-            return NodeResult.Failure(result.Message);
+            return NodeResult.Failure(result.Message, conversationNode.Id);
         }
 
         return NodeResult.Success(result.Value!, conversationNode.Transitions["next"].Message, conversationNode.Transitions["next"].Id);

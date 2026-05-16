@@ -9,7 +9,7 @@ namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 public class Conversation : BaseEntity
 {
     public Phone UserPhone { get; private set; } = default!;
-    public string AwaitingResponseNodeId { get; private set; } = default!;
+    // public string AwaitingResponseNodeId { get; private set; } = default!;
 
     private Conversation() {}
 
@@ -23,19 +23,19 @@ public class Conversation : BaseEntity
         return new Conversation(userPhone);
     }
 
-    public ReadOnlyCollection<string> HandleMessage(IConversationNode awaitingResponseNode, string message, User user)
+    public (ReadOnlyCollection<string>, string) HandleMessage(IConversationNode awaitingResponseNode, string message, User user)
     {
-        if (AwaitingResponseNodeId is null)
-        {
-            AwaitingResponseNodeId = awaitingResponseNode.Id;
-            return [awaitingResponseNode.Message];
-        }
+        // if (AwaitingResponseNodeId is null)
+        // {
+        //     AwaitingResponseNodeId = awaitingResponseNode.Id;
+        //     return [awaitingResponseNode.Message];
+        // }
 
         NodeResult result = awaitingResponseNode.NodeValidator.Validate(awaitingResponseNode, message);
 
         if (result.IsSuccess)
         {
-            AwaitingResponseNodeId = result.NextStepId!;
+            // AwaitingResponseNodeId = result.NextStepId!;
 
             if (awaitingResponseNode.DomainEventFactory.Count > 0)
             {
@@ -46,6 +46,6 @@ public class Conversation : BaseEntity
             }
         }
 
-        return [result.Message];
+        return ([result.Message], result.NextStepId);
     }
 }
