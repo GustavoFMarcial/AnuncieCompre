@@ -1,16 +1,28 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace AnuncieCompre.Infra.Data;
 
-public class AnuncieCompreContextFactory : IDesignTimeDbContextFactory<AnuncieCompreContext>
+public class AnuncieCompreContextFactory
+    : IDesignTimeDbContextFactory<AnuncieCompreContext>
 {
     public AnuncieCompreContext CreateDbContext(string[] args)
     {
-        var options = new DbContextOptionsBuilder<AnuncieCompreContext>();
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false)
+            .AddUserSecrets<Program>()
+            .Build();
 
-        options.UseNpgsql("...");
+        var connectionString = configuration
+            .GetConnectionString("AnuncieCompreContext");
 
-        return new AnuncieCompreContext(options.Options);
+        var optionsBuilder =
+            new DbContextOptionsBuilder<AnuncieCompreContext>();
+
+        optionsBuilder.UseNpgsql(connectionString);
+
+        return new AnuncieCompreContext(optionsBuilder.Options);
     }
 }

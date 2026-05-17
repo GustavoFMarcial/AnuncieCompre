@@ -38,6 +38,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<Vendor>(s =>
         {
+            s.ComplexProperty(cp => cp.Name);
             s.ComplexProperty(cp => cp.CNPJ);
             s.ComplexProperty(cp => cp.Category);
         });
