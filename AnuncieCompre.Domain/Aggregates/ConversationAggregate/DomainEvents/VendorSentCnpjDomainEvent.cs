@@ -8,4 +8,5 @@ public class VendorSentCnpjDomainEvent(User user, CNPJ cnpj) : IDomainEvent
 {
     public User User { get; set; } = user;
     public CNPJ CNPJ { get; set; } = cnpj;
+    public string EventType { get; private set; } = "vendor-sent-cnpj";
 }

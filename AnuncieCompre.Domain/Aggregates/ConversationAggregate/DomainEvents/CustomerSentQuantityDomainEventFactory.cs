@@ -8,4 +8,5 @@ public class CustomerSentQuantityDomainEvent(User user, Quantity quantity) : IDo
 {
     public User User { get; set; } = user;
     public Quantity Quantity { get; set; } = quantity;
+    public string EventType { get; private set; } = "customer-sent-quantity";
 }

@@ -13,7 +13,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
     public DbSet<User> Users { get; set; } = default!;
     public DbSet<Conversation> Conversations { get; set; } = default!;
     public DbSet<Order> Orders { get; set; } = default!;
-    public DbSet<OutBoxMessage> OutBoxMessage { get; set; } = default!;
+    public DbSet<OutboxMessage> OutBoxMessage { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -66,7 +66,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         foreach (var domainEvent in domainEvents)
         {
-            Add(new OutBoxMessage
+            Add(new OutboxMessage
             {
                 // EventType = domainEvent.,
                 PayloadJson = JsonSerializer.Serialize(domainEvent),

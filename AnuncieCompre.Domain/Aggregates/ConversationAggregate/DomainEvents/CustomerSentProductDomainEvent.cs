@@ -8,4 +8,5 @@ public class CustomerSentProductDomainEvent(User user, Product product) : IDomai
 {
     public User User { get; set; } = user;
     public Product Product { get; set; } = product;
+    public string EventType { get; private set; } = "customer-sent-product";
 }

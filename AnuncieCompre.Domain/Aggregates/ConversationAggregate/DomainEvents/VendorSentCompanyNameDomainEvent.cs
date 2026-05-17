@@ -8,4 +8,5 @@ public class VendorSentCompanyNameDomainEvent(User user, Name name) : IDomainEve
 {
     public User User { get; set; } = user;
     public Name Name { get; set; } = name;
+    public string EventType { get; private set; } = "vendor-sent-comapany-name";
 }

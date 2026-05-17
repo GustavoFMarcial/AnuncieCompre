@@ -8,4 +8,5 @@ public class CustomerSentCompanyCategoryDomainEvent(User user, CompanyCategory c
 {
     public User User { get; set; } = user;
     public CompanyCategory CompanyCategory { get; set; } = companyCategory;
+    public string EventType { get; private set; } = "customer-sent-company-category";
 }

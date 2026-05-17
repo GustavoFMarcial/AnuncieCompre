@@ -8,4 +8,5 @@ public class UserSentEmailDomainEvent(User user, Email email) : IDomainEvent
 {
     public User User { get; set; } = user;
     public Email Email { get; set; } = email;
+    public string EventType { get; private set; } = "user-sent-email";
 }
