@@ -22,7 +22,7 @@ public class Conversation : BaseEntity
         return new Conversation(userPhone);
     }
 
-    public (ReadOnlyCollection<string>, string) HandleMessage(IConversationNode awaitingResponseNode, string message, User user)
+    public (ReadOnlyCollection<string> response, string nextStepId) HandleMessage(IConversationNode awaitingResponseNode, string message, User user)
     {
         NodeResult result = awaitingResponseNode.NodeValidator.Validate(awaitingResponseNode, message);
 

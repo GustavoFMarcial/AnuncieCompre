@@ -20,53 +20,49 @@ public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IDat
     
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
-        User? user = await userRepository.GetUserByPhoneAsync(incomingMessage.SenderPhone);
         Conversation? conversation = await conversationRepository.GetConversationByPhoneAsync(incomingMessage.SenderPhone);
+        User? user = await userRepository.GetUserByPhoneAsync(incomingMessage.SenderPhone);
         string key = $"session:{incomingMessage.SenderPhone}";
         HashEntry[] session = await db.HashGetAllAsync(key);
 
-        if (conversation is null)
+        if (conversation is null || user is null)
         {
             conversation = Conversation.Create(Phone.Create(incomingMessage.SenderPhone).Value);
+            user = User.Create(Phone.Create(incomingMessage.SenderPhone).Value);
             conversationRepository.Add(conversation);
+            userRepository.Add(user);
         }
 
         if (session.Length == 0)
         {
-            if (user is null)
+            HashEntry[] entries;
+
+            if (user.Type.Value == Domain.Enums.UserType.Unknown)
             {
-                var entries = new HashEntry[]
-                {
+                entries =
+                [
                     new("phone", incomingMessage.SenderPhone),
                     new("awaitingResponseNodeId", "initial_start"),
-                };
-                
-                await db.HashSetAsync(key, entries);
+                ];
+            }
+            else if (user.Type.Value == Domain.Enums.UserType.Customer)
+            {
+                entries =
+                [
+                    new("phone", incomingMessage.SenderPhone),
+                    new("awaitingResponseNodeId", "ask_order"),
+                ];
             }
             else
             {
-                if (user.Type.Value == Domain.Enums.UserType.Customer)
-                {
-                    var entries = new HashEntry[]
-                    {
-                        new("phone", incomingMessage.SenderPhone),
-                        new("awaitingResponseNodeId", "ask_order"),
-                    };
-
-                    await db.HashSetAsync(key, entries);
-                }
-                else if (user.Type.Value == Domain.Enums.UserType.Vendor)
-                {
-                    var entries = new HashEntry[]
-                    {
-                        new("phone", incomingMessage.SenderPhone),
-                        new("awaitingResponseNodeId", "vendor_registered"),
-                    };
-
-                    await db.HashSetAsync(key, entries);
-                }
+                entries =
+                [
+                    new("phone", incomingMessage.SenderPhone),
+                    new("awaitingResponseNodeId", "vendor_registered"),
+                ];
             }
 
+            await db.HashSetAsync(key, entries);
             session = await db.HashGetAllAsync(key);
         }
         
