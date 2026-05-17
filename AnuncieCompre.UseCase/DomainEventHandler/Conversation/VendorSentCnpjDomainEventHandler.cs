@@ -5,7 +5,7 @@ using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class VendorSentCnpjDomainEventFactory(IDatabase _db) : IDomainEventHandler<VendorSentCnpjDomainEvent>
+public class VendorSentCnpjDomainEventHandler(IDatabase _db) : IDomainEventHandler<VendorSentCnpjDomainEvent>
 {
     private readonly IDatabase db = _db;
 
