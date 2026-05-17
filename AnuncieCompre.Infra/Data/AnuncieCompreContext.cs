@@ -1,18 +1,20 @@
+using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 using AnuncieCompre.Domain.Aggregates.OrderAggregate;
+using AnuncieCompre.Domain.Aggregates.OutOfBoxAggregate;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.UseCase.Dispatcher;
 using Microsoft.EntityFrameworkCore;
 
 namespace AnuncieCompre.Infra.Data;
 
-public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options, IDomainEventDispatcher _domainEventDispatcher) : DbContext(options)
+public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options) : DbContext(options)
 {
     public DbSet<User> Users { get; set; } = default!;
     public DbSet<Conversation> Conversations { get; set; } = default!;
     public DbSet<Order> Orders { get; set; } = default!;
-    private readonly IDomainEventDispatcher domainEventDispatcher = _domainEventDispatcher;
+    public DbSet<OutBoxMessage> OutBoxMessage { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -62,13 +64,17 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         entitiesWithEvents.ForEach(e => e.ClearDomainEvents());
 
-        var result = await base.SaveChangesAsync(cancellationToken);
-
         foreach (var domainEvent in domainEvents)
         {
-            await domainEventDispatcher.DispatchAsync(domainEvent, cancellationToken);
+            Add(new OutBoxMessage
+            {
+                // EventType = domainEvent.,
+                PayloadJson = JsonSerializer.Serialize(domainEvent),
+            });
         }
 
+        var result = await base.SaveChangesAsync(cancellationToken);
+        
         return result;
     }
 }
