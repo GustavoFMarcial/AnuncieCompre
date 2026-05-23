@@ -9,6 +9,7 @@ using AnuncieCompre.Infra.Repositories.CustomerRepo;
 using AnuncieCompre.Infra.Repositories.OrderRepo;
 using AnuncieCompre.Infra.Repositories.UserRepo;
 using AnuncieCompre.Infra.Repositories.VendorRepo;
+using AnuncieCompre.Infra.Workers;
 using AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 using AnuncieCompre.UseCase.DomainEventHandler.OrderDomainEventHandler;
 using AnuncieCompre.UseCase.Interfaces;
@@ -47,6 +48,7 @@ builder.Services.AddScoped<IDomainEventHandler<VendorSentCompanyCategoryDomainEv
 builder.Services.AddScoped<IDomainEventHandler<VendorSentCompanyNameDomainEvent>, VendorSentCompanyNameDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 builder.Services.AddSingleton<ConversationFlowProvider, ConversationFlowProvider>();
+builder.Services.AddHostedService<OutboxWorker>();
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect("localhost:6379")
 );
@@ -64,6 +66,36 @@ TwilioClient.Init(
 );
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    IDatabase db = scope.ServiceProvider.GetRequiredService<IDatabase>();
+
+    string[] eventTypes = 
+    [
+        "vendor-sent-comapany-name",
+        "vendor-sent-company-category",
+        "vendor-sent-cnpj",
+        "vendor-confirmed-registration",
+        "user-sent-type",
+        "user-sent-name",
+        "user-sent-email",
+        "customer-sent-quantity",
+        "customer-sent-product",
+        "customer-sent-cpf",
+        "customer-sent-company-category",
+        "customer-confirmed-registration",
+    ];
+
+    foreach (string e in eventTypes)
+    {
+        try
+        {
+            await db.StreamCreateConsumerGroupAsync($"events:{e}", "workers", "$", createStream: true);
+        }
+        catch (RedisServerException ex) when (ex.Message.StartsWith("BUSYGROUP")) { }
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

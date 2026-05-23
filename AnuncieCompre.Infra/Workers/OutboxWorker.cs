@@ -1,3 +1,4 @@
+using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.OutOfBoxAggregate;
 using AnuncieCompre.Infra.Data;
 using Microsoft.EntityFrameworkCore;
@@ -5,28 +6,33 @@ using StackExchange.Redis;
 
 namespace AnuncieCompre.Infra.Workers;
 
-public class OutboxWorker(IDatabase _db) : BackgroundService
+public class OutboxWorker(IServiceProvider serviceProvider, IDatabase redis) : BackgroundService
 {
-    private readonly IServiceProvider serviceProvider = default!;
-    private readonly IDatabase db = _db;
-    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var service = serviceProvider.GetRequiredService<AnuncieCompreContext>();
-
-        while (stoppingToken.IsCancellationRequested)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            List<OutboxMessage> outboxMessages = await service.Set<OutboxMessage>().Where(o => o.IsProcessed == false).ToListAsync(cancellationToken: stoppingToken);
+            using var scope = serviceProvider.CreateScope();
 
-            foreach (OutboxMessage o in outboxMessages)
+            var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
+
+            List<OutboxMessage> messages =await context.Set<OutboxMessage>().Where(o => !o.IsProcessed).ToListAsync(stoppingToken);
+
+            foreach (var message in messages)
             {
-                try
+                var values = new NameValueEntry[]
                 {
-                    await db.StreamCreateConsumerGroupAsync($"events:{o.EventType}", "workers", "$", createStream: true);
-                }
-                catch (RedisServerException ex) when (ex.Message.StartsWith("BUSYGROUP")){}
-            }
-        }
+                    new("eventId", message.Id.ToString()),
+                    new("event", message.PayloadJson)
+                };
 
-        throw new NotImplementedException();
+                await redis.StreamAddAsync($"events:{message.EventType}", values, messageId: "*");
+
+                message.IsProcessed = true;
+            }
+
+            await context.SaveChangesAsync(stoppingToken);
+            await Task.Delay(1000, stoppingToken);
+        }
     }
 }
