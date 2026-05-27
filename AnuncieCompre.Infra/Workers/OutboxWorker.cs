@@ -6,8 +6,11 @@ using StackExchange.Redis;
 
 namespace AnuncieCompre.Infra.Workers;
 
-public class OutboxWorker(IServiceProvider serviceProvider, IDatabase redis) : BackgroundService
+public class OutboxWorker(IServiceProvider _serviceProvider, IDatabase _redis) : BackgroundService
 {
+    private readonly IServiceProvider serviceProvider = _serviceProvider;
+    private readonly IDatabase redis = _redis;
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
