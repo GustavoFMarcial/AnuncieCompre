@@ -6,10 +6,10 @@ using StackExchange.Redis;
 
 namespace AnuncieCompre.Infra.Workers;
 
-public class OutboxWorker(IServiceProvider _serviceProvider, IDatabase _redis) : BackgroundService
+public class OutboxWorker(IServiceProvider _serviceProvider, IDatabase _db) : BackgroundService
 {
     private readonly IServiceProvider serviceProvider = _serviceProvider;
-    private readonly IDatabase redis = _redis;
+    private readonly IDatabase db = _db;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -29,7 +29,7 @@ public class OutboxWorker(IServiceProvider _serviceProvider, IDatabase _redis) :
                     new("event", message.PayloadJson)
                 };
 
-                await redis.StreamAddAsync($"events:{message.EventType}", values, messageId: "*");
+                await db.StreamAddAsync($"events:{message.EventType}", values, messageId: "*");
 
                 message.IsProcessed = true;
             }
