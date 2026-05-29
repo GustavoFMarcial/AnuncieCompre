@@ -27,7 +27,7 @@ public class OrderCreatedDomainEventHandler(IMessageSender _messageSender, IVend
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Falha ao enviar mensagem via whatsapp para {domainEvent.UserPhone.Value}");
+                Console.WriteLine($"Falha ao enviar mensagem via whatsapp para fornecedor {v.User.Phone.Value}");
                 Console.WriteLine(e.Message);
             }
         }
