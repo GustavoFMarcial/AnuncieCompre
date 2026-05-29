@@ -5,20 +5,44 @@ using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class VendorSentCompanyCategoryDomainEventHandler(IDatabase _db) : IDomainEventHandler<VendorSentCompanyCategoryDomainEvent>
+public class VendorSentCompanyCategoryDomainEventHandler(IDatabase _db) : BackgroundService
 {
     private readonly IDatabase db = _db;
 
-    public async Task HandleAsync(VendorSentCompanyCategoryDomainEvent domainEvent)
-    {  
-        var json = JsonSerializer.Serialize(domainEvent.CompanyCategory);
-        string key = $"user:{domainEvent.User.Phone.Value}";
-
-        var hash = new HashEntry[]
+    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
         {
-            new("companyCategory", json),
-        };
+            var messages = await db.StreamReadGroupAsync("events:vendor-sent-company-category", "workers", "vendor-sent-company-category", "0-0", count: 5);
 
-        await db.HashSetAsync(key, hash);
+            if (messages.Length == 0)
+            {
+                messages = await db.StreamReadGroupAsync("events:vendor-sent-company-category", "workers", "vendor-sent-company-category", ">", count: 5);
+            }
+
+            foreach (var message in messages)
+            {
+                var eventId = (string?)message["eventId"];
+                var payload = (string?)message["event"];
+
+                if (payload == null) return;
+
+                var domainEvent = JsonSerializer.Deserialize<VendorSentCompanyCategoryDomainEvent>(payload);
+
+                if (domainEvent == null) return;
+
+                string key = $"user:{domainEvent.User.Phone.Value}";
+                var json = JsonSerializer.Serialize(domainEvent.CompanyCategory);
+
+                var hash = new HashEntry[]
+                {
+                    new("companyCategory", json),
+                };
+
+                await db.HashSetAsync(key, hash);
+                await db.StreamAcknowledgeAsync("events:vendor-sent-company-category", "workers", message.Id);
+                await Task.Delay(1000, stoppingToken);
+            }
+        }
     }
 }

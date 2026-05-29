@@ -15,20 +15,20 @@ public class Order : BaseEntity
 
     private Order(){}
 
-    private Order(int customerId/*, Product product, Quantity quantity*/, ValueObjects.CompanyCategory category)
+    private Order(int customerId, Product product, Quantity quantity, ValueObjects.CompanyCategory category)
     {
         CustomerId = customerId;
-        // Product = product;
-        // Quantity = quantity;
+        Product = product;
+        Quantity = quantity;
         Category = category;
     }
 
-    public static Order Create(int customerId, /*Product product, Quantity quantity,*/ ValueObjects.CompanyCategory category)
+    public static Order Create(int customerId, Product product, Quantity quantity, ValueObjects.CompanyCategory category)
     {
-        var order = new Order(customerId, /*userPhone, product, quantity*/ category);
+        var order = new Order(customerId, product, quantity, category);
 
-        // var domainEvent = new OrderCreatedDomainEvent(userPhone, product, quantity, category);
-        // order.AddDomainEvent(domainEvent);
+        var domainEvent = new OrderCreatedDomainEvent(customerId, product, quantity, category);
+        order.AddDomainEvent(domainEvent);
 
         return order;
     }

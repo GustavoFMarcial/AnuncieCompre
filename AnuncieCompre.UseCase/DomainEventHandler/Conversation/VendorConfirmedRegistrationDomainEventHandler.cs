@@ -2,45 +2,73 @@ using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
+using AnuncieCompre.Infra.Data;
 using AnuncieCompre.UseCase.Interfaces;
 using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class VendorConfirmedRegistrationDomainEventHandler(IDatabase _db, IVendorRepository _vendorRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<VendorConfirmedRegistrationDomainEvent>
+public class VendorConfirmedRegistrationDomainEventHandler(IServiceProvider _serviceProvider, IDatabase _db) : BackgroundService
 {
+    private readonly IServiceProvider serviceProvider = _serviceProvider;
     private readonly IDatabase db = _db;
-    private readonly IVendorRepository vendorRepository = _vendorRepository;
-    private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    public async Task HandleAsync(VendorConfirmedRegistrationDomainEvent domainEvent)
+    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        string key = $"user:{domainEvent.User.Phone.Value}";
-        var entries = await db.HashGetAllAsync(key);
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            var messages = await db.StreamReadGroupAsync("events:vendor-confirmed-registration", "workers", "vendor-confirmed-registration", "0-0", count: 5);
 
-        var data = entries.ToDictionary(
-            x => x.Name.ToString(),
-            x => x.Value.ToString()
-        );
+            if (messages.Length == 0)
+            {
+                messages = await db.StreamReadGroupAsync("events:vendor-confirmed-registration", "workers", "vendor-confirmed-registration", ">", count: 5);
+            }
 
-        var name = JsonSerializer.Deserialize<Name>(data["name"]);
-        var email = JsonSerializer.Deserialize<Email>(data["email"]);
-        var type = JsonSerializer.Deserialize<UserType>(data["type"]);
-        var companyCategory = JsonSerializer.Deserialize<CompanyCategory>(data["companyCategory"]);
-        var companyName = JsonSerializer.Deserialize<Name>(data["companyName"]);
-        var cnpj = JsonSerializer.Deserialize<CNPJ>(data["cnpj"]);
+            foreach (var message in messages)
+            {
+                var eventId = (string?)message["eventId"];
+                var payload = (string?)message["event"];
+                using var scope = serviceProvider.CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
+                var repository = scope.ServiceProvider.GetRequiredService<IVendorRepository>();
 
-        if (name is null || email is null || type is null || companyCategory is null || cnpj is null) return;
+                if (payload == null) return;
 
-        domainEvent.User
-            .SetName(name)
-            .SetEmail(email)
-            .SetUserType(type);
+                var domainEvent = JsonSerializer.Deserialize<VendorConfirmedRegistrationDomainEvent>(payload);
 
-        Vendor customer = Vendor.Create(domainEvent.User, companyCategory, name, cnpj);
-        vendorRepository.Add(customer);
+                if (domainEvent == null) return;
 
-        await db.KeyDeleteAsync(key);
-        await unitOfWork.SaveChangesAsync();
+                string key = $"user:{domainEvent.User.Phone.Value}";
+                var entries = await db.HashGetAllAsync(key);
+
+                var data = entries.ToDictionary(
+                    x => x.Name.ToString(),
+                    x => x.Value.ToString()
+                );
+
+                var name = JsonSerializer.Deserialize<Name>(data["name"]);
+                var email = JsonSerializer.Deserialize<Email>(data["email"]);
+                var type = JsonSerializer.Deserialize<UserType>(data["type"]);
+                var companyCategory = JsonSerializer.Deserialize<CompanyCategory>(data["companyCategory"]);
+                var companyName = JsonSerializer.Deserialize<Name>(data["companyName"]);
+                var cnpj = JsonSerializer.Deserialize<CNPJ>(data["cnpj"]);
+
+                if (name is null || email is null || type is null || companyCategory is null || companyName is null || cnpj is null) return;
+
+                domainEvent.User
+                    .SetName(name)
+                    .SetEmail(email)
+                    .SetUserType(type);
+
+                Vendor vendor = Vendor.Create(domainEvent.User, companyCategory, companyName, cnpj);
+                repository.Add(vendor);
+
+                await db.KeyDeleteAsync(key);
+                await db.StreamAcknowledgeAsync("events:vendor-confirmed-registration", "workers", message.Id);
+                await context.SaveChangesAsync(stoppingToken);
+            }
+
+            await Task.Delay(1000, stoppingToken);
+        }
     }
 }

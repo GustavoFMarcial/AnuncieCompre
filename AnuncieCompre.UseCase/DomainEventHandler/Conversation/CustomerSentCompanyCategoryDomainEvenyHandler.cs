@@ -1,25 +1,47 @@
+using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.Domain.Aggregates.OrderAggregate;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
-using AnuncieCompre.UseCase.Interfaces;
+using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class CustomerSentCompanyCategoryDomainEventHandler(ICustomerRepository _customerRepository ,IOrderRepository _orderRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<CustomerSentCompanyCategoryDomainEvent>
+public class CustomerSentCompanyCategoryDomainEventHandler(IDatabase _db) : BackgroundService
 {
-    private readonly ICustomerRepository customerRepository = _customerRepository;
-    private readonly IOrderRepository orderRepository = _orderRepository;
-    private readonly IUnitOfWork unitOfWork = _unitOfWork;
+    private readonly IDatabase db = _db;
 
-    public async Task HandleAsync(CustomerSentCompanyCategoryDomainEvent domainEvent)
+    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Customer? customer = await customerRepository.GetCustomerByPhoneAsync(domainEvent.User.Phone.Value);
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            var messages = await db.StreamReadGroupAsync("events:customer-sent-company-category", "workers", "customer-sent-company-category", "0-0", count: 5);
 
-        if (customer == null) return;
+            if (messages.Length == 0)
+            {
+                messages = await db.StreamReadGroupAsync("events:customer-sent-company-category", "workers", "customer-sent-company-category", ">", count: 5);
+            }
 
-        Order order = Order.Create(customer.Id, domainEvent.CompanyCategory);
-        
-        orderRepository.Add(order);
-        await unitOfWork.SaveChangesAsync();
+            foreach (var message in messages)
+            {
+                var eventId = (string?)message["eventId"];
+                var payload = (string?)message["event"];
+
+                if (payload == null) return;
+
+                var domainEvent = JsonSerializer.Deserialize<CustomerSentCompanyCategoryDomainEvent>(payload);
+
+                if (domainEvent == null) return;
+
+                string key = $"user:{domainEvent.User.Phone.Value}";
+                var json = JsonSerializer.Serialize(domainEvent.CompanyCategory);
+
+                var hash = new HashEntry[]
+                {
+                    new("companyCategory", json),
+                };
+
+                await db.HashSetAsync(key, hash);
+                await db.StreamAcknowledgeAsync("events:customer-sent-company-category", "workers", message.Id);
+                await Task.Delay(1000, stoppingToken);
+            }
+        }
     }
 }

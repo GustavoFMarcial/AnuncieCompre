@@ -5,20 +5,44 @@ using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class UserSentEmailDomainEventHandler(IDatabase _db) : IDomainEventHandler<UserSentEmailDomainEvent>
+public class UserSentEmailDomainEventHandler(IDatabase _db) : BackgroundService
 {
     private readonly IDatabase db = _db;
 
-    public async Task HandleAsync(UserSentEmailDomainEvent domainEvent)
+    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var json = JsonSerializer.Serialize(domainEvent.Email);
-        string key = $"user:{domainEvent.User.Phone.Value}";
-
-        var hash = new HashEntry[]
+        while (!stoppingToken.IsCancellationRequested)
         {
-            new("email", json),
-        };
+            var messages = await db.StreamReadGroupAsync("events:user-sent-email", "workers", "user-sent-email", "0-0", count: 5);
 
-        await db.HashSetAsync(key, hash);
+            if (messages.Length == 0)
+            {
+                messages = await db.StreamReadGroupAsync("events:user-sent-email", "workers", "user-sent-email", ">", count: 5);
+            }
+
+            foreach (var message in messages)
+            {
+                var eventId = (string?)message["eventId"];
+                var payload = (string?)message["event"];
+
+                if (payload == null) return;
+
+                var domainEvent = JsonSerializer.Deserialize<UserSentEmailDomainEvent>(payload);
+
+                if (domainEvent == null) return;
+
+                string key = $"user:{domainEvent.User.Phone.Value}";
+                var json = JsonSerializer.Serialize(domainEvent.Email);
+
+                var hash = new HashEntry[]
+                {
+                    new("email", json),
+                };
+
+                await db.HashSetAsync(key, hash);
+                await db.StreamAcknowledgeAsync("events:user-sent-email", "workers", message.Id);
+                await Task.Delay(1000, stoppingToken);
+            }
+        }
     }
 }

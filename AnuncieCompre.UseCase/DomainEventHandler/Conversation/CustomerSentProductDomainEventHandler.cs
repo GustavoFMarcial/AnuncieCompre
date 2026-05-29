@@ -1,27 +1,48 @@
+using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.Domain.Aggregates.OrderAggregate;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
-using AnuncieCompre.UseCase.Interfaces;
+using StackExchange.Redis;
+
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class CustomerSentProductDomainEventHandler(ICustomerRepository _customerRepository,IOrderRepository _orderRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<CustomerSentProductDomainEvent>
+public class CustomerSentProductDomainEventHandler(IDatabase _db) : BackgroundService
 {
-    private readonly ICustomerRepository customerRepository = _customerRepository;
-    private readonly IOrderRepository orderRepository = _orderRepository;
-    private readonly IUnitOfWork unitOfWork = _unitOfWork;
+    private readonly IDatabase db = _db;
 
-    public async Task HandleAsync(CustomerSentProductDomainEvent domainEvent)
+    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Customer? customer = await customerRepository.GetCustomerByPhoneAsync(domainEvent.User.Phone.Value);
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            var messages = await db.StreamReadGroupAsync("events:customer-sent-product", "workers", "customer-sent-product", "0-0", count: 5);
 
-        if (customer == null) return;
+            if (messages.Length == 0)
+            {
+                messages = await db.StreamReadGroupAsync("events:customer-sent-product", "workers", "customer-sent-product", ">", count: 5);
+            }
 
-        Order? order = await orderRepository.GetLastOrderByCustomerId(customer.Id);
+            foreach (var message in messages)
+            {
+                var eventId = (string?)message["eventId"];
+                var payload = (string?)message["event"];
 
-        if (order is null) return;
+                if (payload == null) return;
 
-        order.SetProduct(domainEvent.Product);
-        await unitOfWork.SaveChangesAsync();
+                var domainEvent = JsonSerializer.Deserialize<CustomerSentProductDomainEvent>(payload);
+
+                if (domainEvent == null) return;
+
+                string key = $"user:{domainEvent.User.Phone.Value}";
+                var json = JsonSerializer.Serialize(domainEvent.Product);
+
+                var hash = new HashEntry[]
+                {
+                    new("product", json),
+                };
+
+                await db.HashSetAsync(key, hash);
+                await db.StreamAcknowledgeAsync("events:customer-sent-product", "workers", message.Id);
+                await Task.Delay(1000, stoppingToken);
+            }
+        }
     }
 }

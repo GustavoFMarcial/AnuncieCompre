@@ -9,9 +9,9 @@ using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class CustomerConfirmedRegistrationDomainEventHandler(IServiceProvider _serviceProdiver, IDatabase _db) : BackgroundService
+public class CustomerConfirmedRegistrationDomainEventHandler(IServiceProvider _serviceProvider, IDatabase _db) : BackgroundService
 {
-    private readonly IServiceProvider serviceProvider = _serviceProdiver;
+    private readonly IServiceProvider serviceProvider = _serviceProvider;
     private readonly IDatabase db = _db;
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)

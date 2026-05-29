@@ -1,24 +1,47 @@
 using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.UseCase.Interfaces;
 using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class CustomerSentCpfDomainEventHandler(IDatabase _db) : IDomainEventHandler<CustomerSentCpfDomainEvent>
+public class CustomerSentCpfDomainEventHandler(IDatabase _db) : BackgroundService
 {
     private readonly IDatabase db = _db;
 
-    public async Task HandleAsync(CustomerSentCpfDomainEvent domainEvent)
+    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var json = JsonSerializer.Serialize(domainEvent.CPF);
-        string key = $"user:{domainEvent.User.Phone.Value}";
-
-        var hash = new HashEntry[]
+        while (!stoppingToken.IsCancellationRequested)
         {
-            new("cpf", json),
-        };
+            var messages = await db.StreamReadGroupAsync("events:customer-sent-cpf", "workers", "customer-sent-cpf", "0-0", count: 5);
 
-        await db.HashSetAsync(key, hash);
+            if (messages.Length == 0)
+            {
+                messages = await db.StreamReadGroupAsync("events:customer-sent-cpf", "workers", "customer-sent-cpf", ">", count: 5);
+            }
+
+            foreach (var message in messages)
+            {
+                var eventId = (string?)message["eventId"];
+                var payload = (string?)message["event"];
+
+                if (payload == null) return;
+
+                var domainEvent = JsonSerializer.Deserialize<CustomerSentCpfDomainEvent>(payload);
+
+                if (domainEvent == null) return;
+
+                string key = $"user:{domainEvent.User.Phone.Value}";
+                var json = JsonSerializer.Serialize(domainEvent.CPF);
+
+                var hash = new HashEntry[]
+                {
+                    new("cpf", json),
+                };
+
+                await db.HashSetAsync(key, hash);
+                await db.StreamAcknowledgeAsync("events:customer-sent-cpf", "workers", message.Id);
+                await Task.Delay(1000, stoppingToken);
+            }
+        }
     }
 }
