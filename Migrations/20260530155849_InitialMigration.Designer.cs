@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20260517203103_InitialMigration")]
+    [Migration("20260530155849_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -90,7 +90,7 @@ namespace AnuncieCompre.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.OutOfBoxAggregate.OutBoxMessage", b =>
+            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.OutOfBoxAggregate.OutboxMessage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -100,6 +100,13 @@ namespace AnuncieCompre.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsProcessed")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("PayloadJson")
                         .IsRequired()
@@ -137,7 +144,7 @@ namespace AnuncieCompre.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Customer");
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.User", b =>
@@ -150,24 +157,6 @@ namespace AnuncieCompre.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Email", "AnuncieCompre.Domain.Aggregates.UserAggregate.User.Email#Email", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("text");
-                        });
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Name", "AnuncieCompre.Domain.Aggregates.UserAggregate.User.Name#Name", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("text");
-                        });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Phone", "AnuncieCompre.Domain.Aggregates.UserAggregate.User.Phone#Phone", b1 =>
                         {
@@ -235,7 +224,7 @@ namespace AnuncieCompre.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Vendor");
+                    b.ToTable("Vendors");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.Customer", b =>
@@ -247,6 +236,45 @@ namespace AnuncieCompre.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.User", b =>
+                {
+                    b.OwnsOne("AnuncieCompre.Domain.Aggregates.ValueObjects.Email", "Email", b1 =>
+                        {
+                            b1.Property<int>("UserId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Value")
+                                .HasColumnType("text");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.OwnsOne("AnuncieCompre.Domain.Aggregates.ValueObjects.Name", "Name", b1 =>
+                        {
+                            b1.Property<int>("UserId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Value")
+                                .HasColumnType("text");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("Email");
+
+                    b.Navigation("Name");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.Vendor", b =>

@@ -12,6 +12,8 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 {
     public DbSet<User> Users { get; set; } = default!;
     public DbSet<Conversation> Conversations { get; set; } = default!;
+    public DbSet<Customer> Customers { get; set; } = default!;
+    public DbSet<Vendor> Vendors { get; set; } = default!;
     public DbSet<Order> Orders { get; set; } = default!;
     public DbSet<OutboxMessage> OutBoxMessage { get; set; } = default!;
 
@@ -25,9 +27,15 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
         modelBuilder.Entity<User>(u =>
         {
             u.ComplexProperty(cp => cp.Phone);
-            u.ComplexProperty(cp => cp.Name);
-            u.ComplexProperty(cp => cp.Email);
             u.ComplexProperty(cp => cp.Type);
+            u.OwnsOne(o => o.Name, name =>
+            {
+                name.Property(x => x.Value).IsRequired(false);
+            });
+            u.OwnsOne(o => o.Email, email =>
+            {
+                email.Property(x => x.Value).IsRequired(false);
+            });
         });
 
         modelBuilder.Entity<Customer>(s =>

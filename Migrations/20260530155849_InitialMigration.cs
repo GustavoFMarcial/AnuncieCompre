@@ -49,7 +49,9 @@ namespace AnuncieCompre.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    EventType = table.Column<string>(type: "text", nullable: false),
                     PayloadJson = table.Column<string>(type: "text", nullable: false),
+                    IsProcessed = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -63,8 +65,8 @@ namespace AnuncieCompre.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Email_Value = table.Column<string>(type: "text", nullable: false),
-                    Name_Value = table.Column<string>(type: "text", nullable: false),
+                    Name_Value = table.Column<string>(type: "text", nullable: true),
+                    Email_Value = table.Column<string>(type: "text", nullable: true),
                     Phone_Value = table.Column<string>(type: "text", nullable: false),
                     Type_Value = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -75,7 +77,7 @@ namespace AnuncieCompre.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Customer",
+                name: "Customers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -86,9 +88,9 @@ namespace AnuncieCompre.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customer", x => x.Id);
+                    table.PrimaryKey("PK_Customers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Customer_Users_UserId",
+                        name: "FK_Customers_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -96,7 +98,7 @@ namespace AnuncieCompre.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Vendor",
+                name: "Vendors",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -109,9 +111,9 @@ namespace AnuncieCompre.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vendor", x => x.Id);
+                    table.PrimaryKey("PK_Vendors", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Vendor_Users_UserId",
+                        name: "FK_Vendors_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -119,13 +121,13 @@ namespace AnuncieCompre.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Customer_UserId",
-                table: "Customer",
+                name: "IX_Customers_UserId",
+                table: "Customers",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vendor_UserId",
-                table: "Vendor",
+                name: "IX_Vendors_UserId",
+                table: "Vendors",
                 column: "UserId");
         }
 
@@ -136,7 +138,7 @@ namespace AnuncieCompre.Migrations
                 name: "Conversations");
 
             migrationBuilder.DropTable(
-                name: "Customer");
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Orders");
@@ -145,7 +147,7 @@ namespace AnuncieCompre.Migrations
                 name: "OutBoxMessage");
 
             migrationBuilder.DropTable(
-                name: "Vendor");
+                name: "Vendors");
 
             migrationBuilder.DropTable(
                 name: "Users");

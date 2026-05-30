@@ -24,6 +24,7 @@ public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IDat
         User? user = await userRepository.GetUserByPhoneAsync(incomingMessage.SenderPhone);
         string key = $"session:{incomingMessage.SenderPhone}";
         HashEntry[] session = await db.HashGetAllAsync(key);
+        HashEntry[] entries;
 
         if (conversation is null || user is null)
         {
@@ -35,7 +36,6 @@ public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IDat
 
         if (session.Length == 0)
         {
-            HashEntry[] entries;
 
             if (user.Type.Value == Domain.Enums.UserType.Unknown)
             {
@@ -71,7 +71,7 @@ public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IDat
             x => x.Value.ToString()
         );
 
-        IConversationNode awaitingRespondeNode = conversationFlowProvider.GetById(data["awaitingResponseId"]);
+        IConversationNode awaitingRespondeNode = conversationFlowProvider.GetById(data["awaitingResponseNodeId"]);
 
         (ReadOnlyCollection<string> response, string nextStepId) = conversation.HandleMessage(awaitingRespondeNode, incomingMessage.Content, user);
 
