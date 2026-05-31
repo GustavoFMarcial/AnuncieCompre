@@ -22,8 +22,13 @@ public class Conversation : BaseEntity
         return new Conversation(userPhone);
     }
 
-    public (ReadOnlyCollection<string> response, string nextStepId) HandleMessage(IConversationNode awaitingResponseNode, string message, User user)
+    public (ReadOnlyCollection<string> response, string nextStepId) HandleMessage(IConversationNode awaitingResponseNode, string message, User user, bool isSessionJustCreated)
     {
+        if (isSessionJustCreated)
+        {
+            return ([awaitingResponseNode.Message], awaitingResponseNode.Id);
+        }
+
         NodeResult result = awaitingResponseNode.NodeValidator.Validate(awaitingResponseNode, message);
 
         if (result.IsSuccess)
