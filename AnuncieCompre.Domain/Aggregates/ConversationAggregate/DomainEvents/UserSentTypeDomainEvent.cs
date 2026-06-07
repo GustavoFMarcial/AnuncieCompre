@@ -4,9 +4,9 @@ using AnuncieCompre.Domain.Aggregates.UserAggregate;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 
-public class UserSentTypeDomainEvent(User user, UserType userType) : IDomainEvent
+public class UserSentTypeDomainEvent(string phone, string userType) : IDomainEvent
 {
-    public User User { get; set; } = user;
-    public UserType UserType { get; set; } = userType;
+    public string Phone { get; set; } = phone;
+    public string UserType { get; set; } = userType;
     public string EventType { get; private set; } = "user-sent-type";
 }

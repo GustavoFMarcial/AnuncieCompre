@@ -31,12 +31,11 @@ public class UserSentEmailDomainEventHandler(IDatabase _db) : BackgroundService
 
                 if (domainEvent == null) continue;
 
-                string key = $"session:{domainEvent.User.Phone.Value}";
-                var json = JsonSerializer.Serialize(domainEvent.Email);
+                string key = $"session:{domainEvent.Phone}";
 
                 var hash = new HashEntry[]
                 {
-                    new("email", json),
+                    new("email", domainEvent.Email),
                 };
 
                 await db.HashSetAsync(key, hash);

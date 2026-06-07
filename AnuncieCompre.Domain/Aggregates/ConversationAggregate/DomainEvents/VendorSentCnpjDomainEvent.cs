@@ -4,9 +4,9 @@ using AnuncieCompre.Domain.Aggregates.UserAggregate;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 
-public class VendorSentCnpjDomainEvent(User user, CNPJ cnpj) : IDomainEvent
+public class VendorSentCnpjDomainEvent(string phone, string cnpj) : IDomainEvent
 {
-    public User User { get; set; } = user;
-    public CNPJ CNPJ { get; set; } = cnpj;
+    public string Phone { get; set; } = phone;
+    public string Cnpj { get; set; } = cnpj;
     public string EventType { get; private set; } = "vendor-sent-cnpj";
 }

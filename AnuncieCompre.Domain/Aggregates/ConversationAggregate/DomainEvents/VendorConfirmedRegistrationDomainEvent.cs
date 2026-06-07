@@ -3,8 +3,8 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 
-public class VendorConfirmedRegistrationDomainEvent(User user) : IDomainEvent
+public class VendorConfirmedRegistrationDomainEvent(string phone) : IDomainEvent
 {
-    public User User { get; set; } = user;
+    public string Phone { get; set; } = phone;
     public string EventType { get; private set; } = "vendor-confirmed-registration";
 }

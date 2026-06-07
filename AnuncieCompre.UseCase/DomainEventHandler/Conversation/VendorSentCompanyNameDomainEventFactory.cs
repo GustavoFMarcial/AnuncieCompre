@@ -31,12 +31,11 @@ public class VendorSentCompanyNameDomainEventHandler(IDatabase _db) : Background
 
                 if (domainEvent == null) continue;
 
-                string key = $"session:{domainEvent.User.Phone.Value}";
-                var json = JsonSerializer.Serialize(domainEvent.Name);
+                string key = $"session:{domainEvent.Phone}";
 
                 var hash = new HashEntry[]
                 {
-                    new("companyName", json),
+                    new("companyName", domainEvent.Name),
                 };
 
                 await db.HashSetAsync(key, hash);

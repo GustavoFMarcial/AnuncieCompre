@@ -14,7 +14,7 @@ public class VendorSentCompanyCategoryDomainEventFactory : IDomainEventFactory
         
         if (data is CompanyCategory companyCategory)
         {
-            return new VendorSentCompanyCategoryDomainEvent(user, companyCategory);
+            return new VendorSentCompanyCategoryDomainEvent(user.Phone.Value, companyCategory.Value.ToString());
         }
 
         throw new DomainException("Tipo inválido do ValueObject");

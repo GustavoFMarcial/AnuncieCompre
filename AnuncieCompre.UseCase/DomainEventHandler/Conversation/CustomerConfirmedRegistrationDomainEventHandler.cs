@@ -2,6 +2,7 @@ using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
+using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Infra.Data;
 using AnuncieCompre.Infra.Repositories.CustomerRepo;
 using AnuncieCompre.UseCase.Interfaces;
@@ -31,7 +32,8 @@ public class CustomerConfirmedRegistrationDomainEventHandler(IServiceProvider _s
                 var payload = (string?)message["event"];
                 using var scope = serviceProvider.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
-                var repository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
+                var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+                var customerRepository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
 
                 if (payload == null) continue;
 
@@ -39,7 +41,7 @@ public class CustomerConfirmedRegistrationDomainEventHandler(IServiceProvider _s
 
                 if (domainEvent == null) continue;
 
-                string key = $"session:{domainEvent.User.Phone.Value}";
+                string key = $"session:{domainEvent.Phone}";
                 var entries = await db.HashGetAllAsync(key);
 
                 var data = entries.ToDictionary(
@@ -47,20 +49,29 @@ public class CustomerConfirmedRegistrationDomainEventHandler(IServiceProvider _s
                     x => x.Value.ToString()
                 );
 
-                var name = JsonSerializer.Deserialize<Name>(data["name"]);
-                var email = JsonSerializer.Deserialize<Email>(data["email"]);
-                var type = JsonSerializer.Deserialize<UserType>(data["type"]);
-                var cpf = JsonSerializer.Deserialize<CPF>(data["cpf"]);
+                var stringName = data["name"];
+                var stringEmail = data["email"];
+                var stringType = data["type"];
+                var stringCPF = data["cpf"];
 
-                if (name is null || email is null || type is null || cpf is null) continue;
+                if (stringName is null || stringEmail is null || stringType is null || stringCPF is null) continue;
 
-                domainEvent.User
-                    .SetName(name)
-                    .SetEmail(email)
-                    .SetUserType(type);
+                User? user = await userRepository.GetUserByPhoneAsync(domainEvent.Phone);
 
-                Customer customer = Customer.Create(domainEvent.User, cpf);
-                repository.Add(customer);
+                if (user is null) continue;
+
+                Result<Name> name = Name.Create(stringName);
+                Result<Email> email = Email.Create(stringEmail);
+                Result<UserType> type = UserType.Create(stringType);
+                Result<CPF> cpf = CPF.Create(stringCPF);
+
+                user
+                    .SetName(name.Value)
+                    .SetEmail(email.Value)
+                    .SetUserType(type.Value);
+
+                Customer customer = Customer.Create(user, cpf.Value);
+                customerRepository.Add(customer);
 
                 await db.KeyDeleteAsync(key);
                 await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);

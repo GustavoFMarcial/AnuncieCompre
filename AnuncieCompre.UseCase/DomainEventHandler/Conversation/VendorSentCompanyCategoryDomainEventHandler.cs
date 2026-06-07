@@ -31,12 +31,11 @@ public class VendorSentCompanyCategoryDomainEventHandler(IDatabase _db) : Backgr
 
                 if (domainEvent == null) continue;
 
-                string key = $"session:{domainEvent.User.Phone.Value}";
-                var json = JsonSerializer.Serialize(domainEvent.CompanyCategory);
+                string key = $"session:{domainEvent.Phone}";
 
                 var hash = new HashEntry[]
                 {
-                    new("companyCategory", json),
+                    new("companyCategory", domainEvent.CompanyCategory),
                 };
 
                 await db.HashSetAsync(key, hash);

@@ -14,7 +14,7 @@ public class VendorSentCnpjDomainEventFactory : IDomainEventFactory
         
         if (data is CNPJ cnpj)
         {
-            return new VendorSentCnpjDomainEvent(user, cnpj);
+            return new VendorSentCnpjDomainEvent(user.Phone.Value, cnpj.Value);
         }
 
         throw new DomainException("Tipo inválido do ValueObject");

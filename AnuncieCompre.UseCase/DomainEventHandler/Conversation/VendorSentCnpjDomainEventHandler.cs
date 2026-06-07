@@ -31,12 +31,11 @@ public class VendorSentCnpjDomainEventHandler(IDatabase _db) : BackgroundService
 
                 if (domainEvent == null) continue;
 
-                string key = $"session:{domainEvent.User.Phone.Value}";
-                var json = JsonSerializer.Serialize(domainEvent.CNPJ);
+                string key = $"session:{domainEvent.Phone}";
 
                 var hash = new HashEntry[]
                 {
-                    new("cnpj", json),
+                    new("cnpj", domainEvent.Cnpj),
                 };
 
                 await db.HashSetAsync(key, hash);

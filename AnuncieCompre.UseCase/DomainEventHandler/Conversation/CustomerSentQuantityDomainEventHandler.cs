@@ -34,12 +34,11 @@ public class CustomerSentQuantityDomainEventHandler(IDatabase _db) : BackgroundS
 
                 if (domainEvent == null) continue;
 
-                string key = $"session:{domainEvent.User.Phone.Value}";
-                var json = JsonSerializer.Serialize(domainEvent.Quantity);
+                string key = $"session:{domainEvent.Phone}";
 
                 var hash = new HashEntry[]
                 {
-                    new("quantity", json),
+                    new("quantity", domainEvent.Quantity),
                 };
 
                 await db.HashSetAsync(key, hash);

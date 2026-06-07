@@ -14,7 +14,7 @@ public class UserSentTypeDomainEventFactory : IDomainEventFactory
         
         if (data is UserType userType)
         {
-            return new UserSentTypeDomainEvent(user, userType);
+            return new UserSentTypeDomainEvent(user.Phone.Value, userType.Value.ToString());
         }
 
         throw new DomainException("Tipo inválido do ValueObject");

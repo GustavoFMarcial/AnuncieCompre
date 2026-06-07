@@ -2,6 +2,7 @@ using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
+using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Infra.Data;
 using AnuncieCompre.UseCase.Interfaces;
 using StackExchange.Redis;
@@ -30,7 +31,8 @@ public class VendorConfirmedRegistrationDomainEventHandler(IServiceProvider _ser
                 var payload = (string?)message["event"];
                 using var scope = serviceProvider.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
-                var repository = scope.ServiceProvider.GetRequiredService<IVendorRepository>();
+                var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+                var vendorRepository = scope.ServiceProvider.GetRequiredService<IVendorRepository>();
 
                 if (payload == null) continue;
 
@@ -38,7 +40,7 @@ public class VendorConfirmedRegistrationDomainEventHandler(IServiceProvider _ser
 
                 if (domainEvent == null) continue;
 
-                string key = $"session:{domainEvent.User.Phone.Value}";
+                string key = $"session:{domainEvent.Phone}";
                 var entries = await db.HashGetAllAsync(key);
 
                 var data = entries.ToDictionary(
@@ -46,22 +48,33 @@ public class VendorConfirmedRegistrationDomainEventHandler(IServiceProvider _ser
                     x => x.Value.ToString()
                 );
 
-                var name = JsonSerializer.Deserialize<Name>(data["name"]);
-                var email = JsonSerializer.Deserialize<Email>(data["email"]);
-                var type = JsonSerializer.Deserialize<UserType>(data["type"]);
-                var companyCategory = JsonSerializer.Deserialize<CompanyCategory>(data["companyCategory"]);
-                var companyName = JsonSerializer.Deserialize<Name>(data["companyName"]);
-                var cnpj = JsonSerializer.Deserialize<CNPJ>(data["cnpj"]);
+                var stringName = data["name"];
+                var stringEmail = data["email"];
+                var stringType = data["type"];
+                var stringCompanyCategory = data["companyCategory"];
+                var stringCompanyName = data["companyName"];
+                var stringCnpj = data["cnpj"];
 
-                if (name is null || email is null || type is null || companyCategory is null || companyName is null || cnpj is null) continue;
+                if (stringName is null || stringEmail is null || stringType is null || stringCompanyCategory is null || stringCompanyName is null || stringCnpj is null) continue;
 
-                domainEvent.User
-                    .SetName(name)
-                    .SetEmail(email)
-                    .SetUserType(type);
+                User? user = await userRepository.GetUserByPhoneAsync(domainEvent.Phone);
 
-                Vendor vendor = Vendor.Create(domainEvent.User, companyCategory, companyName, cnpj);
-                repository.Add(vendor);
+                if (user is null) continue;
+
+                Result<Name> name = Name.Create(stringName);
+                Result<Email> email = Email.Create(stringEmail);
+                Result<UserType> type = UserType.Create(stringType);
+                Result<CompanyCategory> companyCategory = CompanyCategory.Create(stringCompanyCategory);
+                Result<Name> companyName = Name.Create(stringCompanyName);
+                Result<CNPJ> cnpj = CNPJ.Create(stringCnpj);
+
+                user
+                    .SetName(name.Value)
+                    .SetEmail(email.Value)
+                    .SetUserType(type.Value);
+
+                Vendor vendor = Vendor.Create(user, companyCategory.Value, companyName.Value, cnpj.Value);
+                vendorRepository.Add(vendor);
 
                 await db.KeyDeleteAsync(key);
                 await db.StreamAcknowledgeAsync("events:vendor-confirmed-registration", "workers", message.Id);

@@ -30,12 +30,11 @@ public class CustomerSentCpfDomainEventHandler(IDatabase _db) : BackgroundServic
 
                 if (domainEvent == null) continue;
 
-                string key = $"session:{domainEvent.User.Phone.Value}";
-                var json = JsonSerializer.Serialize(domainEvent.CPF);
+                string key = $"session:{domainEvent.Phone}";
 
                 var hash = new HashEntry[]
                 {
-                    new("cpf", json),
+                    new("cpf", domainEvent.cpf),
                 };
 
                 await db.HashSetAsync(key, hash);

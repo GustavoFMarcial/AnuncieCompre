@@ -30,7 +30,7 @@ public class CustomerSentCompanyCategoryDomainEventHandler(IDatabase _db) : Back
 
                 if (domainEvent == null) continue;
 
-                string key = $"session:{domainEvent.User.Phone.Value}";
+                string key = $"session:{domainEvent.Phone}";
                 var json = JsonSerializer.Serialize(domainEvent.CompanyCategory);
 
                 var hash = new HashEntry[]
