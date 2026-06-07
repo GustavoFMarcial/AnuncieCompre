@@ -24,13 +24,13 @@ public class CustomerSentCpfDomainEventHandler(IDatabase _db) : BackgroundServic
                 var eventId = (string?)message["eventId"];
                 var payload = (string?)message["event"];
 
-                if (payload == null) return;
+                if (payload == null) continue;
 
                 var domainEvent = JsonSerializer.Deserialize<CustomerSentCpfDomainEvent>(payload);
 
-                if (domainEvent == null) return;
+                if (domainEvent == null) continue;
 
-                string key = $"user:{domainEvent.User.Phone.Value}";
+                string key = $"session:{domainEvent.User.Phone.Value}";
                 var json = JsonSerializer.Serialize(domainEvent.CPF);
 
                 var hash = new HashEntry[]
@@ -40,8 +40,9 @@ public class CustomerSentCpfDomainEventHandler(IDatabase _db) : BackgroundServic
 
                 await db.HashSetAsync(key, hash);
                 await db.StreamAcknowledgeAsync("events:customer-sent-cpf", "workers", message.Id);
-                await Task.Delay(1000, stoppingToken);
             }
+            
+            await Task.Delay(1000, stoppingToken);
         }
     }
 }

@@ -33,13 +33,13 @@ public class CustomerConfirmedRegistrationDomainEventHandler(IServiceProvider _s
                 var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
                 var repository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
 
-                if (payload == null) return;
+                if (payload == null) continue;
 
                 var domainEvent = JsonSerializer.Deserialize<CustomerConfirmedRegistrationDomainEvent>(payload);
 
-                if (domainEvent == null) return;
+                if (domainEvent == null) continue;
 
-                string key = $"user:{domainEvent.User.Phone.Value}";
+                string key = $"session:{domainEvent.User.Phone.Value}";
                 var entries = await db.HashGetAllAsync(key);
 
                 var data = entries.ToDictionary(
@@ -52,7 +52,7 @@ public class CustomerConfirmedRegistrationDomainEventHandler(IServiceProvider _s
                 var type = JsonSerializer.Deserialize<UserType>(data["type"]);
                 var cpf = JsonSerializer.Deserialize<CPF>(data["cpf"]);
 
-                if (name is null || email is null || type is null || cpf is null) return;
+                if (name is null || email is null || type is null || cpf is null) continue;
 
                 domainEvent.User
                     .SetName(name)

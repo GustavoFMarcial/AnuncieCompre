@@ -32,12 +32,14 @@ public class CustomerFlow
         IDomainEventFactory customerSentProductDomainEventFactory = new CustomerSentProductDomainEventFactory();
         IDomainEventFactory customerSentQuantityDomainEventFactory = new CustomerSentQuantityDomainEventFactory();
         IDomainEventFactory customerConfirmedRegistrationDomainEventFactory = new CustomerConfirmedRegistrationDomainEventFactory();
+        IDomainEventFactory userFinishedConversationDomainEventFactory = new UserFinishedConversationDomainEventFactory();
 
         var finish = new FinalNode
         {
             Id = "customer_finish",
             Message = "Ok, até logo!",
             NodeValidator = finishValidator,
+            DomainEventFactory = [userFinishedConversationDomainEventFactory],
         };
 
         var askAnotherOrder = new OptionNode

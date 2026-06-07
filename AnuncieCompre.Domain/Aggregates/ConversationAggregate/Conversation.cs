@@ -10,7 +10,7 @@ public class Conversation : BaseEntity
 {
     public Phone UserPhone { get; private set; } = default!;
 
-    private Conversation() {}
+    private Conversation() { }
 
     private Conversation(Phone phone)
     {
@@ -36,6 +36,21 @@ public class Conversation : BaseEntity
             if (awaitingResponseNode.DomainEventFactory.Count > 0)
             {
                 foreach (var domainEventFactory in awaitingResponseNode.DomainEventFactory)
+                {
+                    AddDomainEvent(domainEventFactory.Handle(user, result.Value));
+                }
+            }
+
+            if (awaitingResponseNode.Transitions["2"] is FinalNode)
+            {
+                foreach (var domainEventFactory in awaitingResponseNode.Transitions["2"].DomainEventFactory)
+                {
+                    AddDomainEvent(domainEventFactory.Handle(user, result.Value));
+                }
+            }
+            else if (awaitingResponseNode.Transitions["next"] is FinalNode)
+            {
+                foreach (var domainEventFactory in awaitingResponseNode.Transitions["next"].DomainEventFactory)
                 {
                     AddDomainEvent(domainEventFactory.Handle(user, result.Value));
                 }

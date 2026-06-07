@@ -24,6 +24,7 @@ public class VendorFlow
         IDomainEventFactory vendorSentCompanyNameDomainEventFactory = new VendorSentCompanyNameDomainEventFactory();
         IDomainEventFactory vendorSentCnpjDomainEventFactory = new VendorSentCnpjDomainEventFactory();
         IDomainEventFactory vendorConfirmedRegistrationDomainEventFactory = new VendorConfirmedRegistrationDomainEventFactory();
+        IDomainEventFactory userFinishedConversationDomainEventFactory = new UserFinishedConversationDomainEventFactory();
 
         var vendorRegistered = new FinalNode
         {
@@ -33,7 +34,8 @@ public class VendorFlow
                 Obrigado por se registrar no AnuncieCompre!
 
                 Assim que pedidos compatíveis com sua categoria aparecerem você será notificado.
-                """
+                """,
+            DomainEventFactory = [userFinishedConversationDomainEventFactory],
         };
 
         var askCNPJ = new ValidationNode

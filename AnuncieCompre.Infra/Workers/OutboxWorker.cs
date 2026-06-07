@@ -19,14 +19,14 @@ public class OutboxWorker(IServiceProvider _serviceProvider, IDatabase _db) : Ba
 
             var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
 
-            List<OutboxMessage> messages =await context.Set<OutboxMessage>().Where(o => !o.IsProcessed).ToListAsync(stoppingToken);
+            List<OutboxMessage> messages = await context.Set<OutboxMessage>().Where(o => !o.IsProcessed).ToListAsync(stoppingToken);
 
             foreach (var message in messages)
             {
                 var values = new NameValueEntry[]
                 {
                     new("eventId", message.Id.ToString()),
-                    new("event", message.PayloadJson)
+                    new("event", message.PayloadJson),
                 };
 
                 await db.StreamAddAsync($"events:{message.EventType}", values, messageId: "*");

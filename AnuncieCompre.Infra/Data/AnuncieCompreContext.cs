@@ -77,7 +77,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
             Add(new OutboxMessage
             {
                 EventType = domainEvent.EventType,
-                PayloadJson = JsonSerializer.Serialize(domainEvent),
+                PayloadJson = JsonSerializer.Serialize(domainEvent, domainEvent.GetType()),
             });
         }
 

@@ -25,13 +25,13 @@ public class UserSentTypeDomainEventHandler(IDatabase _db) : BackgroundService
                 var eventId = (string?)message["eventId"];
                 var payload = (string?)message["event"];
 
-                if (payload == null) return;
+                if (payload == null) continue;
 
                 var domainEvent = JsonSerializer.Deserialize<UserSentTypeDomainEvent>(payload);
 
-                if (domainEvent == null) return;
+                if (domainEvent == null) continue;
 
-                string key = $"user:{domainEvent.User.Phone.Value}";
+                string key = $"session:{domainEvent.User.Phone.Value}";
                 var json = JsonSerializer.Serialize(domainEvent.UserType);
 
                 var hash = new HashEntry[]
@@ -41,8 +41,9 @@ public class UserSentTypeDomainEventHandler(IDatabase _db) : BackgroundService
 
                 await db.HashSetAsync(key, hash);
                 await db.StreamAcknowledgeAsync("events:user-sent-type", "workers", message.Id);
-                await Task.Delay(1000, stoppingToken);
             }
+                
+            await Task.Delay(1000, stoppingToken);
         }
     }
 }

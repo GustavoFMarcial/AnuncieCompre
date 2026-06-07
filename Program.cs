@@ -19,13 +19,20 @@ using StackExchange.Redis;
 using Twilio;
 
 var builder = WebApplication.CreateBuilder(args);
+var options = ConfigurationOptions.Parse("localhost:6379");
+
+if (builder.Environment.IsDevelopment())
+{
+    options.AsyncTimeout = 300000;
+    options.SyncTimeout = 300000;
+}
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+//Scoped
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -35,13 +42,31 @@ builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCase>();
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
 builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
+
+//Singleton
 builder.Services.AddSingleton<ConversationFlowProvider, ConversationFlowProvider>();
-builder.Services.AddHostedService<OutboxWorker>();
-builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect("localhost:6379")
-);
 builder.Services.AddSingleton(sp =>
     sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(options)
+);
+
+//Hosted
+builder.Services.AddHostedService<OutboxWorker>();
+builder.Services.AddHostedService<CustomerConfirmedRegistrationDomainEventHandler>();
+builder.Services.AddHostedService<CustomerSentCompanyCategoryDomainEventHandler>();
+builder.Services.AddHostedService<CustomerSentCpfDomainEventHandler>();
+builder.Services.AddHostedService<CustomerSentProductDomainEventHandler>();
+builder.Services.AddHostedService<CustomerSentQuantityDomainEventHandler>();
+builder.Services.AddHostedService<UserFinishedConversationDomainEventHandler>();
+builder.Services.AddHostedService<UserSentEmailDomainEventHandler>();
+builder.Services.AddHostedService<UserSentEmailDomainEventHandler>();
+builder.Services.AddHostedService<UserSentNameDomainEventHandler>();
+builder.Services.AddHostedService<UserSentTypeDomainEventHandler>();
+builder.Services.AddHostedService<VendorConfirmedRegistrationDomainEventHandler>();
+builder.Services.AddHostedService<VendorSentCnpjDomainEventHandler>();
+builder.Services.AddHostedService<VendorSentCompanyCategoryDomainEventHandler>();
+builder.Services.AddHostedService<VendorSentCompanyNameDomainEventHandler>();
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string 'AnuncieCompreContext' not found.");
 builder.Services.AddDbContext<AnuncieCompreContext>(options =>
@@ -59,7 +84,7 @@ using (var scope = app.Services.CreateScope())
 {
     IDatabase db = scope.ServiceProvider.GetRequiredService<IDatabase>();
 
-    string[] eventTypes = 
+    string[] eventTypes =
     [
         "vendor-sent-comapany-name",
         "vendor-sent-company-category",
@@ -68,6 +93,7 @@ using (var scope = app.Services.CreateScope())
         "user-sent-type",
         "user-sent-name",
         "user-sent-email",
+        "user-finished-conversation",
         "customer-sent-quantity",
         "customer-sent-product",
         "customer-sent-cpf",

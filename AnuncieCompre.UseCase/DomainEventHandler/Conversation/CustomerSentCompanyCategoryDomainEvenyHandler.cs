@@ -24,13 +24,13 @@ public class CustomerSentCompanyCategoryDomainEventHandler(IDatabase _db) : Back
                 var eventId = (string?)message["eventId"];
                 var payload = (string?)message["event"];
 
-                if (payload == null) return;
+                if (payload == null) continue;
 
                 var domainEvent = JsonSerializer.Deserialize<CustomerSentCompanyCategoryDomainEvent>(payload);
 
-                if (domainEvent == null) return;
+                if (domainEvent == null) continue;
 
-                string key = $"user:{domainEvent.User.Phone.Value}";
+                string key = $"session:{domainEvent.User.Phone.Value}";
                 var json = JsonSerializer.Serialize(domainEvent.CompanyCategory);
 
                 var hash = new HashEntry[]
@@ -40,8 +40,9 @@ public class CustomerSentCompanyCategoryDomainEventHandler(IDatabase _db) : Back
 
                 await db.HashSetAsync(key, hash);
                 await db.StreamAcknowledgeAsync("events:customer-sent-company-category", "workers", message.Id);
-                await Task.Delay(1000, stoppingToken);
             }
+            
+            await Task.Delay(1000, stoppingToken);
         }
     }
 }

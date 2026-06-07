@@ -28,13 +28,13 @@ public class CustomerSentQuantityDomainEventHandler(IDatabase _db) : BackgroundS
                 var eventId = (string?)message["eventId"];
                 var payload = (string?)message["event"];
 
-                if (payload == null) return;
+                if (payload == null) continue;
 
                 var domainEvent = JsonSerializer.Deserialize<CustomerSentQuantityDomainEvent>(payload);
 
-                if (domainEvent == null) return;
+                if (domainEvent == null) continue;
 
-                string key = $"user:{domainEvent.User.Phone.Value}";
+                string key = $"session:{domainEvent.User.Phone.Value}";
                 var json = JsonSerializer.Serialize(domainEvent.Quantity);
 
                 var hash = new HashEntry[]
@@ -44,8 +44,9 @@ public class CustomerSentQuantityDomainEventHandler(IDatabase _db) : BackgroundS
 
                 await db.HashSetAsync(key, hash);
                 await db.StreamAcknowledgeAsync("events:customer-sent-quantity", "workers", message.Id);
-                await Task.Delay(1000, stoppingToken);
             }
+                
+            await Task.Delay(1000, stoppingToken);
         }
     }
 }

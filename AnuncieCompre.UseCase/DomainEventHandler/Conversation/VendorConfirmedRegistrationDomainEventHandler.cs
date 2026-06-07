@@ -32,13 +32,13 @@ public class VendorConfirmedRegistrationDomainEventHandler(IServiceProvider _ser
                 var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
                 var repository = scope.ServiceProvider.GetRequiredService<IVendorRepository>();
 
-                if (payload == null) return;
+                if (payload == null) continue;
 
                 var domainEvent = JsonSerializer.Deserialize<VendorConfirmedRegistrationDomainEvent>(payload);
 
-                if (domainEvent == null) return;
+                if (domainEvent == null) continue;
 
-                string key = $"user:{domainEvent.User.Phone.Value}";
+                string key = $"session:{domainEvent.User.Phone.Value}";
                 var entries = await db.HashGetAllAsync(key);
 
                 var data = entries.ToDictionary(
@@ -53,7 +53,7 @@ public class VendorConfirmedRegistrationDomainEventHandler(IServiceProvider _ser
                 var companyName = JsonSerializer.Deserialize<Name>(data["companyName"]);
                 var cnpj = JsonSerializer.Deserialize<CNPJ>(data["cnpj"]);
 
-                if (name is null || email is null || type is null || companyCategory is null || companyName is null || cnpj is null) return;
+                if (name is null || email is null || type is null || companyCategory is null || companyName is null || cnpj is null) continue;
 
                 domainEvent.User
                     .SetName(name)

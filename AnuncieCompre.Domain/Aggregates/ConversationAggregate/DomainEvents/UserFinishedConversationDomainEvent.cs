@@ -1,0 +1,10 @@
+using AnuncieCompre.Domain.Aggregates.UserAggregate;
+using AnuncieCompre.Domain.Interfaces;
+
+namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
+
+public class UserFinishedConversationDomainEvent(string phone) : IDomainEvent
+{
+    public string Phone { get; set; } = phone;
+    public string EventType { get; private set; } = "user-finished-conversation";
+}

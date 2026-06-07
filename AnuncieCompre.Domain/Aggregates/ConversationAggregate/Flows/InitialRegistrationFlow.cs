@@ -23,11 +23,13 @@ public class InitialRegistrationFlow
         IDomainEventFactory userSentNameDomainEventFactory = new UserSentNameDomainEventFactory();
         IDomainEventFactory userSentEmailDomainEventFactory = new UserSentEmailDomainEventFactory();
         IDomainEventFactory userSentTypeDomainEventFactory = new UserSentTypeDomainEventFactory();
+        IDomainEventFactory userFinishedConversationDomainEventFactory = new UserFinishedConversationDomainEventFactory();
 
         var finish = new FinalNode
         {
             Id = "initial_finish",
-            Message = "Ok, até logo!"
+            Message = "Ok, até logo!",
+            DomainEventFactory = [userFinishedConversationDomainEventFactory],
         };
 
         var askUserType = new ValidationNode

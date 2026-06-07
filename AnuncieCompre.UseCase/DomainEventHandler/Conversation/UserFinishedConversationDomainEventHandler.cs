@@ -1,11 +1,12 @@
+
+
 using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.UseCase.Interfaces;
 using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class UserSentNameDomainEventHandler(IDatabase _db) : BackgroundService
+public class UserFinishedConversationDomainEventHandler(IDatabase _db) : BackgroundService
 {
     private readonly IDatabase db = _db;
 
@@ -13,11 +14,11 @@ public class UserSentNameDomainEventHandler(IDatabase _db) : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var messages = await db.StreamReadGroupAsync("events:user-sent-name", "workers", "user-sent-name", "0-0", count: 5);
+            var messages = await db.StreamReadGroupAsync("events:user-finished-conversation", "workers", "user-finished-conversation", "0-0", count: 5);
 
             if (messages.Length == 0)
             {
-                messages = await db.StreamReadGroupAsync("events:user-sent-name", "workers", "user-sent-name", ">", count: 5);
+                messages = await db.StreamReadGroupAsync("events:user-finished-conversation", "workers", "user-finished-conversation", ">", count: 5);
             }
 
             foreach (var message in messages)
@@ -27,19 +28,14 @@ public class UserSentNameDomainEventHandler(IDatabase _db) : BackgroundService
 
                 if (payload == null) continue;
 
-                var domainEvent = JsonSerializer.Deserialize<UserSentNameDomainEvent>(payload);
+                var domainEvent = JsonSerializer.Deserialize<UserFinishedConversationDomainEvent>(payload);
 
                 if (domainEvent == null) continue;
 
                 string key = $"session:{domainEvent.Phone}";
 
-                var hash = new HashEntry[]
-                {
-                    new("name", domainEvent.Name),
-                };
-
-                await db.HashSetAsync(key, hash);
-                await db.StreamAcknowledgeAsync("events:user-sent-name", "workers", message.Id);
+                await db.KeyDeleteAsync(key);
+                await db.StreamAcknowledgeAsync("events:user-finished-conversation", "workers", message.Id);
             }
                 
             await Task.Delay(1000, stoppingToken);
