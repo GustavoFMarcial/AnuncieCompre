@@ -15,7 +15,7 @@ public class InitialRegistrationFlow
         IValueObjectValidator emailValidator = new EmailValidator();
         IValueObjectValidator nameValidator = new NameValidator();
 
-        INodeValidator askUserTypeValidator = new ValidationNodeValidator(userTypeValidator);
+        INodeValidator askUserTypeValidator = new OptionValidationNodeValidator(["1", "2"], userTypeValidator);
         INodeValidator askEmailValidator = new ValidationNodeValidator(emailValidator);
         INodeValidator askNameValidator = new ValidationNodeValidator(nameValidator);
         INodeValidator startValidator = new OptionNodeValidator(["1", "2"]);
@@ -32,7 +32,7 @@ public class InitialRegistrationFlow
             DomainEventFactory = [userFinishedConversationDomainEventFactory],
         };
 
-        var askUserType = new ValidationNode
+        var askUserType = new OptionValidationNode
         {
             Id = "initial_ask_user_type",
             NodeValidator = askUserTypeValidator,

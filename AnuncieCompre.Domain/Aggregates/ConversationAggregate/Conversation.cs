@@ -29,6 +29,11 @@ public class Conversation : BaseEntity
             return ([awaitingResponseNode.Message], awaitingResponseNode.Id);
         }
 
+        if (awaitingResponseNode is FinalNode)
+        {
+            return ([awaitingResponseNode.Transitions["next"].Message], awaitingResponseNode.Transitions["next"].Id);
+        }
+
         NodeResult result = awaitingResponseNode.NodeValidator.Validate(awaitingResponseNode, message);
 
         if (result.IsSuccess)
@@ -36,21 +41,6 @@ public class Conversation : BaseEntity
             if (awaitingResponseNode.DomainEventFactory.Count > 0)
             {
                 foreach (var domainEventFactory in awaitingResponseNode.DomainEventFactory)
-                {
-                    AddDomainEvent(domainEventFactory.Handle(user, result.Value));
-                }
-            }
-
-            if (awaitingResponseNode.Transitions["2"] is FinalNode)
-            {
-                foreach (var domainEventFactory in awaitingResponseNode.Transitions["2"].DomainEventFactory)
-                {
-                    AddDomainEvent(domainEventFactory.Handle(user, result.Value));
-                }
-            }
-            else if (awaitingResponseNode.Transitions["next"] is FinalNode)
-            {
-                foreach (var domainEventFactory in awaitingResponseNode.Transitions["next"].DomainEventFactory)
                 {
                     AddDomainEvent(domainEventFactory.Handle(user, result.Value));
                 }

@@ -6,7 +6,7 @@ namespace AnuncieCompre.Domain.Conversation.NodeValidators;
 
 public class ValidationNodeValidator(IValueObjectValidator valueObjectValidator) : INodeValidator
 {
-    public IValueObjectValidator ValueObjectValidator = valueObjectValidator;
+    private readonly IValueObjectValidator ValueObjectValidator = valueObjectValidator;
 
     public NodeResult Validate(IConversationNode conversationNode, string message)
     {

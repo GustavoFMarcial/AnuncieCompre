@@ -5,7 +5,7 @@ namespace AnuncieCompre.Domain.Conversation.NodeValidators;
 
 public class OptionNodeValidator(List<string> options) : INodeValidator
 {
-    public List<string> Options { get; set; } = options;
+    private readonly List<string> Options = options;
 
     public NodeResult Validate(IConversationNode conversationNode, string message)
     {
