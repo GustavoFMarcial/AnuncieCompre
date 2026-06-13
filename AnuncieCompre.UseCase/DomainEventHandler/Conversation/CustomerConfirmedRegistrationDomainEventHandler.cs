@@ -73,7 +73,7 @@ public class CustomerConfirmedRegistrationDomainEventHandler(IServiceProvider _s
                 Customer customer = Customer.Create(user, cpf.Value);
                 customerRepository.Add(customer);
 
-                await db.KeyDeleteAsync(key);
+                // await db.KeyDeleteAsync(key);
                 await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
                 await context.SaveChangesAsync(stoppingToken);
             }

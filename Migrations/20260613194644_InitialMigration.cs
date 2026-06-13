@@ -32,10 +32,10 @@ namespace AnuncieCompre.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CustomerId = table.Column<int>(type: "integer", nullable: false),
                     Category_Value = table.Column<int>(type: "integer", nullable: true),
                     Product_Value = table.Column<string>(type: "text", nullable: true),
                     Quantity_Value = table.Column<string>(type: "text", nullable: true),
+                    UserPhone_Value = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>

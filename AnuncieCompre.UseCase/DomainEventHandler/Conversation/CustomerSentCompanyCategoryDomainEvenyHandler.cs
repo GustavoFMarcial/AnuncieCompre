@@ -31,6 +31,34 @@ public class CustomerSentCompanyCategoryDomainEventHandler(IDatabase _db) : Back
                 if (domainEvent == null) continue;
 
                 string key = $"session:{domainEvent.Phone}";
+
+                switch (domainEvent.CompanyCategory)
+                {
+                    case "Autopeça":
+                        domainEvent.CompanyCategory = "1";
+                        break;
+
+                    case "MaterialdeConstrução":
+                        domainEvent.CompanyCategory = "2";
+                        break;
+
+                    case "Automóvel":
+                        domainEvent.CompanyCategory = "3";
+                        break;
+
+                    case "AparelhosEletrônicos":
+                        domainEvent.CompanyCategory = "4";
+                        break;
+
+                    case "Eletrodomésticos":
+                        domainEvent.CompanyCategory = "5";
+                        break;
+
+                    default:
+                        domainEvent.CompanyCategory = "6";
+                        break;
+                }; 
+
                 var json = JsonSerializer.Serialize(domainEvent.CompanyCategory);
 
                 var hash = new HashEntry[]
@@ -41,7 +69,7 @@ public class CustomerSentCompanyCategoryDomainEventHandler(IDatabase _db) : Back
                 await db.HashSetAsync(key, hash);
                 await db.StreamAcknowledgeAsync("events:customer-sent-company-category", "workers", message.Id);
             }
-            
+
             await Task.Delay(1000, stoppingToken);
         }
     }

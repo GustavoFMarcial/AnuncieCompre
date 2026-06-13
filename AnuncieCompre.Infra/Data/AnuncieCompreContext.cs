@@ -52,6 +52,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<Order>(o =>
         {
+            o.ComplexProperty(cp => cp.UserPhone);
             o.ComplexProperty(cp => cp.Product);
             o.ComplexProperty(cp => cp.Quantity);
             o.ComplexProperty(cp => cp.Category);

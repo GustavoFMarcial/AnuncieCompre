@@ -38,11 +38,14 @@ public class Conversation : BaseEntity
 
         if (result.IsSuccess)
         {
-            if (awaitingResponseNode.DomainEventFactory.Count > 0)
+            if (result.ProcDomainEvent)
             {
-                foreach (var domainEventFactory in awaitingResponseNode.DomainEventFactory)
+                if (awaitingResponseNode.DomainEventFactory.Count > 0)
                 {
-                    AddDomainEvent(domainEventFactory.Handle(user, result.Value));
+                    foreach (var domainEventFactory in awaitingResponseNode.DomainEventFactory)
+                    {
+                        AddDomainEvent(domainEventFactory.Handle(user, result.Value));
+                    }
                 }
             }
         }

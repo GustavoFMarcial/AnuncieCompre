@@ -41,7 +41,6 @@ builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCase>();
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
-builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 
 //Singleton
 builder.Services.AddSingleton<ConversationFlowProvider, ConversationFlowProvider>();
@@ -67,6 +66,7 @@ builder.Services.AddHostedService<VendorConfirmedRegistrationDomainEventHandler>
 builder.Services.AddHostedService<VendorSentCnpjDomainEventHandler>();
 builder.Services.AddHostedService<VendorSentCompanyCategoryDomainEventHandler>();
 builder.Services.AddHostedService<VendorSentCompanyNameDomainEventHandler>();
+builder.Services.AddHostedService<OrderCreatedDomainEventHandler>();
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string 'AnuncieCompreContext' not found.");
 builder.Services.AddDbContext<AnuncieCompreContext>(options =>

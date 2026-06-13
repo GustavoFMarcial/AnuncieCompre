@@ -7,6 +7,7 @@ public enum CompanyCategory
     Automóvel,
     AparelhosEletrônicos,
     Eletrodomésticos,
+    SemCategoria,
 }
 
 public static class CompanyCategoryExtensions
@@ -37,5 +38,18 @@ public static class CompanyCategoryExtensions
         return Enum.GetValues<CompanyCategory>()
             .Select(c => ((int)c).ToString())
             .ToArray();
+    }
+
+    public static CompanyCategory StringToCompanyCategory(string companyCategory)
+    {
+        return companyCategory switch
+        {
+            "Autopeça" => CompanyCategory.Autopeça,
+            "MaterialdeConstrução" => CompanyCategory.MaterialdeConstrução,
+            "Automóvel" => CompanyCategory.Automóvel,
+            "AparelhosEletrônicos" => CompanyCategory.AparelhosEletrônicos,
+            "Eletrodomésticos" => CompanyCategory.Eletrodomésticos,
+            _ => CompanyCategory.SemCategoria,
+        };
     }
 }

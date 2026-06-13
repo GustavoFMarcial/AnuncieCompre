@@ -5,5 +5,5 @@ namespace AnuncieCompre.UseCase.Interfaces;
 
 public interface IOrderRepository : IBaseRepository<Order>
 {
-    public Task<Order?> GetLastOrderByCustomerId(int customerId);
+    public Task<Order?> GetLastOrderByPhoneAsync(string userPhone);
 }

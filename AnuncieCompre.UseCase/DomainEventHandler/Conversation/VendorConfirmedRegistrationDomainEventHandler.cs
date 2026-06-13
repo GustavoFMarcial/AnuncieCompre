@@ -76,7 +76,7 @@ public class VendorConfirmedRegistrationDomainEventHandler(IServiceProvider _ser
                 Vendor vendor = Vendor.Create(user, companyCategory.Value, companyName.Value, cnpj.Value);
                 vendorRepository.Add(vendor);
 
-                await db.KeyDeleteAsync(key);
+                // await db.KeyDeleteAsync(key);
                 await db.StreamAcknowledgeAsync("events:vendor-confirmed-registration", "workers", message.Id);
                 await context.SaveChangesAsync(stoppingToken);
             }

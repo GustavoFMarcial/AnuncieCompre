@@ -74,9 +74,7 @@ public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IDat
         );
 
         IConversationNode awaitingRespondeNode = conversationFlowProvider.GetById(data["awaitingResponseNodeId"]);
-        Console.WriteLine("###############################");
-        Console.WriteLine(data["awaitingResponseNodeId"]);
-        Console.WriteLine("###############################");
+
         (ReadOnlyCollection<string> response, string nextStepId) = conversation.HandleMessage(awaitingRespondeNode, incomingMessage.Content, user, isSessionJustCreated);
 
         var hash = new HashEntry[]

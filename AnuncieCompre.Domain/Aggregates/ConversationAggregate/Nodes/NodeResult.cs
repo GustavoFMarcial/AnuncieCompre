@@ -5,8 +5,9 @@ namespace AnuncieCompre.Domain.Conversation.Nodes;
 public class NodeResult : Result<ValueObject>
 {
     public string NextStepId { get; set; } = default!;
+    public bool ProcDomainEvent { get; set; }
 
-    public static NodeResult Success(ValueObject value, string message, string nextStepId)
+    public static NodeResult Success(ValueObject value, string message, string nextStepId, bool procDomainevent = true)
     {
         NodeResult result = new()
         {
@@ -14,18 +15,20 @@ public class NodeResult : Result<ValueObject>
             Message = message,
             Value = value,
             NextStepId = nextStepId,
+            ProcDomainEvent = procDomainevent,
         };
 
         return result;
     }
 
-    public static NodeResult Success(string message, string nextStepId)
+    public static NodeResult Success(string message, string nextStepId, bool procDomainEvent = true)
     {
         NodeResult result = new()
         {
             IsSuccess = true,
             Message = message,
             NextStepId = nextStepId,
+            ProcDomainEvent = procDomainEvent,
         };
 
         return result;

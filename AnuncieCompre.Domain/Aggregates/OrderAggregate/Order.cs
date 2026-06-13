@@ -7,27 +7,26 @@ namespace AnuncieCompre.Domain.Aggregates.OrderAggregate;
 
 public class Order : BaseEntity
 {
-    // public Phone UserPhone { get; private set; } = default!;
-    public int CustomerId { get; private set; }
+    public Phone UserPhone { get; private set; } = default!;
     public Product? Product { get; private set; } = default!;
     public Quantity? Quantity  { get; private set; } = default!;
     public ValueObjects.CompanyCategory? Category { get; private set; } = default!;
 
     private Order(){}
 
-    private Order(int customerId, Product product, Quantity quantity, ValueObjects.CompanyCategory category)
+    private Order(Phone userPhone, Product product, Quantity quantity, ValueObjects.CompanyCategory category)
     {
-        CustomerId = customerId;
+        UserPhone = userPhone;
         Product = product;
         Quantity = quantity;
         Category = category;
     }
 
-    public static Order Create(int customerId, Product product, Quantity quantity, ValueObjects.CompanyCategory category)
+    public static Order Create(Phone userPhone, Product product, Quantity quantity, ValueObjects.CompanyCategory category)
     {
-        var order = new Order(customerId, product, quantity, category);
+        var order = new Order(userPhone, product, quantity, category);
 
-        var domainEvent = new OrderCreatedDomainEvent(customerId, product, quantity, category);
+        var domainEvent = new OrderCreatedDomainEvent(userPhone.Value, product.Value, quantity.Value, category.Value.ToString());
         order.AddDomainEvent(domainEvent);
 
         return order;

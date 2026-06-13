@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20260613154940_InitialMigration")]
+    [Migration("20260613194644_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -62,9 +62,6 @@ namespace AnuncieCompre.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("integer");
-
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Category", "AnuncieCompre.Domain.Aggregates.OrderAggregate.Order.Category#CompanyCategory", b1 =>
                         {
                             b1.Property<int>("Value")
@@ -80,6 +77,15 @@ namespace AnuncieCompre.Migrations
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Quantity", "AnuncieCompre.Domain.Aggregates.OrderAggregate.Order.Quantity#Quantity", b1 =>
                         {
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text");
+                        });
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "UserPhone", "AnuncieCompre.Domain.Aggregates.OrderAggregate.Order.UserPhone#Phone", b1 =>
+                        {
+                            b1.IsRequired();
+
                             b1.Property<string>("Value")
                                 .IsRequired()
                                 .HasColumnType("text");

@@ -25,14 +25,15 @@ public class CustomerFlow
         INodeValidator customerRegisteredValidator = new OptionNodeValidator(["1", "2"]);
         INodeValidator askOrderValidator = new OptionNodeValidator(["1", "2"]);
         INodeValidator askCpf = new ValidationNodeValidator(cpfValidator);
-        // INodeValidator askConfirmationValidator = new OptionNodeValidator(["1", "2"]); 
+        INodeValidator askConfirmationValidator = new ConfirmationNodeValidator(["1", "2"]); 
 ;
+        IDomainEventFactory userFinishedConversationDomainEventFactory = new UserFinishedConversationDomainEventFactory();
         IDomainEventFactory customerSentCpfDomainEventFactory = new CustomerSentCpfDomainEventFactory();
+        IDomainEventFactory customerConfirmedRegistrationDomainEventFactory = new CustomerConfirmedRegistrationDomainEventFactory();
         IDomainEventFactory customerSentCompanyCategoryDomainEventFactory = new CustomerSentCompanyCategoryDomainEventFactory();
         IDomainEventFactory customerSentProductDomainEventFactory = new CustomerSentProductDomainEventFactory();
         IDomainEventFactory customerSentQuantityDomainEventFactory = new CustomerSentQuantityDomainEventFactory();
-        IDomainEventFactory customerConfirmedRegistrationDomainEventFactory = new CustomerConfirmedRegistrationDomainEventFactory();
-        IDomainEventFactory userFinishedConversationDomainEventFactory = new UserFinishedConversationDomainEventFactory();
+        IDomainEventFactory customerConfirmedOrderDomainEventFactory = new CustomerConfirmedOrderDomainEventFactory();
 
         var finish = new FinalNode
         {
@@ -54,6 +55,20 @@ public class CustomerFlow
                 2 - Não
                 """,
             NodeValidator = askAnotherOrderValidator,
+        };
+
+        var askOrderConfirmation = new ConfirmationNode
+        {
+            Id = "customer_order_ask_confirmation",
+            Message =
+                """
+                As informações passadas estão corretas para que possamos disparar o pedido aos fornecedores?
+
+                1 - Sim.
+                2 - Não, passar informações novamente.
+                """,
+            NodeValidator = askConfirmationValidator,
+            DomainEventFactory = [customerConfirmedOrderDomainEventFactory]
         };
 
         var askQuantity = new ValidationNode
@@ -113,40 +128,46 @@ public class CustomerFlow
             NodeValidator = customerRegisteredValidator,
         };
 
+        var askRegistrationConfirmation = new ConfirmationNode
+        {
+            Id = "customer_registration_ask_confirmation",
+            Message =
+                """
+                Os dados passados estão corretos para que possamos te registrar?
+
+                1 - Sim.
+                2 - Não, passar dados novamente.
+                """,
+            NodeValidator = askConfirmationValidator,
+            DomainEventFactory = [customerConfirmedRegistrationDomainEventFactory]
+        };
+
         var askCPF = new ValidationNode
         {
             Id = "customer_ask_cpf",
             Message = "Qual seu CPF?",
             NodeValidator = askCpf,
-            DomainEventFactory = [customerSentCpfDomainEventFactory, customerConfirmedRegistrationDomainEventFactory],
+            DomainEventFactory = [customerSentCpfDomainEventFactory],
         };
-
-        // var askConfirmation = new OptionNode
-        // {
-        //     Id = "initial_customer_ask_confirmation",
-        //     Message =
-        //         """
-        //         Os dados passados estão corretos para que possamos te registrar?
-
-        //         1 - Sim.
-        //         2 - Não, passar dados novamente.
-        //         """,
-        //     NodeValidator = askConfirmationValidator,
-        // };
 
         conversationflow["initial_ask_user_type"].Transitions["1"] = askCPF;
 
-        // askConfirmation.Transitions["1"] = askCPF;
-        // askConfirmation.Transitions["2"] = conversationflow["initial_ask_name"];
+        askCPF.Transitions["next"] = askRegistrationConfirmation;
 
-        askCPF.Transitions["next"] = customerRegistered;
+        askRegistrationConfirmation.Transitions["1"] = customerRegistered;
+        askRegistrationConfirmation.Transitions["2"] = conversationflow["initial_ask_name"];
 
         customerRegistered.Transitions["1"] = askCompanyCategory;
         customerRegistered.Transitions["2"] = finish;
 
         askCompanyCategory.Transitions["next"] = askProduct;
+
         askProduct.Transitions["next"] = askQuantity;
-        askQuantity.Transitions["next"] = askAnotherOrder;
+
+        askQuantity.Transitions["next"] = askOrderConfirmation;
+
+        askOrderConfirmation.Transitions["1"] = askAnotherOrder;
+        askOrderConfirmation.Transitions["2"] = askCompanyCategory;
 
         askAnotherOrder.Transitions["1"] = askCompanyCategory;
         askAnotherOrder.Transitions["2"] = finish;
@@ -158,6 +179,8 @@ public class CustomerFlow
 
         return new Dictionary<string, IConversationNode>
         {
+            { askOrderConfirmation.Id, askOrderConfirmation },
+            { askRegistrationConfirmation.Id, askRegistrationConfirmation },
             { askOrder.Id, askOrder },
             { askCPF.Id, askCPF },
             { customerRegistered.Id, customerRegistered },
