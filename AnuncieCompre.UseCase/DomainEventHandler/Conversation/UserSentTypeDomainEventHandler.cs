@@ -31,6 +31,12 @@ public class UserSentTypeDomainEventHandler(IDatabase _db) : BackgroundService
 
                 if (domainEvent == null) continue;
 
+                domainEvent.UserType = domainEvent.UserType switch
+                {
+                    "Customer" => "1",
+                    "Vendor" => "2",
+                    _ => "0",
+                };
                 string key = $"session:{domainEvent.Phone}";
 
                 var hash = new HashEntry[]

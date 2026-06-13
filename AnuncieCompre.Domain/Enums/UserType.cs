@@ -2,7 +2,7 @@ namespace AnuncieCompre.Domain.Enums;
 
 public enum UserType
 {
-    Unknown = 1,
+    Unknown = 0,
     Customer,
     Vendor,
 }
