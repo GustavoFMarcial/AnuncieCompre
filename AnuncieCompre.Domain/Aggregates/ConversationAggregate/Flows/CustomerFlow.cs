@@ -158,6 +158,7 @@ public class CustomerFlow
 
         return new Dictionary<string, IConversationNode>
         {
+            { askOrder.Id, askOrder },
             { askCPF.Id, askCPF },
             { customerRegistered.Id, customerRegistered },
             { askCompanyCategory.Id, askCompanyCategory },
