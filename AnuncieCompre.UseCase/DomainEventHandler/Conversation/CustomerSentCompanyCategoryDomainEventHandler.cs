@@ -32,32 +32,16 @@ public class CustomerSentCompanyCategoryDomainEventHandler(IDatabase _db) : Back
 
                 string key = $"session:{domainEvent.Phone}";
 
-                switch (domainEvent.CompanyCategory)
+                domainEvent.CompanyCategory = domainEvent.CompanyCategory switch
                 {
-                    case "Autopeça":
-                        domainEvent.CompanyCategory = "1";
-                        break;
-
-                    case "MaterialdeConstrução":
-                        domainEvent.CompanyCategory = "2";
-                        break;
-
-                    case "Automóvel":
-                        domainEvent.CompanyCategory = "3";
-                        break;
-
-                    case "AparelhosEletrônicos":
-                        domainEvent.CompanyCategory = "4";
-                        break;
-
-                    case "Eletrodomésticos":
-                        domainEvent.CompanyCategory = "5";
-                        break;
-
-                    default:
-                        domainEvent.CompanyCategory = "6";
-                        break;
-                }; 
+                    "Autopeça" => "1",
+                    "MaterialdeConstrução" => "2",
+                    "Automóvel" => "3",
+                    "AparelhosEletrônicos" => "4",
+                    "Eletrodomésticos" => "5",
+                    _ => "6",
+                };
+                ; 
 
                 var json = JsonSerializer.Serialize(domainEvent.CompanyCategory);
 

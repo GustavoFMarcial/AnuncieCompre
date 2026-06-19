@@ -8,11 +8,10 @@ using StackExchange.Redis;
 namespace AnuncieCompre.UseCase.DomainEventHandler.OrderDomainEventHandler;
 
 
-public class OrderCreatedDomainEventHandler(IServiceProvider _serviceProvider, IDatabase _db, IMessageSender _messageSender) : BackgroundService
+public class OrderCreatedDomainEventHandler(IServiceProvider _serviceProvider, IDatabase _db) : BackgroundService
 {
     private readonly IServiceProvider serviceProvider = _serviceProvider;
     private readonly IDatabase db = _db;
-    private readonly IMessageSender messageSender = _messageSender;
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -32,6 +31,7 @@ public class OrderCreatedDomainEventHandler(IServiceProvider _serviceProvider, I
                 using var scope = serviceProvider.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
                 var vendorRepository = scope.ServiceProvider.GetRequiredService<IVendorRepository>();
+                var messageSender = scope.ServiceProvider.GetRequiredService<IMessageSender>();
 
                 if (payload == null) continue;
 
@@ -48,10 +48,10 @@ public class OrderCreatedDomainEventHandler(IServiceProvider _serviceProvider, I
                         await messageSender.SendMessageAsync(
                             v.User.Phone.Value,
                             $"""
-                    Olá! Recebemos um pedido de {domainEvent.Quantity} de {domainEvent.Product} na sua região.
+                            Olá! Recebemos um pedido de {domainEvent.Quantity} de {domainEvent.Product} na sua região.
 
-                    Gostaria de receber os detalhes para avaliar se consegue atender?
-                    """);
+                            Gostaria de receber os detalhes para avaliar se consegue atender?
+                            """);
                     }
                     catch (Exception e)
                     {

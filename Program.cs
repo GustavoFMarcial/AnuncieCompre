@@ -66,6 +66,7 @@ builder.Services.AddHostedService<VendorConfirmedRegistrationDomainEventHandler>
 builder.Services.AddHostedService<VendorSentCnpjDomainEventHandler>();
 builder.Services.AddHostedService<VendorSentCompanyCategoryDomainEventHandler>();
 builder.Services.AddHostedService<VendorSentCompanyNameDomainEventHandler>();
+builder.Services.AddHostedService<CustomerConfirmedOrderDomainEventHandler>();
 builder.Services.AddHostedService<OrderCreatedDomainEventHandler>();
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string 'AnuncieCompreContext' not found.");
@@ -99,6 +100,8 @@ using (var scope = app.Services.CreateScope())
         "customer-sent-cpf",
         "customer-sent-company-category",
         "customer-confirmed-registration",
+        "customer-confirmed-order",
+        "order-created",
     ];
 
     foreach (string e in eventTypes)

@@ -53,6 +53,10 @@ public class CustomerConfirmedOrderDomainEventHandler(IServiceProvider _serviceP
                 var stringProduct = data["product"];
                 var stringQuantity = data["quantity"];
 
+                Console.WriteLine(stringCompanyCategory);
+                Console.WriteLine(stringProduct);
+                Console.WriteLine(stringQuantity);
+
                 if (stringCompanyCategory is null || stringProduct is null || stringQuantity is null) continue;
 
                 Result<Phone> phone = Phone.Create(domainEvent.Phone);
