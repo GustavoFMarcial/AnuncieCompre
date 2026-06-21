@@ -82,4 +82,4 @@ dotnet user-secrets set "ConnectionStrings:AnuncieCompreContext" "SUA_CONNECTION
 ### 4. Rodar o projeto
 ```bash
 dotnet run
-```bash
+```
