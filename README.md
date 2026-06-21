@@ -74,9 +74,12 @@ git clone https://github.com/GustavoFMarcial/AnuncieCompre.git
 ```
 ### 2. Configurar o banco de dados
 PostgreSQL e Redis rodando localmente
-```bash
-### 3. Configurar secrets
-dotnet user-secrets set "ConnectionStrings:AnuncieCompreContext" "SUA_CONNECTION_STRING"
 
+### 3. Configurar secrets
+```bash
+dotnet user-secrets set "ConnectionStrings:AnuncieCompreContext" "SUA_CONNECTION_STRING"
+```
 ### 4. Rodar o projeto
-dotnet run```
+```bash
+dotnet run
+```bash
