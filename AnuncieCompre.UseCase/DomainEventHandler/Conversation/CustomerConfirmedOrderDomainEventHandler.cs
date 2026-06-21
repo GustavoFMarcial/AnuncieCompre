@@ -64,6 +64,10 @@ public class CustomerConfirmedOrderDomainEventHandler(IServiceProvider _serviceP
                 Result<Product> product = Product.Create(stringProduct);
                 Result<Quantity> quantity = Quantity.Create(stringQuantity);
 
+                Console.WriteLine(companyCategory.Value);
+                Console.WriteLine(product.Value);
+                Console.WriteLine(quantity.Value);
+
                 Domain.Aggregates.OrderAggregate.Order order = Domain.Aggregates.OrderAggregate.Order.Create(phone.Value, product.Value, quantity.Value, companyCategory.Value);
                 orderRepository.Add(order);
 
