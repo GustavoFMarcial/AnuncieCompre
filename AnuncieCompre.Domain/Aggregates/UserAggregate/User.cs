@@ -6,8 +6,8 @@ public class User : BaseEntity
 {
     public Phone Phone { get; private set; } = default!;
     public UserType Type { get; private set; } = UserType.Create("0").Value;
-    public Name? Name { get; private set; }
-    public Email? Email { get; private set; }
+    public Name Name { get; private set; } = default!;
+    public Email Email { get; private set; } = default!;
 
     private User(){}
 

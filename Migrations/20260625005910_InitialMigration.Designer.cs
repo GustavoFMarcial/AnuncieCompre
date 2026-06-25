@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20260619013432_InitialMigration")]
+    [Migration("20260625005910_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -278,9 +278,11 @@ namespace AnuncieCompre.Migrations
                                 .HasForeignKey("UserId");
                         });
 
-                    b.Navigation("Email");
+                    b.Navigation("Email")
+                        .IsRequired();
 
-                    b.Navigation("Name");
+                    b.Navigation("Name")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.Vendor", b =>

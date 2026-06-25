@@ -36,6 +36,8 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
             {
                 email.Property(x => x.Value).IsRequired(false);
             });
+            // u.ComplexProperty(cp => cp.Name);
+            // u.ComplexProperty(cp => cp.Email);
         });
 
         modelBuilder.Entity<Customer>(s =>

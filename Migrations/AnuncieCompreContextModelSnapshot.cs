@@ -275,9 +275,11 @@ namespace AnuncieCompre.Migrations
                                 .HasForeignKey("UserId");
                         });
 
-                    b.Navigation("Email");
+                    b.Navigation("Email")
+                        .IsRequired();
 
-                    b.Navigation("Name");
+                    b.Navigation("Name")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.Vendor", b =>

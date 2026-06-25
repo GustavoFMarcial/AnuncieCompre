@@ -1,5 +1,3 @@
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.Domain.Aggregates.OrderAggregate.DomainEvents;
 using AnuncieCompre.Infra.Data;
 using AnuncieCompre.Infra.MessageSender;
 using AnuncieCompre.Infra.Providers;
@@ -19,13 +17,6 @@ using StackExchange.Redis;
 using Twilio;
 
 var builder = WebApplication.CreateBuilder(args);
-var options = ConfigurationOptions.Parse("localhost:6379");
-
-if (builder.Environment.IsDevelopment())
-{
-    options.AsyncTimeout = 300000;
-    options.SyncTimeout = 300000;
-}
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -44,11 +35,23 @@ builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
 
 //Singleton
 builder.Services.AddSingleton<ConversationFlowProvider, ConversationFlowProvider>();
-builder.Services.AddSingleton(sp =>
-    sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
-builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(options)
-);
+builder.Services.AddSingleton(sp => sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var config = builder.Configuration["Redis:Connection"] ?? throw new Exception("Redis connection missing");
+    var options = ConfigurationOptions.Parse(config);
+    options.AbortOnConnectFail = false;
+    options.ConnectRetry = 5;
+    options.ConnectTimeout = 5000;
+
+    if (builder.Environment.IsDevelopment())
+    {
+        options.AsyncTimeout = 300000;
+        options.SyncTimeout = 300000;
+    }
+
+    return ConnectionMultiplexer.Connect(options);
+});
 
 //Hosted
 builder.Services.AddHostedService<OutboxWorker>();
@@ -69,9 +72,9 @@ builder.Services.AddHostedService<VendorSentCompanyNameDomainEventHandler>();
 builder.Services.AddHostedService<CustomerConfirmedOrderDomainEventHandler>();
 builder.Services.AddHostedService<OrderCreatedDomainEventHandler>();
 
-var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string 'AnuncieCompreContext' not found.");
-builder.Services.AddDbContext<AnuncieCompreContext>(options =>
-    options.UseNpgsql(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string not found.");
+
+builder.Services.AddDbContext<AnuncieCompreContext>(options => options.UseNpgsql(connectionString));
 // builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 TwilioClient.Init(
@@ -126,4 +129,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+Console.WriteLine("ANTES DO RUN");
+
 app.Run();
+
+Console.WriteLine("DEPOIS DO RUN");
