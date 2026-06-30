@@ -4,6 +4,7 @@ using AnuncieCompre.UseCase.Interfaces;
 using System.Text.Json;
 using AnuncieCompre.Infra.Data;
 using StackExchange.Redis;
+using AnuncieCompre.Domain.Enums;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.OrderDomainEventHandler;
 
@@ -39,7 +40,7 @@ public class OrderCreatedDomainEventHandler(IServiceProvider _serviceProvider, I
 
                 if (domainEvent == null) continue;
 
-                List<Vendor> vendors = await vendorRepository.GetVendorsByCategoryAsync((Domain.Enums.CompanyCategory)int.Parse(domainEvent.Category));
+                List<Vendor> vendors = await vendorRepository.GetVendorsByCategoryAsync(CompanyCategoryExtensions.StringToCompanyCategory(domainEvent.Category));
 
                 foreach (Vendor v in vendors)
                 {

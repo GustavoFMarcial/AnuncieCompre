@@ -21,7 +21,7 @@ public class CompanyCategory : ValueObject
         {
             if (c == company) return Result<CompanyCategory>.Success(new CompanyCategory((Enums.CompanyCategory)int.Parse(company)), "CompanyCategory validado com sucesso");
         }
-        
+
         return Result<CompanyCategory>.Failure("Opção inválida, escolha novamente.");
     }
 }

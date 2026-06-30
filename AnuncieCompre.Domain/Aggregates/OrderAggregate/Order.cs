@@ -8,9 +8,9 @@ namespace AnuncieCompre.Domain.Aggregates.OrderAggregate;
 public class Order : BaseEntity
 {
     public Phone UserPhone { get; private set; } = default!;
-    public Product? Product { get; private set; } = default!;
-    public Quantity? Quantity  { get; private set; } = default!;
-    public ValueObjects.CompanyCategory? Category { get; private set; } = default!;
+    public Product Product { get; private set; } = default!;
+    public Quantity Quantity  { get; private set; } = default!;
+    public ValueObjects.CompanyCategory Category { get; private set; } = default!;
 
     private Order(){}
 

@@ -129,8 +129,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-Console.WriteLine("ANTES DO RUN");
-
 app.Run();
-
-Console.WriteLine("DEPOIS DO RUN");
