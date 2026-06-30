@@ -53,20 +53,12 @@ public class CustomerConfirmedOrderDomainEventHandler(IServiceProvider _serviceP
                 var stringProduct = data["product"];
                 var stringQuantity = data["quantity"];
 
-                Console.WriteLine(stringCompanyCategory);
-                Console.WriteLine(stringProduct);
-                Console.WriteLine(stringQuantity);
-
                 if (stringCompanyCategory is null || stringProduct is null || stringQuantity is null) continue;
 
                 Result<Phone> phone = Phone.Create(domainEvent.Phone);
                 Result<CompanyCategory> companyCategory = CompanyCategory.Create(stringCompanyCategory);
                 Result<Product> product = Product.Create(stringProduct);
                 Result<Quantity> quantity = Quantity.Create(stringQuantity);
-
-                Console.WriteLine(companyCategory.Value);
-                Console.WriteLine(product.Value);
-                Console.WriteLine(quantity.Value);
 
                 Domain.Aggregates.OrderAggregate.Order order = Domain.Aggregates.OrderAggregate.Order.Create(phone.Value, product.Value, quantity.Value, companyCategory.Value);
                 orderRepository.Add(order);

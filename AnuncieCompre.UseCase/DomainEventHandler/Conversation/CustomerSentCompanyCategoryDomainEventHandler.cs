@@ -41,13 +41,10 @@ public class CustomerSentCompanyCategoryDomainEventHandler(IDatabase _db) : Back
                     "Eletrodomésticos" => "5",
                     _ => "6",
                 };
-                ; 
-
-                var json = JsonSerializer.Serialize(domainEvent.CompanyCategory);
 
                 var hash = new HashEntry[]
                 {
-                    new("companyCategory", json),
+                    new("companyCategory", domainEvent.CompanyCategory),
                 };
 
                 await db.HashSetAsync(key, hash);
