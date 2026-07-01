@@ -7,7 +7,7 @@ public enum CompanyCategory
     Automóvel,
     AparelhosEletrônicos,
     Eletrodomésticos,
-    SemCategoria,
+    SemCategoria = 99,
 }
 
 public static class CompanyCategoryExtensions
