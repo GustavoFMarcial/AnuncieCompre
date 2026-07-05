@@ -23,14 +23,21 @@ public class CustomerSentCompanyCategoryDomainEventHandler(IDatabase _db) : Back
             {
                 var eventId = (string?)message["eventId"];
                 var payload = (string?)message["event"];
+                var eventKey = $"processed-events:{eventId}";
 
-                if (payload == null) continue;
+                if (payload == null || eventId == null) continue;
+
+                if (await db.KeyExistsAsync(eventKey))
+                {
+                    await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
+                    continue;
+                }
 
                 var domainEvent = JsonSerializer.Deserialize<CustomerSentCompanyCategoryDomainEvent>(payload);
 
-                if (domainEvent == null) continue;
+                if (domainEvent == null || eventKey == null) continue;
 
-                string key = $"session:{domainEvent.Phone}";
+                string sessionKey = $"session:{domainEvent.Phone}";
 
                 domainEvent.CompanyCategory = domainEvent.CompanyCategory switch
                 {
@@ -47,7 +54,8 @@ public class CustomerSentCompanyCategoryDomainEventHandler(IDatabase _db) : Back
                     new("companyCategory", domainEvent.CompanyCategory),
                 };
 
-                await db.HashSetAsync(key, hash);
+                await db.HashSetAsync(sessionKey, hash);
+                await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
                 await db.StreamAcknowledgeAsync("events:customer-sent-company-category", "workers", message.Id);
             }
 

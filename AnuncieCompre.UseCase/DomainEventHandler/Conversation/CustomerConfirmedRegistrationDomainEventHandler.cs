@@ -30,19 +30,27 @@ public class CustomerConfirmedRegistrationDomainEventHandler(IServiceProvider _s
             {
                 var eventId = (string?)message["eventId"];
                 var payload = (string?)message["event"];
+                var eventKey = $"processed-events:{eventId}";
+
+                if (payload == null || eventId == null) continue;
+
+                if (await db.KeyExistsAsync(eventKey))
+                {
+                    await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
+                    continue;
+                }
+
                 using var scope = serviceProvider.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
                 var customerRepository = scope.ServiceProvider.GetRequiredService<ICustomerRepository>();
 
-                if (payload == null) continue;
-
                 var domainEvent = JsonSerializer.Deserialize<CustomerConfirmedRegistrationDomainEvent>(payload);
 
                 if (domainEvent == null) continue;
 
-                string key = $"session:{domainEvent.Phone}";
-                var entries = await db.HashGetAllAsync(key);
+                string sessionKey = $"session:{domainEvent.Phone}";
+                var entries = await db.HashGetAllAsync(sessionKey);
 
                 var data = entries.ToDictionary(
                     x => x.Name.ToString(),
@@ -74,8 +82,9 @@ public class CustomerConfirmedRegistrationDomainEventHandler(IServiceProvider _s
                 customerRepository.Add(customer);
 
                 // await db.KeyDeleteAsync(key);
-                await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
                 await context.SaveChangesAsync(stoppingToken);
+                await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
+                await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
             }
 
             await Task.Delay(1000, stoppingToken);

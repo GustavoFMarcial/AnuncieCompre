@@ -29,19 +29,27 @@ public class VendorConfirmedRegistrationDomainEventHandler(IServiceProvider _ser
             {
                 var eventId = (string?)message["eventId"];
                 var payload = (string?)message["event"];
+                var eventKey = $"processed-events:{eventId}";
+
+                if (payload == null || eventId == null) continue;
+
+                if (await db.KeyExistsAsync(eventKey))
+                {
+                    await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
+                    continue;
+                }
+
                 using var scope = serviceProvider.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
                 var vendorRepository = scope.ServiceProvider.GetRequiredService<IVendorRepository>();
 
-                if (payload == null) continue;
-
                 var domainEvent = JsonSerializer.Deserialize<VendorConfirmedRegistrationDomainEvent>(payload);
 
                 if (domainEvent == null) continue;
 
-                string key = $"session:{domainEvent.Phone}";
-                var entries = await db.HashGetAllAsync(key);
+                string sessionKey = $"session:{domainEvent.Phone}";
+                var entries = await db.HashGetAllAsync(sessionKey);
 
                 var data = entries.ToDictionary(
                     x => x.Name.ToString(),
@@ -77,8 +85,9 @@ public class VendorConfirmedRegistrationDomainEventHandler(IServiceProvider _ser
                 vendorRepository.Add(vendor);
 
                 // await db.KeyDeleteAsync(key);
-                await db.StreamAcknowledgeAsync("events:vendor-confirmed-registration", "workers", message.Id);
                 await context.SaveChangesAsync(stoppingToken);
+                await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
+                await db.StreamAcknowledgeAsync("events:vendor-confirmed-registration", "workers", message.Id);
             }
 
             await Task.Delay(1000, stoppingToken);
