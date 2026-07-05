@@ -29,12 +29,20 @@ public class OrderCreatedDomainEventHandler(IServiceProvider _serviceProvider, I
             {
                 var eventId = (string?)message["eventId"];
                 var payload = (string?)message["event"];
+                var eventKey = $"processed-events:{eventId}";
+
+                if (payload == null || eventId == null) continue;
+
+                if (await db.KeyExistsAsync(eventKey))
+                {
+                    await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
+                    continue;
+                }
+
                 using var scope = serviceProvider.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
                 var vendorRepository = scope.ServiceProvider.GetRequiredService<IVendorRepository>();
                 var messageSender = scope.ServiceProvider.GetRequiredService<IMessageSender>();
-
-                if (payload == null) continue;
 
                 var domainEvent = JsonSerializer.Deserialize<OrderCreatedDomainEvent>(payload);
 
@@ -62,8 +70,9 @@ public class OrderCreatedDomainEventHandler(IServiceProvider _serviceProvider, I
                 }
 
                 // await db.KeyDeleteAsync(key);
-                await db.StreamAcknowledgeAsync("events:order-created", "workers", message.Id);
                 await context.SaveChangesAsync(stoppingToken);
+                await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
+                await db.StreamAcknowledgeAsync("events:order-created", "workers", message.Id);
             }
 
             await Task.Delay(1000, stoppingToken);

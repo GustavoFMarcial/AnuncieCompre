@@ -24,21 +24,29 @@ public class VendorSentCompanyCategoryDomainEventHandler(IDatabase _db) : Backgr
             {
                 var eventId = (string?)message["eventId"];
                 var payload = (string?)message["event"];
+                var eventKey = $"processed-events:{eventId}";
 
-                if (payload == null) continue;
+                if (payload == null || eventId == null) continue;
+
+                if (await db.KeyExistsAsync(eventKey))
+                {
+                    await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
+                    continue;
+                }
 
                 var domainEvent = JsonSerializer.Deserialize<VendorSentCompanyCategoryDomainEvent>(payload);
 
                 if (domainEvent == null) continue;
 
-                string key = $"session:{domainEvent.Phone}";
+                string sessionKey = $"session:{domainEvent.Phone}";
 
                 var hash = new HashEntry[]
                 {
                     new("companyCategory", domainEvent.CompanyCategory),
                 };
 
-                await db.HashSetAsync(key, hash);
+                await db.HashSetAsync(sessionKey, hash);
+                await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
                 await db.StreamAcknowledgeAsync("events:vendor-sent-company-category", "workers", message.Id);
             }
                 

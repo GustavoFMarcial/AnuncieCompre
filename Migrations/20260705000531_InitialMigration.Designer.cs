@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20260625005910_InitialMigration")]
+    [Migration("20260705000531_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -28,11 +28,9 @@ namespace AnuncieCompre.Migrations
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -53,23 +51,25 @@ namespace AnuncieCompre.Migrations
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.OrderAggregate.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Category", "AnuncieCompre.Domain.Aggregates.OrderAggregate.Order.Category#CompanyCategory", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<int>("Value")
                                 .HasColumnType("integer");
                         });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Product", "AnuncieCompre.Domain.Aggregates.OrderAggregate.Order.Product#Product", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<string>("Value")
                                 .IsRequired()
                                 .HasColumnType("text");
@@ -77,6 +77,8 @@ namespace AnuncieCompre.Migrations
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Quantity", "AnuncieCompre.Domain.Aggregates.OrderAggregate.Order.Quantity#Quantity", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<string>("Value")
                                 .IsRequired()
                                 .HasColumnType("text");
@@ -98,11 +100,9 @@ namespace AnuncieCompre.Migrations
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.OutOfBoxAggregate.OutboxMessage", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -125,17 +125,15 @@ namespace AnuncieCompre.Migrations
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.Customer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CPF", "AnuncieCompre.Domain.Aggregates.UserAggregate.Customer.CPF#CPF", b1 =>
                         {
@@ -155,11 +153,9 @@ namespace AnuncieCompre.Migrations
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -188,17 +184,15 @@ namespace AnuncieCompre.Migrations
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.Vendor", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CNPJ", "AnuncieCompre.Domain.Aggregates.UserAggregate.Vendor.CNPJ#CNPJ", b1 =>
                         {
@@ -248,8 +242,8 @@ namespace AnuncieCompre.Migrations
                 {
                     b.OwnsOne("AnuncieCompre.Domain.Aggregates.ValueObjects.Email", "Email", b1 =>
                         {
-                            b1.Property<int>("UserId")
-                                .HasColumnType("integer");
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("Value")
                                 .HasColumnType("text");
@@ -264,8 +258,8 @@ namespace AnuncieCompre.Migrations
 
                     b.OwnsOne("AnuncieCompre.Domain.Aggregates.ValueObjects.Name", "Name", b1 =>
                         {
-                            b1.Property<int>("UserId")
-                                .HasColumnType("integer");
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("Value")
                                 .HasColumnType("text");

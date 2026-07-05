@@ -15,7 +15,7 @@ services:
 
 
   redis:
-    image: redis:7
+    image: redis:8.6
     container_name: anuncie-redis
     restart: unless-stopped
     ports:
