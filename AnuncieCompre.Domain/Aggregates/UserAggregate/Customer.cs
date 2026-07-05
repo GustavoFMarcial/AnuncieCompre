@@ -4,7 +4,7 @@ namespace AnuncieCompre.Domain.Aggregates.UserAggregate;
 
 public class Customer : BaseEntity
 {
-    public int UserId { get; private set; }
+    public Guid UserId { get; private set; }
     public User User { get; private set; } = default!;
     public CPF CPF { get; private set; } = default!;
 

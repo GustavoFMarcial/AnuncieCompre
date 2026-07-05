@@ -7,7 +7,7 @@ public enum CompanyCategory
     Automóvel,
     AparelhosEletrônicos,
     Eletrodomésticos,
-    SemCategoria = 99,
+    SemCategoria
 }
 
 public static class CompanyCategoryExtensions
@@ -35,9 +35,13 @@ public static class CompanyCategoryExtensions
 
     public static string[] ToStringArray()
     {
-        return Enum.GetValues<CompanyCategory>()
+        var array = Enum.GetValues<CompanyCategory>()
             .Select(c => ((int)c).ToString())
             .ToArray();
+
+        var newArray = array.SkipLast(1).ToArray();
+
+        return newArray;
     }
 
     public static CompanyCategory StringToCompanyCategory(string companyCategory)

@@ -6,7 +6,7 @@ namespace AnuncieCompre.Domain.Aggregates.UserAggregate;
 
 public class Vendor : BaseEntity
 {
-    public int UserId { get; private set; }
+    public Guid UserId { get; private set; }
     public User User { get; private set; } = default!;
     public ValueObjects.CompanyCategory Category { get; private set; } = default!;
     public Name Name { get; private set; } = default!;
