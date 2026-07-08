@@ -14,7 +14,9 @@ public class Phone : ValueObject
 
     public static Result<Phone> Create(string number)
     {
-        if (!number.Contains("+55")) return Result<Phone>.Failure("Código do país inválido, número de fora do Brasil");
+        if (!number.Contains("+55")) return Result<Phone>.Failure("Número de fora do Brasil");
+        if (!number.Contains("whatsapp")) return Result<Phone>.Failure("Número não é whatsapp");
+        if (number.Length < 22 || number.Length > 23) return Result<Phone>.Failure("Número no formato errado");
 
         return Result<Phone>.Success(new Phone(number), "VOPhone criado com sucesso");
     }
