@@ -81,9 +81,9 @@ public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IDat
         {
             new ("awaitingResponseNodeId", nextStepId),
         };
+        await unitOfWork.SaveChangesAsync();
         await db.HashSetAsync(key, hash);
         await db.KeyExpireAsync(key, TimeSpan.FromMinutes(30));
-        await unitOfWork.SaveChangesAsync();
 
         return response;
     }
