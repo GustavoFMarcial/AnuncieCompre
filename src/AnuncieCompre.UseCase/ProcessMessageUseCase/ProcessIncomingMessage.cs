@@ -17,7 +17,7 @@ public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IDat
     private readonly IConversationRepository conversationRepository = _conversationRepository;
     private readonly ConversationFlowProvider conversationFlowProvider = _conversationFlowProvider;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
-    
+
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
         Conversation? conversation = await conversationRepository.GetConversationByPhoneAsync(incomingMessage.SenderPhone);
@@ -39,35 +39,16 @@ public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IDat
         {
             isSessionJustCreated = true;
 
-            if (user.Type.Value == Domain.Enums.UserType.Unknown)
-            {
-                entries =
-                [
-                    new("phone", incomingMessage.SenderPhone),
-                    new("awaitingResponseNodeId", "initial_start"),
-                ];
-            }
-            else if (user.Type.Value == Domain.Enums.UserType.Customer)
-            {
-                entries =
-                [
-                    new("phone", incomingMessage.SenderPhone),
-                    new("awaitingResponseNodeId", "ask_order"),
-                ];
-            }
-            else
-            {
-                entries =
-                [
-                    new("phone", incomingMessage.SenderPhone),
-                    new("awaitingResponseNodeId", "vendor_registered"),
-                ];
-            }
+            entries =
+            [
+                new("phone", incomingMessage.SenderPhone),
+                new("awaitingResponseNodeId", conversation.GetNodeIdByUserType(user.Type.Value)),
+            ];
 
             await db.HashSetAsync(key, entries);
             session = await db.HashGetAllAsync(key);
         }
-        
+
         var data = session.ToDictionary(
             x => x.Name.ToString(),
             x => x.Value.ToString()

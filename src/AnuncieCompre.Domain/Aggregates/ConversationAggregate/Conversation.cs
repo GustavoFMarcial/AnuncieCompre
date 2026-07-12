@@ -52,4 +52,15 @@ public class Conversation : BaseEntity
 
         return ([result.Message], result.NextStepId);
     }
+
+    public string GetNodeIdByUserType(Enums.UserType userType)
+    {
+        return userType switch
+        {
+            Enums.UserType.Unknown => "initial_start",
+            Enums.UserType.Customer => "ask_order",
+            Enums.UserType.Vendor => "vendor_ask_premium",
+            _ => "initial_start",
+        };
+    }
 }
