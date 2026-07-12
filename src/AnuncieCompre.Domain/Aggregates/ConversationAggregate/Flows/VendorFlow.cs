@@ -1,3 +1,4 @@
+using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Conversation.NodeValidators;
 using AnuncieCompre.Domain.Enums;
@@ -18,7 +19,9 @@ public class VendorFlow
         INodeValidator askCnpjValidator = new ValidationNodeValidator(cnpjValidator);
         INodeValidator askCompanyNameValidator = new ValidationNodeValidator(nameValidator);
         INodeValidator askCompanyCategoryValidator = new ValidationNodeValidator(companyCategoryValidator);
-        // INodeValidator askConfirmationValidator = new OptionNodeValidator(["1", "2"]);
+        INodeValidator askConfirmationValidator = new ConfirmationNodeValidator(["1", "2"]);
+        INodeValidator askToPremiumValidator = new OptionNodeValidator(["1", "2"]);
+        INodeValidator finishValidator = new FinalNodeValidator();
 
         IDomainEventFactory vendorSentCompanyCategoryDomainEventFactory = new VendorSentCompanyCategoryDomainEventFactory();
         IDomainEventFactory vendorSentCompanyNameDomainEventFactory = new VendorSentCompanyNameDomainEventFactory();
@@ -26,16 +29,52 @@ public class VendorFlow
         IDomainEventFactory vendorConfirmedRegistrationDomainEventFactory = new VendorConfirmedRegistrationDomainEventFactory();
         IDomainEventFactory userFinishedConversationDomainEventFactory = new UserFinishedConversationDomainEventFactory();
 
-        var vendorRegistered = new FinalNode
+        var finish = new FinalNode
+        {
+            Id = "vendor_finish",
+            Message = "Ok, até logo!",
+            NodeValidator = finishValidator,
+            DomainEventFactory = [userFinishedConversationDomainEventFactory],
+        };
+
+        var paymentToPremium = new FinalNode
+        {
+            Id = "vendor_payment_to_premium",
+            Message = "FEATURE NÃO IMPLEMENTADA AINDA",
+            NodeValidator = finishValidator,
+            DomainEventFactory = [userFinishedConversationDomainEventFactory],
+        };
+
+        var askPremium = new OptionNode
+        {
+            Id = "vendor_ask_premium",
+            Message =
+            """
+            Olá, bem-vindo novamente ao AnuncieCompre!
+
+            Deseja assinar nosso plano premium para receber pedidos mais rápido ?            
+            
+            1 - Sim
+            2 - Não
+            """,
+            NodeValidator = askToPremiumValidator,
+        };
+
+        var vendorRegistered = new OptionNode
         {
             Id = "vendor_registered",
             Message =
                 """
                 Obrigado por se registrar no AnuncieCompre!
-
                 Assim que pedidos compatíveis com sua categoria aparecerem você será notificado.
+
+                Deseja assinar nosso plano premium para receber pedidos mais rápido ?
+
+                1 - Sim
+                2 - Não
                 """,
-            DomainEventFactory = [userFinishedConversationDomainEventFactory],
+            NodeValidator = askToPremiumValidator,
+            DomainEventFactory = [],
         };
 
         var askCNPJ = new ValidationNode
@@ -43,7 +82,7 @@ public class VendorFlow
             Id = "vendor_ask_cnpj",
             Message = "Qual o CNPJ da empresa?",
             NodeValidator = askCnpjValidator,
-            DomainEventFactory = [vendorSentCnpjDomainEventFactory, vendorConfirmedRegistrationDomainEventFactory],
+            DomainEventFactory = [vendorSentCnpjDomainEventFactory],
         };
 
         var askCompanyName = new ValidationNode
@@ -67,27 +106,40 @@ public class VendorFlow
             DomainEventFactory = [vendorSentCompanyCategoryDomainEventFactory],
         };
 
-        // var askConfirmation = new OptionNode
-        // {
-        //     Id = "initial_vendor_ask_confirmation",
-        //     Message =
-        //         """
-        //         Os dados passados estão corretos para que possamos te registrar?
+        var askRegistrationConfirmation = new ConfirmationNode
+        {
+            Id = "initial_vendor_ask_confirmation",
+            Message =
+                """
+                Os dados passados estão corretos para que possamos te registrar?
 
-        //         1 - Sim.
-        //         2 - Não, passar dados novamente.
-        //         """,
-        //     NodeValidator = askConfirmationValidator,
-        // };
+                1 - Sim.
+                2 - Não, passar dados novamente.
+                """,
+            NodeValidator = askConfirmationValidator,
+            DomainEventFactory = [vendorConfirmedRegistrationDomainEventFactory],
+        };
 
         conversationflow["initial_ask_user_type"].Transitions["2"] = askCNPJ;
 
-        // askConfirmation.Transitions["1"] = askCNPJ;
-        // askConfirmation.Transitions["2"] = conversationflow["initial_ask_name"];
-
         askCompanyCategory.Transitions["next"] = askCompanyName;
+
         askCompanyName.Transitions["next"] = askCNPJ;
-        askCNPJ.Transitions["next"] = vendorRegistered;
+
+        askCNPJ.Transitions["next"] = askRegistrationConfirmation;
+
+        askRegistrationConfirmation.Transitions["1"] = vendorRegistered;
+        askRegistrationConfirmation.Transitions["2"] = conversationflow["initial_ask_name"];
+
+        vendorRegistered.Transitions["1"] = paymentToPremium;
+        vendorRegistered.Transitions["2"] = finish;
+
+        finish.Transitions["next"] = askPremium;
+        
+        paymentToPremium.Transitions["next"] = askPremium;
+
+        askPremium.Transitions["1"] = paymentToPremium;
+        askPremium.Transitions["2"] = finish;
 
         return new Dictionary<string, IConversationNode>
         {

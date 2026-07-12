@@ -25,8 +25,8 @@ public class CustomerFlow
         INodeValidator customerRegisteredValidator = new OptionNodeValidator(["1", "2"]);
         INodeValidator askOrderValidator = new OptionNodeValidator(["1", "2"]);
         INodeValidator askCpf = new ValidationNodeValidator(cpfValidator);
-        INodeValidator askConfirmationValidator = new ConfirmationNodeValidator(["1", "2"]); 
-;
+        INodeValidator askConfirmationValidator = new ConfirmationNodeValidator(["1", "2"]);
+
         IDomainEventFactory userFinishedConversationDomainEventFactory = new UserFinishedConversationDomainEventFactory();
         IDomainEventFactory customerSentCpfDomainEventFactory = new CustomerSentCpfDomainEventFactory();
         IDomainEventFactory customerConfirmedRegistrationDomainEventFactory = new CustomerConfirmedRegistrationDomainEventFactory();
