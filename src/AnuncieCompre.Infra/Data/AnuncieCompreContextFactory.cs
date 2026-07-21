@@ -23,6 +23,9 @@ public class AnuncieCompreContextFactory
 
         optionsBuilder.UseNpgsql(connectionString);
 
-        return new AnuncieCompreContext(optionsBuilder.Options);
+        var serviceCollection = new ServiceCollection();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+
+        return new AnuncieCompreContext(optionsBuilder.Options, serviceProvider);
     }
 }

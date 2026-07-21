@@ -9,6 +9,6 @@ public class CustomerConfirmedOrderDomainEventFactory : IDomainEventFactory
 {
     public IDomainEvent Handle(User user, ValueObject tempData)
     {
-        return new CustomerConfirmedOrderDomainEvent(user.Phone.Value);
+        return new CustomerConfirmedOrderDomainEvent(user.Phone);
     }
 }

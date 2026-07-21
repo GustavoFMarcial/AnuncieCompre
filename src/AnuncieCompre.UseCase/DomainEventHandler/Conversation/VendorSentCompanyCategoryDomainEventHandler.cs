@@ -1,56 +1,26 @@
 using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
+using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.UseCase.Interfaces;
 using StackExchange.Redis;
 
-namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
+namespace AnuncieCompre.UseCase.DomainEventHandler.Conversation;
 
-public class VendorSentCompanyCategoryDomainEventHandler(IDatabase _db) : BackgroundService
+public class VendorSentCompanyCategoryDomainEventHandler(IUserRepository _userRepository, IVendorRepository _vendorRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<VendorSentCompanyCategoryDomainEvent>
 {
-    private readonly IDatabase db = _db;
+    private readonly IUserRepository userRepository = _userRepository;
+    private readonly IVendorRepository vendorRepository = _vendorRepository;
+    private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+    public async Task HandleAsync(VendorSentCompanyCategoryDomainEvent domainEvent)
     {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            var messages = await db.StreamReadGroupAsync("events:vendor-sent-company-category", "workers", "vendor-sent-company-category", "0-0", count: 5);
+        User? user = await userRepository.GetUserByPhoneAsync(domainEvent.Phone.Value);
 
-            if (messages.Length == 0)
-            {
-                messages = await db.StreamReadGroupAsync("events:vendor-sent-company-category", "workers", "vendor-sent-company-category", ">", count: 5);
-            }
+        if (user is null) return;
 
-            foreach (var message in messages)
-            {
-                var eventId = (string?)message["eventId"];
-                var payload = (string?)message["event"];
-                var eventKey = $"processed-events:{eventId}";
+        Vendor vendor = Vendor.Create(user, domainEvent.CompanyCategory);
 
-                if (payload == null || eventId == null) continue;
-
-                if (await db.KeyExistsAsync(eventKey))
-                {
-                    await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
-                    continue;
-                }
-
-                var domainEvent = JsonSerializer.Deserialize<VendorSentCompanyCategoryDomainEvent>(payload);
-
-                if (domainEvent == null) continue;
-
-                string sessionKey = $"session:{domainEvent.Phone}";
-
-                var hash = new HashEntry[]
-                {
-                    new("companyCategory", domainEvent.CompanyCategory),
-                };
-
-                await db.HashSetAsync(sessionKey, hash);
-                await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
-                await db.StreamAcknowledgeAsync("events:vendor-sent-company-category", "workers", message.Id);
-            }
-                
-            await Task.Delay(1000, stoppingToken);
-        }
+        vendorRepository.Add(vendor);
+        await unitOfWork.SaveChangesAsync();
     }
 }

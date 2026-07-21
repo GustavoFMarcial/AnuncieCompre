@@ -1,14 +1,16 @@
 using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
+using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.OrderAggregate;
 using AnuncieCompre.Domain.Aggregates.OutOfBoxAggregate;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
+using AnuncieCompre.UseCase.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace AnuncieCompre.Infra.Data;
 
-public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options) : DbContext(options)
+public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options, IServiceProvider _serviceProvider) : DbContext(options)
 {
     public DbSet<User> Users { get; set; } = default!;
     public DbSet<Conversation> Conversations { get; set; } = default!;
@@ -16,6 +18,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
     public DbSet<Vendor> Vendors { get; set; } = default!;
     public DbSet<Order> Orders { get; set; } = default!;
     public DbSet<OutboxMessage> OutBoxMessage { get; set; } = default!;
+    private readonly IServiceProvider serviceProvider = _serviceProvider;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -61,31 +64,64 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
         });
     }
 
+    // public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    // {
+    //     var entitiesWithEvents = ChangeTracker
+    //         .Entries<BaseEntity>()
+    //         .Where(e => e.Entity.DomainEvents.Any())
+    //         .Select(e => e.Entity)
+    //         .ToList();
+
+    //     var domainEvents = entitiesWithEvents
+    //         .SelectMany(e => e.DomainEvents)
+    //         .ToList();
+
+    //     entitiesWithEvents.ForEach(e => e.ClearDomainEvents());
+
+    //     foreach (var domainEvent in domainEvents)
+    //     {
+    //         Add(new OutboxMessage
+    //         {
+    //             EventType = domainEvent.EventType,
+    //             PayloadJson = JsonSerializer.Serialize(domainEvent, domainEvent.GetType()),
+    //         });
+    //     }
+
+    //     var result = await base.SaveChangesAsync(cancellationToken);
+
+    //     return result;
+    // }
+
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        var entitiesWithEvents = ChangeTracker
-            .Entries<BaseEntity>()
-            .Where(e => e.Entity.DomainEvents.Any())
-            .Select(e => e.Entity)
+        var domainEvents = ChangeTracker.Entries<BaseEntity>()
+            .SelectMany(e => e.Entity.DomainEvents)
             .ToList();
-
-        var domainEvents = entitiesWithEvents
-            .SelectMany(e => e.DomainEvents)
-            .ToList();
-
-        entitiesWithEvents.ForEach(e => e.ClearDomainEvents());
 
         foreach (var domainEvent in domainEvents)
         {
-            Add(new OutboxMessage
+            Type eventType = domainEvent.GetType();
+            Type handlerType = typeof(IDomainEventHandler<>).MakeGenericType(eventType);
+
+            var handler = serviceProvider.GetRequiredService(handlerType);
+            var method = handlerType.GetMethod("HandleAsync");
+
+            if (method != null)
             {
-                EventType = domainEvent.EventType,
-                PayloadJson = JsonSerializer.Serialize(domainEvent, domainEvent.GetType()),
-            });
+                var taskResult = method.Invoke(handler, [domainEvent]);
+
+                if (taskResult is Task task)
+                {
+                    await task;
+                }
+            }
         }
 
-        var result = await base.SaveChangesAsync(cancellationToken);
-        
-        return result;
+        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+        {
+            entry.Entity.ClearDomainEvents();
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
     }
 }

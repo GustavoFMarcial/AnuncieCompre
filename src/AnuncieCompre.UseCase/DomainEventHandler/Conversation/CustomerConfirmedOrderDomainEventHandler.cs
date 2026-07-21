@@ -1,83 +1,83 @@
-using System.Text.Json;
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
-using AnuncieCompre.Domain.Aggregates.ValueObjects;
-using AnuncieCompre.Domain.Common;
-using AnuncieCompre.Infra.Data;
-using AnuncieCompre.Infra.Repositories.CustomerRepo;
-using AnuncieCompre.Infra.Repositories.OrderRepo;
-using AnuncieCompre.UseCase.Interfaces;
-using StackExchange.Redis;
+// using System.Text.Json;
+// using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
+// using AnuncieCompre.Domain.Aggregates.UserAggregate;
+// using AnuncieCompre.Domain.Aggregates.ValueObjects;
+// using AnuncieCompre.Domain.Common;
+// using AnuncieCompre.Infra.Data;
+// using AnuncieCompre.Infra.Repositories.CustomerRepo;
+// using AnuncieCompre.Infra.Repositories.OrderRepo;
+// using AnuncieCompre.UseCase.Interfaces;
+// using StackExchange.Redis;
 
-namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
+// namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class CustomerConfirmedOrderDomainEventHandler(IServiceProvider _serviceProvider, IDatabase _db) : BackgroundService
-{
-    private readonly IServiceProvider serviceProvider = _serviceProvider;
-    private readonly IDatabase db = _db;
+// public class CustomerConfirmedOrderDomainEventHandler(IServiceProvider _serviceProvider, IDatabase _db) : BackgroundService
+// {
+//     private readonly IServiceProvider serviceProvider = _serviceProvider;
+//     private readonly IDatabase db = _db;
 
-    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            var messages = await db.StreamReadGroupAsync("events:customer-confirmed-order", "workers", "customer-confirmed-order", "0-0", count: 5);
+//     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+//     {
+//         while (!stoppingToken.IsCancellationRequested)
+//         {
+//             var messages = await db.StreamReadGroupAsync("events:customer-confirmed-order", "workers", "customer-confirmed-order", "0-0", count: 5);
 
-            if (messages.Length == 0)
-            {
-                messages = await db.StreamReadGroupAsync("events:customer-confirmed-order", "workers", "customer-confirmed-order", ">", count: 5);
-            }
+//             if (messages.Length == 0)
+//             {
+//                 messages = await db.StreamReadGroupAsync("events:customer-confirmed-order", "workers", "customer-confirmed-order", ">", count: 5);
+//             }
 
-            foreach (var message in messages)
-            {
-                var eventId = (string?)message["eventId"];
-                var payload = (string?)message["event"];
-                var eventKey = $"processed-events:{eventId}";
+//             foreach (var message in messages)
+//             {
+//                 var eventId = (string?)message["eventId"];
+//                 var payload = (string?)message["event"];
+//                 var eventKey = $"processed-events:{eventId}";
               
-                if (payload == null || eventId == null ) continue;
+//                 if (payload == null || eventId == null ) continue;
 
-                if (await db.KeyExistsAsync(eventKey))
-                {
-                    await db.StreamAcknowledgeAsync("events:customer-confirmed-order", "workers", message.Id);
-                    continue;
-                }
+//                 if (await db.KeyExistsAsync(eventKey))
+//                 {
+//                     await db.StreamAcknowledgeAsync("events:customer-confirmed-order", "workers", message.Id);
+//                     continue;
+//                 }
 
-                using var scope = serviceProvider.CreateScope();
-                var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
-                var orderRepository = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
+//                 using var scope = serviceProvider.CreateScope();
+//                 var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
+//                 var orderRepository = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
 
-                var domainEvent = JsonSerializer.Deserialize<CustomerConfirmedOrderDomainEvent>(payload);
+//                 var domainEvent = JsonSerializer.Deserialize<CustomerConfirmedOrderDomainEvent>(payload);
 
-                if (domainEvent == null) continue;
+//                 if (domainEvent == null) continue;
 
-                string sessionKey = $"session:{domainEvent.Phone}";
-                var entries = await db.HashGetAllAsync(sessionKey);
+//                 string sessionKey = $"session:{domainEvent.Phone}";
+//                 var entries = await db.HashGetAllAsync(sessionKey);
 
-                var data = entries.ToDictionary(
-                    x => x.Name.ToString(),
-                    x => x.Value.ToString()
-                );
+//                 var data = entries.ToDictionary(
+//                     x => x.Name.ToString(),
+//                     x => x.Value.ToString()
+//                 );
 
-                var stringCompanyCategory = data["companyCategory"];
-                var stringProduct = data["product"];
-                var stringQuantity = data["quantity"];
+//                 var stringCompanyCategory = data["companyCategory"];
+//                 var stringProduct = data["product"];
+//                 var stringQuantity = data["quantity"];
 
-                if (stringCompanyCategory is null || stringProduct is null || stringQuantity is null) continue;
+//                 if (stringCompanyCategory is null || stringProduct is null || stringQuantity is null) continue;
 
-                Result<Phone> phone = Phone.Create(domainEvent.Phone);
-                Result<CompanyCategory> companyCategory = CompanyCategory.Create(stringCompanyCategory);
-                Result<Product> product = Product.Create(stringProduct);
-                Result<Quantity> quantity = Quantity.Create(stringQuantity);
+//                 Result<Phone> phone = Phone.Create(domainEvent.Phone);
+//                 Result<CompanyCategory> companyCategory = CompanyCategory.Create(stringCompanyCategory);
+//                 Result<Product> product = Product.Create(stringProduct);
+//                 Result<Quantity> quantity = Quantity.Create(stringQuantity);
 
-                Domain.Aggregates.OrderAggregate.Order order = Domain.Aggregates.OrderAggregate.Order.Create(phone.Value, product.Value, quantity.Value, companyCategory.Value);
-                orderRepository.Add(order);
+//                 Domain.Aggregates.OrderAggregate.Order order = Domain.Aggregates.OrderAggregate.Order.Create(phone.Value, product.Value, quantity.Value, companyCategory.Value);
+//                 orderRepository.Add(order);
 
-                // await db.KeyDeleteAsync(key);
-                await context.SaveChangesAsync(stoppingToken);
-                await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
-                await db.StreamAcknowledgeAsync("events:customer-confirmed-order", "workers", message.Id);
-            }
+//                 // await db.KeyDeleteAsync(key);
+//                 await context.SaveChangesAsync(stoppingToken);
+//                 await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
+//                 await db.StreamAcknowledgeAsync("events:customer-confirmed-order", "workers", message.Id);
+//             }
 
-            await Task.Delay(1000, stoppingToken);
-        }
-    }
-}
+//             await Task.Delay(1000, stoppingToken);
+//         }
+//     }
+// }

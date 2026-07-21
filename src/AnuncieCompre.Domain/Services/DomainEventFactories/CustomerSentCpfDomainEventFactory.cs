@@ -14,7 +14,7 @@ public class CustomerSentCpfDomainEventFactory : IDomainEventFactory
         
         if (data is CPF cpf)
         {
-            return new CustomerSentCpfDomainEvent(user.Phone.Value, cpf.Value);
+            return new CustomerSentCpfDomainEvent(user.Phone, cpf);
         }
 
         throw new DomainException("Tipo inválido do ValueObject");

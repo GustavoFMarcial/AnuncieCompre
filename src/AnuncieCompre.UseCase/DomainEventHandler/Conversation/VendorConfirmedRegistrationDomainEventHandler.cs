@@ -1,96 +1,96 @@
-using System.Text.Json;
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
-using AnuncieCompre.Domain.Aggregates.ValueObjects;
-using AnuncieCompre.Domain.Common;
-using AnuncieCompre.Infra.Data;
-using AnuncieCompre.UseCase.Interfaces;
-using StackExchange.Redis;
+// using System.Text.Json;
+// using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
+// using AnuncieCompre.Domain.Aggregates.UserAggregate;
+// using AnuncieCompre.Domain.Aggregates.ValueObjects;
+// using AnuncieCompre.Domain.Common;
+// using AnuncieCompre.Infra.Data;
+// using AnuncieCompre.UseCase.Interfaces;
+// using StackExchange.Redis;
 
-namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
+// namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
 
-public class VendorConfirmedRegistrationDomainEventHandler(IServiceProvider _serviceProvider, IDatabase _db) : BackgroundService
-{
-    private readonly IServiceProvider serviceProvider = _serviceProvider;
-    private readonly IDatabase db = _db;
+// public class VendorConfirmedRegistrationDomainEventHandler(IServiceProvider _serviceProvider, IDatabase _db) : BackgroundService
+// {
+//     private readonly IServiceProvider serviceProvider = _serviceProvider;
+//     private readonly IDatabase db = _db;
 
-    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            var messages = await db.StreamReadGroupAsync("events:vendor-confirmed-registration", "workers", "vendor-confirmed-registration", "0-0", count: 5);
+//     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+//     {
+//         while (!stoppingToken.IsCancellationRequested)
+//         {
+//             var messages = await db.StreamReadGroupAsync("events:vendor-confirmed-registration", "workers", "vendor-confirmed-registration", "0-0", count: 5);
 
-            if (messages.Length == 0)
-            {
-                messages = await db.StreamReadGroupAsync("events:vendor-confirmed-registration", "workers", "vendor-confirmed-registration", ">", count: 5);
-            }
+//             if (messages.Length == 0)
+//             {
+//                 messages = await db.StreamReadGroupAsync("events:vendor-confirmed-registration", "workers", "vendor-confirmed-registration", ">", count: 5);
+//             }
 
-            foreach (var message in messages)
-            {
-                var eventId = (string?)message["eventId"];
-                var payload = (string?)message["event"];
-                var eventKey = $"processed-events:{eventId}";
+//             foreach (var message in messages)
+//             {
+//                 var eventId = (string?)message["eventId"];
+//                 var payload = (string?)message["event"];
+//                 var eventKey = $"processed-events:{eventId}";
 
-                if (payload == null || eventId == null) continue;
+//                 if (payload == null || eventId == null) continue;
 
-                if (await db.KeyExistsAsync(eventKey))
-                {
-                    await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
-                    continue;
-                }
+//                 if (await db.KeyExistsAsync(eventKey))
+//                 {
+//                     await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
+//                     continue;
+//                 }
 
-                using var scope = serviceProvider.CreateScope();
-                var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
-                var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-                var vendorRepository = scope.ServiceProvider.GetRequiredService<IVendorRepository>();
+//                 using var scope = serviceProvider.CreateScope();
+//                 var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
+//                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+//                 var vendorRepository = scope.ServiceProvider.GetRequiredService<IVendorRepository>();
 
-                var domainEvent = JsonSerializer.Deserialize<VendorConfirmedRegistrationDomainEvent>(payload);
+//                 var domainEvent = JsonSerializer.Deserialize<VendorConfirmedRegistrationDomainEvent>(payload);
 
-                if (domainEvent == null) continue;
+//                 if (domainEvent == null) continue;
 
-                string sessionKey = $"session:{domainEvent.Phone}";
-                var entries = await db.HashGetAllAsync(sessionKey);
+//                 string sessionKey = $"session:{domainEvent.Phone}";
+//                 var entries = await db.HashGetAllAsync(sessionKey);
 
-                var data = entries.ToDictionary(
-                    x => x.Name.ToString(),
-                    x => x.Value.ToString()
-                );
+//                 var data = entries.ToDictionary(
+//                     x => x.Name.ToString(),
+//                     x => x.Value.ToString()
+//                 );
 
-                var stringName = data["name"];
-                var stringEmail = data["email"];
-                var stringType = data["type"];
-                var stringCompanyCategory = data["companyCategory"];
-                var stringCompanyName = data["companyName"];
-                var stringCnpj = data["cnpj"];
+//                 var stringName = data["name"];
+//                 var stringEmail = data["email"];
+//                 var stringType = data["type"];
+//                 var stringCompanyCategory = data["companyCategory"];
+//                 var stringCompanyName = data["companyName"];
+//                 var stringCnpj = data["cnpj"];
 
-                if (stringName is null || stringEmail is null || stringType is null || stringCompanyCategory is null || stringCompanyName is null || stringCnpj is null) continue;
+//                 if (stringName is null || stringEmail is null || stringType is null || stringCompanyCategory is null || stringCompanyName is null || stringCnpj is null) continue;
 
-                User? user = await userRepository.GetUserByPhoneAsync(domainEvent.Phone);
+//                 User? user = await userRepository.GetUserByPhoneAsync(domainEvent.Phone);
 
-                if (user is null) continue;
+//                 if (user is null) continue;
 
-                Result<Name> name = Name.Create(stringName);
-                Result<Email> email = Email.Create(stringEmail);
-                Result<UserType> type = UserType.Create(stringType);
-                Result<CompanyCategory> companyCategory = CompanyCategory.Create(stringCompanyCategory);
-                Result<Name> companyName = Name.Create(stringCompanyName);
-                Result<CNPJ> cnpj = CNPJ.Create(stringCnpj);
+//                 Result<Name> name = Name.Create(stringName);
+//                 Result<Email> email = Email.Create(stringEmail);
+//                 Result<UserType> type = UserType.Create(stringType);
+//                 Result<CompanyCategory> companyCategory = CompanyCategory.Create(stringCompanyCategory);
+//                 Result<Name> companyName = Name.Create(stringCompanyName);
+//                 Result<CNPJ> cnpj = CNPJ.Create(stringCnpj);
 
-                user
-                    .SetName(name.Value)
-                    .SetEmail(email.Value)
-                    .SetUserType(type.Value);
+//                 user
+//                     .SetName(name.Value)
+//                     .SetEmail(email.Value)
+//                     .SetUserType(type.Value);
 
-                Vendor vendor = Vendor.Create(user, companyCategory.Value, companyName.Value, cnpj.Value);
-                vendorRepository.Add(vendor);
+//                 Vendor vendor = Vendor.Create(user, companyCategory.Value, companyName.Value, cnpj.Value);
+//                 vendorRepository.Add(vendor);
 
-                // await db.KeyDeleteAsync(key);
-                await context.SaveChangesAsync(stoppingToken);
-                await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
-                await db.StreamAcknowledgeAsync("events:vendor-confirmed-registration", "workers", message.Id);
-            }
+//                 // await db.KeyDeleteAsync(key);
+//                 await context.SaveChangesAsync(stoppingToken);
+//                 await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
+//                 await db.StreamAcknowledgeAsync("events:vendor-confirmed-registration", "workers", message.Id);
+//             }
 
-            await Task.Delay(1000, stoppingToken);
-        }
-    }
-}
+//             await Task.Delay(1000, stoppingToken);
+//         }
+//     }
+// }

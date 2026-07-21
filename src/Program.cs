@@ -1,3 +1,4 @@
+using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Infra.Data;
 using AnuncieCompre.Infra.MessageSender;
 using AnuncieCompre.Infra.Providers;
@@ -7,8 +8,7 @@ using AnuncieCompre.Infra.Repositories.CustomerRepo;
 using AnuncieCompre.Infra.Repositories.OrderRepo;
 using AnuncieCompre.Infra.Repositories.UserRepo;
 using AnuncieCompre.Infra.Repositories.VendorRepo;
-using AnuncieCompre.Infra.Workers;
-using AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
+using AnuncieCompre.UseCase.DomainEventHandler.Conversation;
 using AnuncieCompre.UseCase.DomainEventHandler.OrderDomainEventHandler;
 using AnuncieCompre.UseCase.Interfaces;
 using AnuncieCompre.UseCase.ProcessMessageUseCase;
@@ -32,6 +32,21 @@ builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCase>();
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
+// builder.Services.AddHostedService<CustomerConfirmedRegistrationDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<CustomerSentCompanyCategoryDomainEvent>, CustomerSentCompanyCategoryDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<CustomerSentCpfDomainEvent>, CustomerSentCpfDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<CustomerSentProductDomainEvent>, CustomerSentProductDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<CustomerSentQuantityDomainEvent>, CustomerSentQuantityDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<UserFinishedConversationDomainEvent>, UserFinishedConversationDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<UserSentEmailDomainEvent>, UserSentEmailDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<UserSentNameDomainEvent>, UserSentNameDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<UserSentTypeDomainEvent>, UserSentTypeDomainEventHandler>();
+// builder.Services.AddHostedService<VendorConfirmedRegistrationDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<VendorSentCnpjDomainEvent>, VendorSentCnpjDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<VendorSentCompanyCategoryDomainEvent>, VendorSentCompanyCategoryDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<VendorSentCompanyNameDomainEvent>, VendorSentCompanyNameDomainEventHandler>();
+// builder.Services.AddHostedService<CustomerConfirmedOrderDomainEventHandler>();
+// builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 
 //Singleton
 builder.Services.AddSingleton<ConversationFlowProvider, ConversationFlowProvider>();
@@ -52,25 +67,6 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 
     return ConnectionMultiplexer.Connect(options);
 });
-
-//Hosted
-builder.Services.AddHostedService<OutboxWorker>();
-builder.Services.AddHostedService<CustomerConfirmedRegistrationDomainEventHandler>();
-builder.Services.AddHostedService<CustomerSentCompanyCategoryDomainEventHandler>();
-builder.Services.AddHostedService<CustomerSentCpfDomainEventHandler>();
-builder.Services.AddHostedService<CustomerSentProductDomainEventHandler>();
-builder.Services.AddHostedService<CustomerSentQuantityDomainEventHandler>();
-builder.Services.AddHostedService<UserFinishedConversationDomainEventHandler>();
-builder.Services.AddHostedService<UserSentEmailDomainEventHandler>();
-builder.Services.AddHostedService<UserSentEmailDomainEventHandler>();
-builder.Services.AddHostedService<UserSentNameDomainEventHandler>();
-builder.Services.AddHostedService<UserSentTypeDomainEventHandler>();
-builder.Services.AddHostedService<VendorConfirmedRegistrationDomainEventHandler>();
-builder.Services.AddHostedService<VendorSentCnpjDomainEventHandler>();
-builder.Services.AddHostedService<VendorSentCompanyCategoryDomainEventHandler>();
-builder.Services.AddHostedService<VendorSentCompanyNameDomainEventHandler>();
-builder.Services.AddHostedService<CustomerConfirmedOrderDomainEventHandler>();
-builder.Services.AddHostedService<OrderCreatedDomainEventHandler>();
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string not found.");
 
