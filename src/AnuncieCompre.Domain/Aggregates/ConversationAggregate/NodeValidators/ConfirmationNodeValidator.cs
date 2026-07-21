@@ -11,11 +11,11 @@ public class ConfirmationNodeValidator(List<string> options) : INodeValidator
     {
         if (message == Options[0])
         {
-            return NodeResult.Success(conversationNode.Transitions[message].Message, conversationNode.Transitions[message].Id);
+            return NodeResult.Success(conversationNode.Transitions[message].Message, conversationNode.Transitions[message].Id, false);
         }
         else if (message == Options[1])
         {
-            return NodeResult.Success(conversationNode.Transitions[message].Message, conversationNode.Transitions[message].Id, false);
+            return NodeResult.Success(conversationNode.Transitions[message].Message, conversationNode.Transitions[message].Id);   
         }
 
         return NodeResult.Failure("Opção inválida, escolha novamente", conversationNode.Id);

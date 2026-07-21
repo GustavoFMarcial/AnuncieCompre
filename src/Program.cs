@@ -45,28 +45,8 @@ builder.Services.AddScoped<IDomainEventHandler<UserSentTypeDomainEvent>, UserSen
 builder.Services.AddScoped<IDomainEventHandler<VendorSentCnpjDomainEvent>, VendorSentCnpjDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<VendorSentCompanyCategoryDomainEvent>, VendorSentCompanyCategoryDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<VendorSentCompanyNameDomainEvent>, VendorSentCompanyNameDomainEventHandler>();
-// builder.Services.AddHostedService<CustomerConfirmedOrderDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<CustomerDoesNotConfirmedOrderDomainEvent>, CustomerDoesNotConfirmedOrderDomainEventHandler>();
 // builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
-
-//Singleton
-builder.Services.AddSingleton<ConversationFlowProvider, ConversationFlowProvider>();
-builder.Services.AddSingleton(sp => sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-{
-    var config = builder.Configuration["Redis:Connection"] ?? throw new Exception("Redis connection missing");
-    var options = ConfigurationOptions.Parse(config);
-    options.AbortOnConnectFail = false;
-    options.ConnectRetry = 5;
-    options.ConnectTimeout = 5000;
-
-    if (builder.Environment.IsDevelopment())
-    {
-        options.AsyncTimeout = 300000;
-        options.SyncTimeout = 300000;
-    }
-
-    return ConnectionMultiplexer.Connect(options);
-});
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string not found.");
 
@@ -79,39 +59,6 @@ TwilioClient.Init(
 );
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    IDatabase db = scope.ServiceProvider.GetRequiredService<IDatabase>();
-
-    string[] eventTypes =
-    [
-        "vendor-sent-comapany-name",
-        "vendor-sent-company-category",
-        "vendor-sent-cnpj",
-        "vendor-confirmed-registration",
-        "user-sent-type",
-        "user-sent-name",
-        "user-sent-email",
-        "user-finished-conversation",
-        "customer-sent-quantity",
-        "customer-sent-product",
-        "customer-sent-cpf",
-        "customer-sent-company-category",
-        "customer-confirmed-registration",
-        "customer-confirmed-order",
-        "order-created",
-    ];
-
-    foreach (string e in eventTypes)
-    {
-        try
-        {
-            await db.StreamCreateConsumerGroupAsync($"events:{e}", "workers", "$", createStream: true);
-        }
-        catch (RedisServerException ex) when (ex.Message.StartsWith("BUSYGROUP")) { }
-    }
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

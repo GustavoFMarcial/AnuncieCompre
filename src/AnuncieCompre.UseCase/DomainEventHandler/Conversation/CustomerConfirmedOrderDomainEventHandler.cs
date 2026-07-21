@@ -1,83 +1,21 @@
-// using System.Text.Json;
-// using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-// using AnuncieCompre.Domain.Aggregates.UserAggregate;
-// using AnuncieCompre.Domain.Aggregates.ValueObjects;
-// using AnuncieCompre.Domain.Common;
-// using AnuncieCompre.Infra.Data;
-// using AnuncieCompre.Infra.Repositories.CustomerRepo;
-// using AnuncieCompre.Infra.Repositories.OrderRepo;
-// using AnuncieCompre.UseCase.Interfaces;
-// using StackExchange.Redis;
+using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
+using AnuncieCompre.Domain.Aggregates.OrderAggregate;
+using AnuncieCompre.UseCase.Interfaces;
 
-// namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
+namespace AnuncieCompre.UseCase.DomainEventHandler.Conversation;
 
-// public class CustomerConfirmedOrderDomainEventHandler(IServiceProvider _serviceProvider, IDatabase _db) : BackgroundService
-// {
-//     private readonly IServiceProvider serviceProvider = _serviceProvider;
-//     private readonly IDatabase db = _db;
+public class CustomerDoesNotConfirmedOrderDomainEventHandler(IOrderRepository _orderRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<CustomerDoesNotConfirmedOrderDomainEvent>
+{
+    private readonly IOrderRepository orderRepository = _orderRepository;
+    private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-//     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
-//     {
-//         while (!stoppingToken.IsCancellationRequested)
-//         {
-//             var messages = await db.StreamReadGroupAsync("events:customer-confirmed-order", "workers", "customer-confirmed-order", "0-0", count: 5);
+    public async Task HandleAsync(CustomerDoesNotConfirmedOrderDomainEvent domainEvent)
+    {
+        Order? order = await orderRepository.GetLastOrderByPhoneAsync(domainEvent.Phone.Value);
 
-//             if (messages.Length == 0)
-//             {
-//                 messages = await db.StreamReadGroupAsync("events:customer-confirmed-order", "workers", "customer-confirmed-order", ">", count: 5);
-//             }
+        if (order is null) return;
 
-//             foreach (var message in messages)
-//             {
-//                 var eventId = (string?)message["eventId"];
-//                 var payload = (string?)message["event"];
-//                 var eventKey = $"processed-events:{eventId}";
-              
-//                 if (payload == null || eventId == null ) continue;
-
-//                 if (await db.KeyExistsAsync(eventKey))
-//                 {
-//                     await db.StreamAcknowledgeAsync("events:customer-confirmed-order", "workers", message.Id);
-//                     continue;
-//                 }
-
-//                 using var scope = serviceProvider.CreateScope();
-//                 var context = scope.ServiceProvider.GetRequiredService<AnuncieCompreContext>();
-//                 var orderRepository = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
-
-//                 var domainEvent = JsonSerializer.Deserialize<CustomerConfirmedOrderDomainEvent>(payload);
-
-//                 if (domainEvent == null) continue;
-
-//                 string sessionKey = $"session:{domainEvent.Phone}";
-//                 var entries = await db.HashGetAllAsync(sessionKey);
-
-//                 var data = entries.ToDictionary(
-//                     x => x.Name.ToString(),
-//                     x => x.Value.ToString()
-//                 );
-
-//                 var stringCompanyCategory = data["companyCategory"];
-//                 var stringProduct = data["product"];
-//                 var stringQuantity = data["quantity"];
-
-//                 if (stringCompanyCategory is null || stringProduct is null || stringQuantity is null) continue;
-
-//                 Result<Phone> phone = Phone.Create(domainEvent.Phone);
-//                 Result<CompanyCategory> companyCategory = CompanyCategory.Create(stringCompanyCategory);
-//                 Result<Product> product = Product.Create(stringProduct);
-//                 Result<Quantity> quantity = Quantity.Create(stringQuantity);
-
-//                 Domain.Aggregates.OrderAggregate.Order order = Domain.Aggregates.OrderAggregate.Order.Create(phone.Value, product.Value, quantity.Value, companyCategory.Value);
-//                 orderRepository.Add(order);
-
-//                 // await db.KeyDeleteAsync(key);
-//                 await context.SaveChangesAsync(stoppingToken);
-//                 await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
-//                 await db.StreamAcknowledgeAsync("events:customer-confirmed-order", "workers", message.Id);
-//             }
-
-//             await Task.Delay(1000, stoppingToken);
-//         }
-//     }
-// }
+        orderRepository.Delete(order);
+        await unitOfWork.SaveChangesAsync();
+    }
+}

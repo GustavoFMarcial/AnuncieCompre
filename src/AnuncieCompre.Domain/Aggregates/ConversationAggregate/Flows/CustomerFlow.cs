@@ -33,7 +33,7 @@ public class CustomerFlow
         IDomainEventFactory customerSentCompanyCategoryDomainEventFactory = new CustomerSentCompanyCategoryDomainEventFactory();
         IDomainEventFactory customerSentProductDomainEventFactory = new CustomerSentProductDomainEventFactory();
         IDomainEventFactory customerSentQuantityDomainEventFactory = new CustomerSentQuantityDomainEventFactory();
-        IDomainEventFactory customerConfirmedOrderDomainEventFactory = new CustomerConfirmedOrderDomainEventFactory();
+        IDomainEventFactory customerDoesNotConfirmedOrderDomainEventFactory = new CustomerDoesNotConfirmedOrderDomainEventFactory();
 
         var finish = new FinalNode
         {
@@ -68,7 +68,7 @@ public class CustomerFlow
                 2 - Não, passar informações novamente.
                 """,
             NodeValidator = askConfirmationValidator,
-            DomainEventFactory = [customerConfirmedOrderDomainEventFactory]
+            DomainEventFactory = [customerDoesNotConfirmedOrderDomainEventFactory]
         };
 
         var askQuantity = new ValidationNode
