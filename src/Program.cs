@@ -32,7 +32,7 @@ builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCase>();
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
-// builder.Services.AddHostedService<CustomerConfirmedRegistrationDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<CustomerDoesNotConfirmedRegistrationDomainEvent>, CustomerDoesNotConfirmedRegistrationDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<CustomerSentCompanyCategoryDomainEvent>, CustomerSentCompanyCategoryDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<CustomerSentCpfDomainEvent>, CustomerSentCpfDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<CustomerSentProductDomainEvent>, CustomerSentProductDomainEventHandler>();

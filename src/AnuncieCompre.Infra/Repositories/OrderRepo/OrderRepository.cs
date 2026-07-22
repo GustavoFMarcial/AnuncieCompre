@@ -11,7 +11,16 @@ public class OrderRepository(AnuncieCompreContext _context) : BaseRepository<Ord
     {
         return await context.Set<Order>()
             .Where(o => o.UserPhone.Value == userPhone)
-            .OrderByDescending(o => o.Id)
+            .OrderByDescending(o => o.CreatedAt)
             .FirstOrDefaultAsync();
     }
+
+    public async Task ExecuteDeleteAsync(string userPhone)
+    {
+        await context.Set<Order>()
+            .Where(o => o.UserPhone.Value == userPhone)
+            .OrderByDescending(o => o.CreatedAt)
+            .ExecuteDeleteAsync();
+    }
+
 }

@@ -29,7 +29,7 @@ public class CustomerFlow
 
         IDomainEventFactory userFinishedConversationDomainEventFactory = new UserFinishedConversationDomainEventFactory();
         IDomainEventFactory customerSentCpfDomainEventFactory = new CustomerSentCpfDomainEventFactory();
-        IDomainEventFactory customerConfirmedRegistrationDomainEventFactory = new CustomerConfirmedRegistrationDomainEventFactory();
+        IDomainEventFactory customerDoesNotConfirmedRegistrationDomainEventFactory = new CustomerDoesNotConfirmedRegistrationDomainEventFactory();
         IDomainEventFactory customerSentCompanyCategoryDomainEventFactory = new CustomerSentCompanyCategoryDomainEventFactory();
         IDomainEventFactory customerSentProductDomainEventFactory = new CustomerSentProductDomainEventFactory();
         IDomainEventFactory customerSentQuantityDomainEventFactory = new CustomerSentQuantityDomainEventFactory();
@@ -139,7 +139,7 @@ public class CustomerFlow
                 2 - Não, passar dados novamente.
                 """,
             NodeValidator = askConfirmationValidator,
-            DomainEventFactory = [customerConfirmedRegistrationDomainEventFactory]
+            DomainEventFactory = [customerDoesNotConfirmedRegistrationDomainEventFactory]
         };
 
         var askCPF = new ValidationNode
