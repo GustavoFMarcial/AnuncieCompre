@@ -1,7 +1,6 @@
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Infra.Data;
 using AnuncieCompre.Infra.MessageSender;
-using AnuncieCompre.Infra.Providers;
 using AnuncieCompre.Infra.Repositories;
 using AnuncieCompre.Infra.Repositories.ConversationRepo;
 using AnuncieCompre.Infra.Repositories.CustomerRepo;
@@ -13,7 +12,6 @@ using AnuncieCompre.UseCase.DomainEventHandler.OrderDomainEventHandler;
 using AnuncieCompre.UseCase.Interfaces;
 using AnuncieCompre.UseCase.ProcessMessageUseCase;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 using Twilio;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,7 +39,7 @@ builder.Services.AddScoped<IDomainEventHandler<UserFinishedConversationDomainEve
 builder.Services.AddScoped<IDomainEventHandler<UserSentEmailDomainEvent>, UserSentEmailDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<UserSentNameDomainEvent>, UserSentNameDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<UserSentTypeDomainEvent>, UserSentTypeDomainEventHandler>();
-// builder.Services.AddHostedService<VendorConfirmedRegistrationDomainEventHandler>();
+builder.Services.AddScoped<IDomainEventHandler<VendorDoesNotConfirmedRegistrationDomainEvent>, VendorDoesNotConfirmedRegistrationDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<VendorSentCnpjDomainEvent>, VendorSentCnpjDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<VendorSentCompanyCategoryDomainEvent>, VendorSentCompanyCategoryDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<VendorSentCompanyNameDomainEvent>, VendorSentCompanyNameDomainEventHandler>();
@@ -51,7 +49,6 @@ builder.Services.AddScoped<IDomainEventHandler<CustomerDoesNotConfirmedOrderDoma
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string not found.");
 
 builder.Services.AddDbContext<AnuncieCompreContext>(options => options.UseNpgsql(connectionString));
-// builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 TwilioClient.Init(
     builder.Configuration["Twilio:AccountSid"],

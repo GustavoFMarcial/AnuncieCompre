@@ -8,4 +8,5 @@ public interface IVendorRepository : IBaseRepository<Vendor>
 {
     public Task<Vendor?> GetVendorByPhoneAsync(string userPhone);
     public Task<List<Vendor>> GetVendorsByCategoryAsync(CompanyCategory category);
+    public Task ExecuteDeleteAsync(string userPhone);
 }
