@@ -9,6 +9,8 @@ namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 public class Conversation : BaseEntity
 {
     public Phone UserPhone { get; private set; } = default!;
+    public string AwaitingResponseNodeId { get; private set; } = default!;
+    public TimeOnly TimeLastMessage { get; private set; }
 
     private Conversation() { }
 
@@ -50,6 +52,7 @@ public class Conversation : BaseEntity
             }
         }
 
+        TimeLastMessage = TimeOnly.FromDateTime(DateTime.Now);
         return ([result.Message], result.NextStepId);
     }
 
