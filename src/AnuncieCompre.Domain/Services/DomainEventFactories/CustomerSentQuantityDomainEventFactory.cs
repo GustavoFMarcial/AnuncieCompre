@@ -14,7 +14,7 @@ public class CustomerSentQuantityDomainEventFactory : IDomainEventFactory
         
         if (data is Quantity quantity)
         {
-            return new CustomerSentQuantityDomainEvent(user.Phone.Value, quantity.Value);
+            return new CustomerSentQuantityDomainEvent(user.Phone, quantity);
         }
 
         throw new DomainException("Tipo inválido do ValueObject");

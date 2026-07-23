@@ -14,7 +14,7 @@ public class CustomerSentProductDomainEventFactory : IDomainEventFactory
         
         if (data is Product product)
         {
-            return new CustomerSentProductDomainEvent(user.Phone.Value, product.Value);
+            return new CustomerSentProductDomainEvent(user.Phone, product);
         }
 
         throw new DomainException("Tipo inválido do ValueObject");

@@ -27,12 +27,16 @@ public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IDat
         HashEntry[] session = await db.HashGetAllAsync(key);
         HashEntry[] entries;
 
-        if (conversation is null || user is null)
+        if (user is null)
+        {
+            user = User.Create(Phone.Create(incomingMessage.SenderPhone).Value);
+            userRepository.Add(user);
+        }
+
+        if (conversation is null)
         {
             conversation = Conversation.Create(Phone.Create(incomingMessage.SenderPhone).Value);
-            user = User.Create(Phone.Create(incomingMessage.SenderPhone).Value);
             conversationRepository.Add(conversation);
-            userRepository.Add(user);
         }
 
         if (session.Length == 0)

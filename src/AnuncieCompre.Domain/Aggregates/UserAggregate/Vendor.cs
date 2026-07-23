@@ -14,18 +14,16 @@ public class Vendor : BaseEntity
 
     private Vendor(){}
 
-    private Vendor(User user, ValueObjects.CompanyCategory category, Name companyName, CNPJ cnpj)
+    private Vendor(User user, ValueObjects.CompanyCategory category)
     {
         UserId = user.Id;
         User = user;
         Category = category;
-        Name = companyName;
-        CNPJ = cnpj;
     }
 
-    public static Vendor Create(User user, ValueObjects.CompanyCategory category, Name companyName, CNPJ cnpj)
+    public static Vendor Create(User user, ValueObjects.CompanyCategory category)
     {
-        return new Vendor(user, category, companyName, cnpj);
+        return new Vendor(user, category);
     }
 
     public Vendor SetName(Name name)
