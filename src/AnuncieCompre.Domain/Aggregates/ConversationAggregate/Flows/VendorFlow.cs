@@ -26,7 +26,7 @@ public class VendorFlow
         IDomainEventFactory vendorSentCompanyCategoryDomainEventFactory = new VendorSentCompanyCategoryDomainEventFactory();
         IDomainEventFactory vendorSentCompanyNameDomainEventFactory = new VendorSentCompanyNameDomainEventFactory();
         IDomainEventFactory vendorSentCnpjDomainEventFactory = new VendorSentCnpjDomainEventFactory();
-        IDomainEventFactory vendorConfirmedRegistrationDomainEventFactory = new VendorConfirmedRegistrationDomainEventFactory();
+        IDomainEventFactory vendorDoesNotConfirmedRegistrationDomainEventFactory = new VendorDoesNotConfirmedRegistrationDomainEventFactory();
         IDomainEventFactory userFinishedConversationDomainEventFactory = new UserFinishedConversationDomainEventFactory();
 
         var finish = new FinalNode
@@ -117,7 +117,7 @@ public class VendorFlow
                 2 - Não, passar dados novamente.
                 """,
             NodeValidator = askConfirmationValidator,
-            DomainEventFactory = [vendorConfirmedRegistrationDomainEventFactory],
+            DomainEventFactory = [vendorDoesNotConfirmedRegistrationDomainEventFactory],
         };
 
         conversationflow["initial_ask_user_type"].Transitions["2"] = askCNPJ;

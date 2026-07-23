@@ -1,55 +1,26 @@
 using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
+using AnuncieCompre.Domain.Aggregates.UserAggregate;
+using AnuncieCompre.UseCase.Interfaces;
 using StackExchange.Redis;
 
-namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
+namespace AnuncieCompre.UseCase.DomainEventHandler.Conversation;
 
-public class CustomerSentCpfDomainEventHandler(IDatabase _db) : BackgroundService
+public class CustomerSentCpfDomainEventHandler(IUserRepository _userRepository, ICustomerRepository _customerRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<CustomerSentCpfDomainEvent>
 {
-    private readonly IDatabase db = _db;
+    private readonly IUserRepository userRepository = _userRepository;
+    private readonly ICustomerRepository customerRepository = _customerRepository;
+    private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+    public async Task HandleAsync(CustomerSentCpfDomainEvent domainEvent)
     {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            var messages = await db.StreamReadGroupAsync("events:customer-sent-cpf", "workers", "customer-sent-cpf", "0-0", count: 5);
+        User? user = await userRepository.GetUserByPhoneAsync(domainEvent.Phone.Value);
 
-            if (messages.Length == 0)
-            {
-                messages = await db.StreamReadGroupAsync("events:customer-sent-cpf", "workers", "customer-sent-cpf", ">", count: 5);
-            }
+        if (user is null) return;
 
-            foreach (var message in messages)
-            {
-                var eventId = (string?)message["eventId"];
-                var payload = (string?)message["event"];
-                var eventKey = $"processed-events:{eventId}";
+        Customer customer = Customer.Create(user, domainEvent.Cpf);
 
-                if (payload == null || eventId == null) continue;
-
-                if (await db.KeyExistsAsync(eventKey))
-                {
-                    await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
-                    continue;
-                }
-
-                var domainEvent = JsonSerializer.Deserialize<CustomerSentCpfDomainEvent>(payload);
-
-                if (domainEvent == null) continue;
-
-                string sessionKey = $"session:{domainEvent.Phone}";
-
-                var hash = new HashEntry[]
-                {
-                    new("cpf", domainEvent.cpf),
-                };
-
-                await db.HashSetAsync(sessionKey, hash);
-                await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
-                await db.StreamAcknowledgeAsync("events:customer-sent-cpf", "workers", message.Id);
-            }
-            
-            await Task.Delay(1000, stoppingToken);
-        }
+        customerRepository.Add(customer);
+        await unitOfWork.SaveChangesAsync();
     }
 }

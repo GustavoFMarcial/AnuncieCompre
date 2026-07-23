@@ -14,20 +14,18 @@ public class Order : BaseEntity
 
     private Order(){}
 
-    private Order(Phone userPhone, Product product, Quantity quantity, ValueObjects.CompanyCategory category)
+    private Order(Phone userPhone, Product product)
     {
         UserPhone = userPhone;
         Product = product;
-        Quantity = quantity;
-        Category = category;
     }
 
-    public static Order Create(Phone userPhone, Product product, Quantity quantity, ValueObjects.CompanyCategory category)
+    public static Order Create(Phone userPhone, Product product)
     {
-        var order = new Order(userPhone, product, quantity, category);
+        var order = new Order(userPhone, product);
 
-        var domainEvent = new OrderCreatedDomainEvent(userPhone.Value, product.Value, quantity.Value, category.Value.ToString());
-        order.AddDomainEvent(domainEvent);
+        // var domainEvent = new OrderCreatedDomainEvent(userPhone.Value, product.Value, quantity.Value, category.Value.ToString());
+        // order.AddDomainEvent(domainEvent);
 
         return order;
     }

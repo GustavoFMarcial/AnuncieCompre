@@ -17,4 +17,10 @@ public class VendorRepository(AnuncieCompreContext _context) : BaseRepository<Ve
     {
         return await context.Set<Vendor>().Where(v => v.Category!.Value == category).ToListAsync();
     }
+
+    public async Task ExecuteDeleteAsync(string userPhone)
+    {
+        await context.Set<Vendor>().Where(v => v.User.Phone.Value == userPhone).ExecuteDeleteAsync();
+    }
+
 }

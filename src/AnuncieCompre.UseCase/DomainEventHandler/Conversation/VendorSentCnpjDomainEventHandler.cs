@@ -1,56 +1,24 @@
 using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
+using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.UseCase.Interfaces;
 using StackExchange.Redis;
 
-namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
+namespace AnuncieCompre.UseCase.DomainEventHandler.Conversation;
 
-public class VendorSentCnpjDomainEventHandler(IDatabase _db) : BackgroundService
+public class VendorSentCnpjDomainEventHandler(IVendorRepository _vendorRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<VendorSentCnpjDomainEvent>
 {
-    private readonly IDatabase db = _db;
+    private readonly IVendorRepository vendorRepository = _vendorRepository;
+    private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+    public async Task HandleAsync(VendorSentCnpjDomainEvent domainEvent)
     {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            var messages = await db.StreamReadGroupAsync("events:vendor-sent-cnpj", "workers", "vendor-sent-cnpj", "0-0", count: 5);
+        Vendor? vendor = await vendorRepository.GetVendorByPhoneAsync(domainEvent.Phone.Value);
 
-            if (messages.Length == 0)
-            {
-                messages = await db.StreamReadGroupAsync("events:vendor-sent-cnpj", "workers", "vendor-sent-cnpj", ">", count: 5);
-            }
+        if (vendor is null) return;
 
-            foreach (var message in messages)
-            {
-                var eventId = (string?)message["eventId"];
-                var payload = (string?)message["event"];
-                var eventKey = $"processed-events:{eventId}";
-
-                if (payload == null || eventId == null) continue;
-
-                if (await db.KeyExistsAsync(eventKey))
-                {
-                    await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
-                    continue;
-                }
-
-                var domainEvent = JsonSerializer.Deserialize<VendorSentCnpjDomainEvent>(payload);
-
-                if (domainEvent == null) continue;
-
-                string sessionKey = $"session:{domainEvent.Phone}";
-
-                var hash = new HashEntry[]
-                {
-                    new("cnpj", domainEvent.Cnpj),
-                };
-
-                await db.HashSetAsync(sessionKey, hash);
-                await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
-                await db.StreamAcknowledgeAsync("events:vendor-sent-cnpj", "workers", message.Id);
-            }
-                
-            await Task.Delay(1000, stoppingToken);
-        }
+        vendor.SetCNPJ(domainEvent.Cnpj);
+        await unitOfWork.SaveChangesAsync();
     }
 }
+

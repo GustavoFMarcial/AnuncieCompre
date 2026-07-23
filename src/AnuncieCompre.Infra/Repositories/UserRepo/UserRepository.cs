@@ -14,4 +14,9 @@ public class UserRepository(AnuncieCompreContext _context) : BaseRepository<User
 
         return user;
     }
+
+    public async Task ExecuteDeleteAsync(string userPhone)
+    {
+        await context.Set<User>().Where(u => u.Phone.Value == userPhone).ExecuteDeleteAsync();
+    }
 }

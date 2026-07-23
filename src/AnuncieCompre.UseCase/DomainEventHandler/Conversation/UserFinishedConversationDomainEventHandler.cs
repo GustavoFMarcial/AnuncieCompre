@@ -1,52 +1,20 @@
-
-
-using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using StackExchange.Redis;
+using AnuncieCompre.UseCase.Interfaces;
 
-namespace AnuncieCompre.UseCase.DomainEventHandler.ConversationDomainEventHandler;
+namespace AnuncieCompre.UseCase.DomainEventHandler.Conversation;
 
-public class UserFinishedConversationDomainEventHandler(IDatabase _db) : BackgroundService
+public class UserFinishedConversationDomainEventHandler(IConversationRepository _conversationRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<UserFinishedConversationDomainEvent>
 {
-    private readonly IDatabase db = _db;
+    private readonly IConversationRepository conversationRepository = _conversationRepository;
+    private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+    public async Task HandleAsync(UserFinishedConversationDomainEvent domainEvent)
     {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            var messages = await db.StreamReadGroupAsync("events:user-finished-conversation", "workers", "user-finished-conversation", "0-0", count: 5);
+        Domain.Aggregates.ConversationAggregate.Conversation? conversation = await conversationRepository.GetConversationByPhoneAsync(domainEvent.Phone.Value);
 
-            if (messages.Length == 0)
-            {
-                messages = await db.StreamReadGroupAsync("events:user-finished-conversation", "workers", "user-finished-conversation", ">", count: 5);
-            }
+        if (conversation is null) return;
 
-            foreach (var message in messages)
-            {
-                var eventId = (string?)message["eventId"];
-                var payload = (string?)message["event"];
-                var eventKey = $"processed-events:{eventId}";
-
-                if (payload == null || eventId == null) continue;
-
-                if (await db.KeyExistsAsync(eventKey))
-                {
-                    await db.StreamAcknowledgeAsync("events:customer-confirmed-registration", "workers", message.Id);
-                    continue;
-                }
-
-                var domainEvent = JsonSerializer.Deserialize<UserFinishedConversationDomainEvent>(payload);
-
-                if (domainEvent == null) continue;
-
-                string sessionKey = $"session:{domainEvent.Phone}";
-
-                await db.KeyDeleteAsync(sessionKey);
-                await db.StringSetAsync(eventKey, "1", TimeSpan.FromDays(7));
-                await db.StreamAcknowledgeAsync("events:user-finished-conversation", "workers", message.Id);
-            }
-                
-            await Task.Delay(1000, stoppingToken);
-        }
+        conversationRepository.Delete(conversation);
+        await unitOfWork.SaveChangesAsync();
     }
 }

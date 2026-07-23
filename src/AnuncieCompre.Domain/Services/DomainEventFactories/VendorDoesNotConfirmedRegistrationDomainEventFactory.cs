@@ -5,10 +5,10 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Services.DomainEventFactories;
 
-public class VendorConfirmedRegistrationDomainEventFactory : IDomainEventFactory
+public class VendorDoesNotConfirmedRegistrationDomainEventFactory : IDomainEventFactory
 {
     public IDomainEvent Handle(User user, ValueObject tempData)
     {
-        return new VendorConfirmedRegistrationDomainEvent(user.Phone.Value);
+        return new VendorDoesNotConfirmedRegistrationDomainEvent(user.Phone);
     }
 }
