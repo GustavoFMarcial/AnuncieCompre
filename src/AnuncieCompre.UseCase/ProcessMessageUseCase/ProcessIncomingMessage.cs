@@ -20,12 +20,7 @@ public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IDat
 
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
-        Conversation? conversation = await conversationRepository.GetConversationByPhoneAsync(incomingMessage.SenderPhone);
         User? user = await userRepository.GetUserByPhoneAsync(incomingMessage.SenderPhone);
-        string key = $"session:{incomingMessage.SenderPhone}";
-        bool isSessionJustCreated = false;
-        HashEntry[] session = await db.HashGetAllAsync(key);
-        HashEntry[] entries;
 
         if (user is null)
         {
@@ -33,43 +28,19 @@ public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IDat
             userRepository.Add(user);
         }
 
+        Conversation? conversation = await conversationRepository.GetOpenConversationByUserIdAsync(user.Id);
+
         if (conversation is null)
         {
             conversation = Conversation.Create(Phone.Create(incomingMessage.SenderPhone).Value);
             conversationRepository.Add(conversation);
         }
 
-        if (session.Length == 0)
-        {
-            isSessionJustCreated = true;
+        IConversationNode awaitingRespondeNode = conversationFlowProvider.GetById(conversation.AwaitingResponseNodeId);
 
-            entries =
-            [
-                new("phone", incomingMessage.SenderPhone),
-                new("awaitingResponseNodeId", conversation.GetNodeIdByUserType(user.Type.Value)),
-            ];
+        ReadOnlyCollection<string> response = conversation.HandleMessage(awaitingRespondeNode, incomingMessage.Content, user);
 
-            await db.HashSetAsync(key, entries);
-            session = await db.HashGetAllAsync(key);
-        }
-
-        var data = session.ToDictionary(
-            x => x.Name.ToString(),
-            x => x.Value.ToString()
-        );
-
-        IConversationNode awaitingRespondeNode = conversationFlowProvider.GetById(data["awaitingResponseNodeId"]);
-
-        (ReadOnlyCollection<string> response, string nextStepId) = conversation.HandleMessage(awaitingRespondeNode, incomingMessage.Content, user, isSessionJustCreated);
-
-        var hash = new HashEntry[]
-        {
-            new ("awaitingResponseNodeId", nextStepId),
-        };
         await unitOfWork.SaveChangesAsync();
-        await db.HashSetAsync(key, hash);
-        await db.KeyExpireAsync(key, TimeSpan.FromMinutes(30));
-
         return response;
     }
 }

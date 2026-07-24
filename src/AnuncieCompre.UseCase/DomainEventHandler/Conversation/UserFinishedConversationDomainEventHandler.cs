@@ -10,7 +10,7 @@ public class UserFinishedConversationDomainEventHandler(IConversationRepository 
 
     public async Task HandleAsync(UserFinishedConversationDomainEvent domainEvent)
     {
-        Domain.Aggregates.ConversationAggregate.Conversation? conversation = await conversationRepository.GetConversationByPhoneAsync(domainEvent.Phone.Value);
+        Domain.Aggregates.ConversationAggregate.Conversation? conversation = await conversationRepository.GetOpenConversationByUserIdAsync(domainEvent.User.Id);
 
         if (conversation is null) return;
 
