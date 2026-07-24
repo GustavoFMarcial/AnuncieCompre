@@ -9,6 +9,6 @@ public class UserFinishedConversationDomainEventFactory : IDomainEventFactory
 {
     public IDomainEvent Handle(User user, ValueObject tempData)
     {
-        return new UserFinishedConversationDomainEvent(user.Phone);
+        return new UserFinishedConversationDomainEvent(user);
     }
 }

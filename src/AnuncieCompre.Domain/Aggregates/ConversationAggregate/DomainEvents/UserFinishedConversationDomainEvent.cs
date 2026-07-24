@@ -4,8 +4,8 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 
-public class UserFinishedConversationDomainEvent(Phone phone) : IDomainEvent
+public class UserFinishedConversationDomainEvent(User user) : IDomainEvent
 {
-    public Phone Phone { get; set; } = phone;
+    public User User { get; set; } = user;
     public string EventType { get; private set; } = "user-finished-conversation";
 }

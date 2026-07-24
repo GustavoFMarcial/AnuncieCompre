@@ -18,7 +18,7 @@ public class ConversationFlowProvider
     
     public IConversationNode GetById(string id)
     {
-        // if (id is null) return InitialRegistration["initial_start"];
+        if (id is null) return InitialRegistration["initial_start"];
         IConversationNode? conversationNode;
 
         if (InitialRegistration.TryGetValue(id, out conversationNode)) return conversationNode;

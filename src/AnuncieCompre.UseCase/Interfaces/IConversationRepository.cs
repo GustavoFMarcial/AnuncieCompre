@@ -6,5 +6,5 @@ namespace AnuncieCompre.UseCase.Interfaces;
 
 public interface IConversationRepository : IBaseRepository<Conversation>
 {
-    public Task<Conversation?> GetConversationByPhoneAsync(string userPhone);
+    public Task<Conversation?> GetOpenConversationByUserIdAsync(Guid userId);
 }
