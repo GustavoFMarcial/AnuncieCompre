@@ -17,7 +17,7 @@ public class Conversation : BaseEntity
     public TimeOnly TimeLastMessage { get; private set; }
     public bool IsProcessing { get; private set; }
     public ConversationAttendant Attendant { get; private set; } = ConversationAttendant.Bot;
-    public ConversationStatus Status { get; private set; } = ConversationStatus.Open;
+    public ConversationStatus Status { get; private set; } = ConversationStatus.JustCreated;
     public List<Message> Messages { get; private set; } = [];
     public DateTime EndedAt { get; private set; }
 
@@ -33,16 +33,21 @@ public class Conversation : BaseEntity
         return new Conversation(userPhone);
     }
 
-    public (ReadOnlyCollection<string> response, string nextStepId) HandleMessage(IConversationNode awaitingResponseNode, string message, User user, bool isSessionJustCreated)
+    public ReadOnlyCollection<string> HandleMessage(IConversationNode awaitingResponseNode, string message, User user)
     {
-        if (isSessionJustCreated)
+        TimeLastMessage = TimeOnly.FromDateTime(DateTime.Now);
+
+        if (Status == ConversationStatus.JustCreated)
         {
-            return ([awaitingResponseNode.Message], awaitingResponseNode.Id);
+            Status = ConversationStatus.Open;
+            AwaitingResponseNodeId =  awaitingResponseNode.Id;
+            return [awaitingResponseNode.Message];
         }
 
         if (awaitingResponseNode is FinalNode)
         {
-            return ([awaitingResponseNode.Transitions["next"].Message], awaitingResponseNode.Transitions["next"].Id);
+            AwaitingResponseNodeId = awaitingResponseNode.Transitions["next"].Id;
+            return [awaitingResponseNode.Transitions["next"].Message];
         }
 
         NodeResult result = awaitingResponseNode.NodeValidator.Validate(awaitingResponseNode, message);
@@ -61,8 +66,8 @@ public class Conversation : BaseEntity
             }
         }
 
-        TimeLastMessage = TimeOnly.FromDateTime(DateTime.Now);
-        return ([result.Message], result.NextStepId);
+        AwaitingResponseNodeId = result.NextStepId;
+        return [result.Message];
     }
 
     public string GetNodeIdByUserType(Enums.UserType userType)
