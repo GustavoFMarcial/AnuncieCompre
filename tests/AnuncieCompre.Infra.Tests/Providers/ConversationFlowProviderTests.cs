@@ -11,9 +11,9 @@ public class ConversationFlowProviderTests
 {
 
     [Theory]
-    [InlineData("initial_start")]
-    [InlineData("ask_order")]
-    [InlineData("vendor_registered")]
+    [InlineData("start")]
+    [InlineData("ask_another_order")]
+    [InlineData("finish")]
     public void GetById_ValidId_ShouldReturnConversationNode(string id)
     {
         ConversationFlowProvider conversationFlowProvider = new ConversationFlowProvider();

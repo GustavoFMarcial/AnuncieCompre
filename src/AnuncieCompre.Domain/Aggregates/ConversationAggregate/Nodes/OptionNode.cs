@@ -1,3 +1,4 @@
+using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Conversation.Nodes;

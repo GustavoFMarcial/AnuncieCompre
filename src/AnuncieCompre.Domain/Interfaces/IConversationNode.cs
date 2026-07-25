@@ -1,3 +1,5 @@
+using AnuncieCompre.Domain.Aggregates.UserAggregate;
+
 namespace AnuncieCompre.Domain.Interfaces;
 
 public interface IConversationNode
