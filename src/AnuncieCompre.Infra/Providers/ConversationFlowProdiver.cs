@@ -6,14 +6,10 @@ namespace AnuncieCompre.Infra.Providers;
 public class ConversationFlowProvider
 {
     private readonly IReadOnlyDictionary<string, IConversationNode> InitialRegistration;
-    private readonly IReadOnlyDictionary<string, IConversationNode> Customer;
-    private readonly IReadOnlyDictionary<string, IConversationNode> Vendor;
 
     public ConversationFlowProvider()
     {
-        InitialRegistration = InitialRegistrationFlow.Build();
-        Customer = CustomerFlow.Build(InitialRegistration);
-        Vendor = VendorFlow.Build(InitialRegistration);
+        InitialRegistration = ConversationFlow.Build();
     }
     
     public IConversationNode GetById(string id)
@@ -22,8 +18,6 @@ public class ConversationFlowProvider
         IConversationNode? conversationNode;
 
         if (InitialRegistration.TryGetValue(id, out conversationNode)) return conversationNode;
-        if (Customer.TryGetValue(id, out conversationNode)) return conversationNode;
-        if (Vendor.TryGetValue(id, out conversationNode)) return conversationNode;
 
         throw new KeyNotFoundException();
     }

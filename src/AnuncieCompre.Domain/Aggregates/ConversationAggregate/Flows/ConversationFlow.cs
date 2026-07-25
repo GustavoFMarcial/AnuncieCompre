@@ -7,7 +7,7 @@ using AnuncieCompre.Domain.Services.ValueObjectValidators;
 
 namespace AnuncieCompre.Domain.Conversation.Flows;
 
-public class InitialRegistrationFlow
+public class ConversationFlow
 {
     public static IReadOnlyDictionary<string, IConversationNode> Build()
     {
@@ -38,7 +38,7 @@ public class InitialRegistrationFlow
 
         var finish = new FinalNode
         {
-            Id = "initial_finish",
+            Id = "finish",
             Message = "Ok, até logo!",
             NodeValidator = finishValidator,
             DomainEventFactory = [userFinishedConversationDomainEventFactory],
@@ -46,7 +46,7 @@ public class InitialRegistrationFlow
 
         var askAnotherOrder = new OptionNode
         {
-            Id = "customer_ask_another_order",
+            Id = "ask_another_order",
             Message =
                 """
                 Pedido criado com sucesso!
@@ -60,7 +60,7 @@ public class InitialRegistrationFlow
 
         var askRegistrationConfirmation = new ConfirmationNode
         {
-            Id = "customer_registration_ask_confirmation",
+            Id = "registration_ask_confirmation",
             Message =
                 """
                 Nome e email passados estão corretos para que possamos colocar junto ao pedido ?
@@ -74,7 +74,7 @@ public class InitialRegistrationFlow
 
         var askEmail = new ValidationNode
         {
-            Id = "initial_ask_email",
+            Id = "ask_email",
             Message = "Qual email para cadastro?",
             NodeValidator = askEmailValidator,
             DomainEventFactory = [userSentEmailDomainEventFactory],
@@ -82,15 +82,15 @@ public class InitialRegistrationFlow
 
         var askName = new ValidationNode
         {
-            Id = "initial_ask_name",
+            Id = "ask_name",
             Message = "Qual seu nome?",
             NodeValidator = askNameValidator,
             DomainEventFactory = [userSentNameDomainEventFactory],
         };
 
-        var askRegistration = new OptionNode
+        var askRegistration = new ConfirmationNode
         {
-            Id = "initial_ask_registration",
+            Id = "ask_registration",
             Message =
                 """
                 Para que possamos prosseguir com o envio do pedido aos fornecedores precisamos de seu nome completo e um email, deseja continuar ?
@@ -104,7 +104,7 @@ public class InitialRegistrationFlow
 
         var askOrderConfirmation = new ConfirmationNode
         {
-            Id = "customer_order_ask_confirmation",
+            Id = "order_ask_confirmation",
             Message =
                 """
                 As informações passadas estão corretas para que possamos enviar o pedido aos fornecedores?
@@ -118,7 +118,7 @@ public class InitialRegistrationFlow
 
         var askQuantity = new ValidationNode
         {
-            Id = "customer_ask_quantity",
+            Id = "ask_quantity",
             Message = "Qual quantia deseja comprar?",
             NodeValidator = askQuantityValidator,
             DomainEventFactory = [customerSentQuantityDomainEventFactory],
@@ -126,7 +126,7 @@ public class InitialRegistrationFlow
 
         var askProduct = new ValidationNode
         {
-            Id = "customer_ask_product",
+            Id = "ask_product",
             Message = "Qual produto deseja comprar?",
             NodeValidator = askProductValidator,
             DomainEventFactory = [customerSentProductDomainEventFactory],
@@ -134,7 +134,7 @@ public class InitialRegistrationFlow
 
         var askCompanyCategory = new ValidationNode
         {
-            Id = "customer_ask_company_category",
+            Id = "ask_company_category",
             Message =
                 $"""
                 Qual categoria de produto deseja comprar?
@@ -147,7 +147,7 @@ public class InitialRegistrationFlow
 
         var start = new OptionNode
         {
-            Id = "initial_start",
+            Id = "start",
             Message =
                 """
                 Olá, bem-vindo ao AnuncieCompre.

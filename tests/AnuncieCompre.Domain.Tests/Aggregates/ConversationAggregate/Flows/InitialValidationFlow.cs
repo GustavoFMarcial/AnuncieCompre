@@ -13,7 +13,7 @@ public class InitialValidationFlow
         node.Message.Should().NotBeNullOrWhiteSpace();
         node.NodeValidator.Should().NotBeNull();
 
-        if (node.Id != "initial_ask_user_type")
+        if (node.Id != "ask_user_type")
         {
             node.Transitions.Count.Should().BeGreaterThan(0);
         }

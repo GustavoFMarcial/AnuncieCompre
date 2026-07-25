@@ -12,13 +12,13 @@ public class InitialRegistrationFlowTests
     [Fact]
     public void Build_ValidateNodes()
     {
-        IReadOnlyDictionary<string, IConversationNode> initialFlow = InitialRegistrationFlow.Build();
+        IReadOnlyDictionary<string, IConversationNode> initialFlow = ConversationFlow.Build();
 
         foreach (KeyValuePair<string, IConversationNode> node in initialFlow)
         {
             InitialValidationFlow.Validate(node.Value);
 
-            if (node.Value.Id == "initial_ask_name")
+            if (node.Value.Id == "ask_name")
             {
                 var result1 = node.Value.NodeValidator.Validate(node.Value, "Gustavo F Marcial");
                 var result2 = node.Value.NodeValidator.Validate(node.Value, "Gustavo F. Marcial");
@@ -27,7 +27,7 @@ public class InitialRegistrationFlowTests
                 result2.IsSuccess.Should().BeFalse();
             }
 
-            if (node.Value.Id == "initial_ask_email")
+            if (node.Value.Id == "ask_email")
             {
                 var result1 = node.Value.NodeValidator.Validate(node.Value, "teste@gmail.com");
                 var result2 = node.Value.NodeValidator.Validate(node.Value, "teste@teste");
@@ -36,7 +36,7 @@ public class InitialRegistrationFlowTests
                 result2.IsSuccess.Should().BeFalse();
             }
 
-            if (node.Value.Id == "initial_ask_user_type")
+            if (node.Value.Id == "ask_user_type")
             {
                 var result1 = node.Value.NodeValidator.Validate(node.Value, "1");
                 var result2 = node.Value.NodeValidator.Validate(node.Value, "99");
