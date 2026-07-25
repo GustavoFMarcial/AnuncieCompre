@@ -14,7 +14,7 @@ public class UserSentEmailDomainEventFactory : IDomainEventFactory
         
         if (data is Email email)
         {
-            return new UserSentEmailDomainEvent(user.Phone, email);
+            return new UserSentEmailDomainEvent(user, email);
         }
 
         throw new DomainException("Tipo inválido do ValueObject");

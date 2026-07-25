@@ -4,9 +4,9 @@ using AnuncieCompre.Domain.Aggregates.UserAggregate;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 
-public class VendorSentCompanyCategoryDomainEvent(Phone phone, CompanyCategory companyCategory) : IDomainEvent
+public class UserSentCompanyCategoryDomainEvent(User user, CompanyCategory companyCategory) : IDomainEvent
 {
-    public Phone Phone { get; set; } = phone;
+    public User User { get; set; } = user;
     public CompanyCategory CompanyCategory { get; set; } = companyCategory;
-    public string EventType { get; private set; } = "vendor-sent-company-category";
+    public string EventType { get; private set; } = "customer-sent-company-category";
 }

@@ -4,14 +4,14 @@ using AnuncieCompre.UseCase.Interfaces;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.Conversation;
 
-public class CustomerSentQuantityDomainEventHandler(IOrderRepository _orderRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<CustomerSentQuantityDomainEvent>
+public class UserSentQuantityDomainEventHandler(IOrderRepository _orderRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<UserSentQuantityDomainEvent>
 {
     private readonly IOrderRepository orderRepository = _orderRepository;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    public async Task HandleAsync(CustomerSentQuantityDomainEvent domainEvent)
+    public async Task HandleAsync(UserSentQuantityDomainEvent domainEvent)
     {
-        Order? order = await orderRepository.GetLastOrderByPhoneAsync(domainEvent.Phone.Value);
+        Order? order = await orderRepository.GetLastOrderByUserId(domainEvent.User.Id);
 
         if (order is null) return;
 
