@@ -10,10 +10,9 @@ using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.ProcessMessageUseCase;
 
-public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IDatabase _db, IConversationRepository _conversationRepository, IUnitOfWork _unitOfWork, ConversationFlowProvider _conversationFlowProvider) : IProcessIncomingMessage
+public class ProcessIncomingMessageUseCase(IUserRepository _userRepository, IConversationRepository _conversationRepository, IUnitOfWork _unitOfWork, ConversationFlowProvider _conversationFlowProvider) : IProcessIncomingMessage
 {
     private readonly IUserRepository userRepository = _userRepository;
-    private readonly IDatabase db = _db;
     private readonly IConversationRepository conversationRepository = _conversationRepository;
     private readonly ConversationFlowProvider conversationFlowProvider = _conversationFlowProvider;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
