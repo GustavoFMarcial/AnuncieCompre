@@ -29,11 +29,11 @@ public class ConversationFlow
 
         IDomainEventFactory userSentNameDomainEventFactory = new UserSentNameDomainEventFactory();
         IDomainEventFactory userSentEmailDomainEventFactory = new UserSentEmailDomainEventFactory();
-        IDomainEventFactory customerDoesNotConfirmedRegistrationDomainEventFactory = new CustomerDoesNotConfirmedRegistrationDomainEventFactory();
-        IDomainEventFactory customerDoesNotConfirmedOrderDomainEventFactory = new CustomerDoesNotConfirmedOrderDomainEventFactory();
-        IDomainEventFactory customerSentQuantityDomainEventFactory = new CustomerSentQuantityDomainEventFactory();
-        IDomainEventFactory customerSentProductDomainEventFactory = new CustomerSentProductDomainEventFactory();
-        IDomainEventFactory customerSentCompanyCategoryDomainEventFactory = new CustomerSentCompanyCategoryDomainEventFactory();
+        IDomainEventFactory userDoesNotConfirmedRegistrationDomainEventFactory = new UserDoesNotConfirmedRegistrationDomainEventFactory();
+        IDomainEventFactory userDoesNotConfirmedOrderDomainEventFactory = new UserDoesNotConfirmedOrderDomainEventFactory();
+        IDomainEventFactory userSentQuantityDomainEventFactory = new UserSentQuantityDomainEventFactory();
+        IDomainEventFactory userSentProductDomainEventFactory = new UserSentProductDomainEventFactory();
+        IDomainEventFactory userSentCompanyCategoryDomainEventFactory = new UserSentCompanyCategoryDomainEventFactory();
         IDomainEventFactory userFinishedConversationDomainEventFactory = new UserFinishedConversationDomainEventFactory();
 
         var finish = new FinalNode
@@ -69,7 +69,7 @@ public class ConversationFlow
                 2 - Não, passar dados novamente.
                 """,
             NodeValidator = askConfirmationValidator,
-            DomainEventFactory = [customerDoesNotConfirmedRegistrationDomainEventFactory]
+            DomainEventFactory = [userDoesNotConfirmedRegistrationDomainEventFactory]
         };
 
         var askEmail = new ValidationNode
@@ -113,7 +113,7 @@ public class ConversationFlow
                 2 - Não, passar informações novamente.
                 """,
             NodeValidator = askConfirmationValidator,
-            DomainEventFactory = [customerDoesNotConfirmedOrderDomainEventFactory]
+            DomainEventFactory = [userDoesNotConfirmedOrderDomainEventFactory]
         };
 
         var askQuantity = new ValidationNode
@@ -121,7 +121,7 @@ public class ConversationFlow
             Id = "ask_quantity",
             Message = "Qual quantia deseja comprar?",
             NodeValidator = askQuantityValidator,
-            DomainEventFactory = [customerSentQuantityDomainEventFactory],
+            DomainEventFactory = [userSentQuantityDomainEventFactory],
         };
 
         var askProduct = new ValidationNode
@@ -129,7 +129,7 @@ public class ConversationFlow
             Id = "ask_product",
             Message = "Qual produto deseja comprar?",
             NodeValidator = askProductValidator,
-            DomainEventFactory = [customerSentProductDomainEventFactory],
+            DomainEventFactory = [userSentProductDomainEventFactory],
         };
 
         var askCompanyCategory = new ValidationNode
@@ -142,7 +142,7 @@ public class ConversationFlow
                 {CompanyCategoryExtensions.PrintNames()}
                 """,
             NodeValidator = askCompanyCategoryValidator,
-            DomainEventFactory = [customerSentCompanyCategoryDomainEventFactory],
+            DomainEventFactory = [userSentCompanyCategoryDomainEventFactory],
         };
 
         var start = new OptionNode

@@ -5,10 +5,8 @@ namespace AnuncieCompre.Domain.Aggregates.UserAggregate;
 public class User : BaseEntity
 {
     public Phone Phone { get; private set; } = default!;
-    public UserType Type { get; private set; } = UserType.Create("0").Value;
     public Name Name { get; private set; } = default!;
     public Email Email { get; private set; } = default!;
-    public CPF Cpf { get; private set; } = default!;
     public List<ConversationAggregate.Conversation> Conversations = [];
 
     private User(){}
@@ -32,12 +30,6 @@ public class User : BaseEntity
     public User SetEmail(Email email)
     {
         Email = email;
-        return this;
-    }
-
-    public User SetUserType(UserType userType)
-    {
-        Type = userType;
         return this;
     }
 }

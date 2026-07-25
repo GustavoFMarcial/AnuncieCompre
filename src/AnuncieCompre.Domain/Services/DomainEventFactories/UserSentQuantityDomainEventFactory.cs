@@ -7,14 +7,14 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Services.DomainEventFactories;
 
-public class VendorSentCompanyNameDomainEventFactory : IDomainEventFactory
+public class UserSentQuantityDomainEventFactory : IDomainEventFactory
 {
     public IDomainEvent Handle(User user, ValueObject data)
     {
         
-        if (data is Name name)
+        if (data is Quantity quantity)
         {
-            return new VendorSentCompanyNameDomainEvent(user.Phone, name);
+            return new UserSentQuantityDomainEvent(user, quantity);
         }
 
         throw new DomainException("Tipo inválido do ValueObject");

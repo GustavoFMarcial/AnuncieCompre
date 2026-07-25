@@ -14,7 +14,7 @@ public class UserFinishedConversationDomainEventHandler(IConversationRepository 
 
         if (conversation is null) return;
 
-        conversationRepository.Delete(conversation);
+        conversation.Close();
         await unitOfWork.SaveChangesAsync();
     }
 }

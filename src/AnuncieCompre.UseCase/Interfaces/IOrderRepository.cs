@@ -5,6 +5,6 @@ namespace AnuncieCompre.UseCase.Interfaces;
 
 public interface IOrderRepository : IBaseRepository<Order>
 {
-    public Task<Order?> GetLastOrderByPhoneAsync(string userPhone);
-    public Task ExecuteDeleteAsync(string userPhone);
+    public Task<Order?> GetLastOrderByUserId(Guid userId);
+    public Task ExecuteDeleteByUserIdAsync(Guid userId);
 }
