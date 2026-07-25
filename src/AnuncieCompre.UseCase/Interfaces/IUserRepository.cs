@@ -7,5 +7,6 @@ namespace AnuncieCompre.UseCase.Interfaces;
 public interface IUserRepository : IBaseRepository<User>
 {
     public Task<User?> GetUserByPhoneAsync(string userPhone);
-    public Task ExecuteDeleteAsync(string userPhone);
+    public Task<User?> GetUserByIdAsync(Guid userId);
+    public Task ExecuteDeleteByUserIdAsync(Guid userId);
 }

@@ -80,4 +80,9 @@ public class Conversation : BaseEntity
             _ => "initial_start",
         };
     }
+
+    public void Close()
+    {
+        Status = ConversationStatus.Closed;
+    }
 }

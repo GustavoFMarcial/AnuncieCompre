@@ -6,18 +6,13 @@ using StackExchange.Redis;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.Conversation;
 
-public class UserSentNameDomainEventHandler(IUserRepository _userRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<UserSentNameDomainEvent>
+public class UserSentNameDomainEventHandler(IUnitOfWork _unitOfWork) : IDomainEventHandler<UserSentNameDomainEvent>
 {
-    private readonly IUserRepository userRepository = _userRepository;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
     public async Task HandleAsync(UserSentNameDomainEvent domainEvent)
     {
-        User? user = await userRepository.GetUserByPhoneAsync(domainEvent.Phone.Value);
-
-        if (user is null) return;
-
-        user.SetName(domainEvent.Name);
+        domainEvent.User.SetName(domainEvent.Name);
         await unitOfWork.SaveChangesAsync();
     }
 }
