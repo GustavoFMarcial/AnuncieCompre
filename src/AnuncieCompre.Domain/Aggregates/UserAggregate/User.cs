@@ -5,8 +5,8 @@ namespace AnuncieCompre.Domain.Aggregates.UserAggregate;
 public class User : BaseEntity
 {
     public Phone Phone { get; private set; } = default!;
-    public Name Name { get; private set; } = default!;
-    public Email Email { get; private set; } = default!;
+    public Name? Name { get; private set; } = default!;
+    public Email? Email { get; private set; } = default!;
     public List<ConversationAggregate.Conversation> Conversations = [];
 
     private User(){}

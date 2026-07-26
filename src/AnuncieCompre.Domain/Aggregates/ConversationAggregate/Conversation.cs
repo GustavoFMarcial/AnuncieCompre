@@ -36,7 +36,7 @@ public class Conversation : BaseEntity
 
     public ReadOnlyCollection<string> HandleMessage(IConversationNode awaitingResponseNode, string message, User user)
     {
-        DateTimeLastMessage = DateTime.Now;
+        DateTimeLastMessage = DateTime.UtcNow;
 
         if (IsProcessing)
         {
@@ -49,12 +49,15 @@ public class Conversation : BaseEntity
         {
             Status = ConversationStatus.Open;
             AwaitingResponseNodeId = awaitingResponseNode.Id;
+            IsProcessing = false;
             return [awaitingResponseNode.Message];
         }
 
         if (awaitingResponseNode is FinalNode)
         {
             AwaitingResponseNodeId = awaitingResponseNode.Transitions["next"].Id;
+            Status = ConversationStatus.Closed;
+            IsProcessing = false;
             return [awaitingResponseNode.Transitions["next"].Message];
         }
 

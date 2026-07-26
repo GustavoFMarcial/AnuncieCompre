@@ -10,6 +10,8 @@ public class Message : BaseEntity
     public MessageSenderType SenderType { get; private set; }
     public MessageDirection Direction { get; private set; }
 
+    private Message() { }
+
     private Message(ConversationAggregate.Conversation conversation, string text, MessageSenderType senderType, MessageDirection direction)
     {
         ConversationId = conversation.Id;

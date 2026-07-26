@@ -3,10 +3,9 @@ using AnuncieCompre.UseCase.Interfaces;
 
 namespace AnuncieCompre.UseCase.DomainEventHandler.Conversation;
 
-public class UserFinishedConversationDomainEventHandler(IConversationRepository _conversationRepository, IUnitOfWork _unitOfWork) : IDomainEventHandler<UserFinishedConversationDomainEvent>
+public class UserFinishedConversationDomainEventHandler(IConversationRepository _conversationRepository) : IDomainEventHandler<UserFinishedConversationDomainEvent>
 {
     private readonly IConversationRepository conversationRepository = _conversationRepository;
-    private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
     public async Task HandleAsync(UserFinishedConversationDomainEvent domainEvent)
     {
@@ -15,6 +14,5 @@ public class UserFinishedConversationDomainEventHandler(IConversationRepository 
         if (conversation is null) return;
 
         conversation.Close();
-        await unitOfWork.SaveChangesAsync();
     }
 }
