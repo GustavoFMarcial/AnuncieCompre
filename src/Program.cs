@@ -5,6 +5,7 @@ using AnuncieCompre.Infra.Repositories;
 using AnuncieCompre.Infra.Repositories.ConversationRepo;
 using AnuncieCompre.Infra.Repositories.OrderRepo;
 using AnuncieCompre.Infra.Repositories.UserRepo;
+using AnuncieCompre.UseCase.BackgroundServices;
 using AnuncieCompre.UseCase.DomainEventHandler.Conversation;
 using AnuncieCompre.UseCase.Interfaces;
 using AnuncieCompre.UseCase.ProcessMessageUseCase;
@@ -33,6 +34,9 @@ builder.Services.AddScoped<IDomainEventHandler<UserFinishedConversationDomainEve
 builder.Services.AddScoped<IDomainEventHandler<UserSentEmailDomainEvent>, UserSentEmailDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<UserSentNameDomainEvent>, UserSentNameDomainEventHandler>();
 // builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
+
+//Hosted
+builder.Services.AddHostedService<CloseInactiveConversations>();
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string not found.");
 

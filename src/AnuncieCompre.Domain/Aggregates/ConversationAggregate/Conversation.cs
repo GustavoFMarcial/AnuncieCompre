@@ -15,7 +15,7 @@ public class Conversation : BaseEntity
     public User User { get; private set; } = default!;
     public string AwaitingResponseNodeId { get; private set; } = default!;
     public bool IsProcessing { get; private set; }
-    public TimeOnly TimeLastMessage { get; private set; }
+    public DateTime DateTimeLastMessage { get; private set; }
     public ConversationAttendant Attendant { get; private set; } = ConversationAttendant.Bot;
     public ConversationStatus Status { get; private set; } = ConversationStatus.JustCreated;
     public DateTime EndedAt { get; private set; }
@@ -36,7 +36,7 @@ public class Conversation : BaseEntity
 
     public ReadOnlyCollection<string> HandleMessage(IConversationNode awaitingResponseNode, string message, User user)
     {
-        TimeLastMessage = TimeOnly.FromDateTime(DateTime.Now);
+        DateTimeLastMessage = DateTime.Now;
 
         if (IsProcessing)
         {
