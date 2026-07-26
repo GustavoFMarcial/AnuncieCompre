@@ -20,7 +20,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
     {
         modelBuilder.Entity<Conversation>(c =>
         {
-            c.ComplexProperty(cp => cp.UserPhone);
+            c.ComplexProperty(cp => cp.User);
         });
 
         modelBuilder.Entity<User>(u =>
@@ -40,6 +40,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<Order>(o =>
         {
+            o.ComplexProperty(cp => cp.User);
             o.ComplexProperty(cp => cp.Product);
             o.ComplexProperty(cp => cp.Quantity);
             o.ComplexProperty(cp => cp.Category);

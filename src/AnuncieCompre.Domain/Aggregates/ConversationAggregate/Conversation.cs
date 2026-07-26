@@ -5,6 +5,7 @@ using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Aggregates.MessageAggregate;
 using AnuncieCompre.Domain.Enums;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
@@ -12,35 +13,42 @@ public class Conversation : BaseEntity
 {
     public Guid UserId { get; private set; }
     public User User { get; private set; } = default!;
-    public Phone UserPhone { get; private set; } = default!;
     public string AwaitingResponseNodeId { get; private set; } = default!;
-    public TimeOnly TimeLastMessage { get; private set; }
     public bool IsProcessing { get; private set; }
+    public TimeOnly TimeLastMessage { get; private set; }
     public ConversationAttendant Attendant { get; private set; } = ConversationAttendant.Bot;
     public ConversationStatus Status { get; private set; } = ConversationStatus.JustCreated;
-    public List<Message> Messages { get; private set; } = [];
     public DateTime EndedAt { get; private set; }
+    public List<Message> Messages { get; private set; } = [];
 
     private Conversation() { }
 
-    private Conversation(Phone phone)
+    private Conversation(User user)
     {
-        UserPhone = phone;
+        UserId = user.Id;
+        User = user;
     }
 
-    public static Conversation Create(Phone userPhone)
+    public static Conversation Create(User user)
     {
-        return new Conversation(userPhone);
+        return new Conversation(user);
     }
 
     public ReadOnlyCollection<string> HandleMessage(IConversationNode awaitingResponseNode, string message, User user)
     {
         TimeLastMessage = TimeOnly.FromDateTime(DateTime.Now);
 
+        if (IsProcessing)
+        {
+            return ["Só um momento, ainda estamos processando sua última mensagem"];
+        }
+
+        IsProcessing = true;
+
         if (Status == ConversationStatus.JustCreated)
         {
             Status = ConversationStatus.Open;
-            AwaitingResponseNodeId =  awaitingResponseNode.Id;
+            AwaitingResponseNodeId = awaitingResponseNode.Id;
             return [awaitingResponseNode.Message];
         }
 
@@ -52,37 +60,22 @@ public class Conversation : BaseEntity
 
         NodeResult result = awaitingResponseNode.NodeValidator.Validate(awaitingResponseNode, message);
 
-        if (result.IsSuccess)
+        if (result.IsSuccess && result.ProcDomainEvent && awaitingResponseNode.DomainEventFactory.Count > 0)
         {
-            if (result.ProcDomainEvent)
+            foreach (var domainEventFactory in awaitingResponseNode.DomainEventFactory)
             {
-                if (awaitingResponseNode.DomainEventFactory.Count > 0)
-                {
-                    foreach (var domainEventFactory in awaitingResponseNode.DomainEventFactory)
-                    {
-                        AddDomainEvent(domainEventFactory.Handle(user, result.Value));
-                    }
-                }
+                AddDomainEvent(domainEventFactory.Handle(user, result.Value));
             }
         }
 
         AwaitingResponseNodeId = result.NextStepId;
+        IsProcessing = false;
         return [result.Message];
-    }
-
-    public string GetNodeIdByUserType(Enums.UserType userType)
-    {
-        return userType switch
-        {
-            Enums.UserType.Unknown => "initial_start",
-            Enums.UserType.Customer => "ask_order",
-            Enums.UserType.Vendor => "vendor_ask_premium",
-            _ => "initial_start",
-        };
     }
 
     public void Close()
     {
+        EndedAt = DateTime.Now;
         Status = ConversationStatus.Closed;
     }
 }
