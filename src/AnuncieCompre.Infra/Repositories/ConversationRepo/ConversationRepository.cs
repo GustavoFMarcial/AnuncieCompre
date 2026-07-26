@@ -11,6 +11,14 @@ public class ConversationRepository(AnuncieCompreContext _context) : BaseReposit
 {
     public async Task<Conversation?> GetOpenConversationByUserIdAsync(Guid userId)
     {
-        return await context.Set<Conversation>().FirstOrDefaultAsync(c => c.UserId == userId && c.Status == ConversationStatus.Open);
+        return await context.Set<Conversation>()
+            .FirstOrDefaultAsync(c => c.UserId == userId && c.Status == ConversationStatus.Open);
+    }
+
+    public async Task<List<Conversation>> GetOpenConversationsAttendantByBotToListAsync()
+    {
+        return await context.Set<Conversation>()
+            .Where(c => c.Status == ConversationStatus.Open && c.Attendant == ConversationAttendant.Bot)
+            .ToListAsync();
     }
 }
