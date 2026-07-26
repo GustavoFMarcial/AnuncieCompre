@@ -1,11 +1,15 @@
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
+using AnuncieCompre.Domain.Conversation.Flows;
 using AnuncieCompre.Infra.Data;
 using AnuncieCompre.Infra.MessageSender;
+using AnuncieCompre.Infra.Providers;
 using AnuncieCompre.Infra.Repositories;
 using AnuncieCompre.Infra.Repositories.ConversationRepo;
+using AnuncieCompre.Infra.Repositories.MessageRepo;
 using AnuncieCompre.Infra.Repositories.OrderRepo;
 using AnuncieCompre.Infra.Repositories.UserRepo;
 using AnuncieCompre.UseCase.BackgroundServices;
+using AnuncieCompre.UseCase.Dispatchers;
 using AnuncieCompre.UseCase.DomainEventHandler.Conversation;
 using AnuncieCompre.UseCase.Interfaces;
 using AnuncieCompre.UseCase.ProcessMessageUseCase;
@@ -24,6 +28,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<ConversationFlowProvider>();
 builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCase>();
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
 builder.Services.AddScoped<IDomainEventHandler<UserDoesNotConfirmedRegistrationDomainEvent>, UserDoesNotConfirmedRegistrationDomainEventHandler>();
@@ -33,6 +39,7 @@ builder.Services.AddScoped<IDomainEventHandler<UserSentQuantityDomainEvent>, Use
 builder.Services.AddScoped<IDomainEventHandler<UserFinishedConversationDomainEvent>, UserFinishedConversationDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<UserSentEmailDomainEvent>, UserSentEmailDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<UserSentNameDomainEvent>, UserSentNameDomainEventHandler>();
+builder.Services.AddScoped<EventDispatcher>();
 // builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 
 //Hosted

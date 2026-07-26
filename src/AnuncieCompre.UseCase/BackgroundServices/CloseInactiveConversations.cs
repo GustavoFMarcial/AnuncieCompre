@@ -16,7 +16,7 @@ public class CloseInactiveConversations(IServiceProvider _serviceProvider) : Bac
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
             List<Conversation> conversations = await conversationRepository.GetOpenConversationsAttendantByBotToListAsync();
-            DateTime dateTimeNow = DateTime.Now;
+            DateTime dateTimeNow = DateTime.UtcNow;
 
             foreach (Conversation c in conversations)
             {
