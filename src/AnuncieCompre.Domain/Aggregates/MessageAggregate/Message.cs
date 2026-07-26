@@ -9,4 +9,18 @@ public class Message : BaseEntity
     public string Text { get; private set; } = default!;
     public MessageSenderType SenderType { get; private set; }
     public MessageDirection Direction { get; private set; }
+
+    private Message(ConversationAggregate.Conversation conversation, string text, MessageSenderType senderType, MessageDirection direction)
+    {
+        ConversationId = conversation.Id;
+        Conversation = conversation;
+        Text = text;
+        SenderType = senderType;
+        Direction = direction;
+    }
+
+    public static Message Create(ConversationAggregate.Conversation conversation, string text, MessageSenderType senderType, MessageDirection direction)
+    {
+        return new(conversation, text, senderType, direction);
+    }
 }

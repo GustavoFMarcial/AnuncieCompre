@@ -2,7 +2,7 @@ namespace AnuncieCompre.Domain.Enums;
 
 public enum MessageSenderType
 {
-    Customer,
+    Operator,
     Bot,
-    Agent,
+    Customer,
 }
