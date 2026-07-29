@@ -2,24 +2,22 @@
 
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
 
-Chatbot backend para coleta estruturada de pedidos via WhatsApp, integrado com Twilio.  
-O sistema guia o usuário por um fluxo de conversa, validando dados e gerando pedidos automaticamente, utilizando uma arquitetura baseada em estados (**Conversation Flow**) e princípios de **Domain-Driven Design (DDD)**.
+Chatbot backend para coleta estruturada de pedidos via WhatsApp, integrado com Twilio.
 
-O projeto utiliza processamento assíncrono através de **Redis Streams**, permitindo desacoplamento entre os componentes do sistema utilizando o padrão **Producer/Consumer**.
+O sistema guia o usuário por um fluxo de conversa estruturado, validando as informações fornecidas e gerando pedidos automaticamente. A arquitetura é baseada em **Conversation Flow**, seguindo princípios de **Domain-Driven Design (DDD)** e **Clean Architecture**, priorizando organização, desacoplamento e facilidade de manutenção.
 
 ---
 
 ## 🚀 Funcionalidades
 
 - Atendimento automatizado via WhatsApp (Twilio)
-- Fluxo de conversa baseado em estados (**Conversation Flow**)
-- Validação de entrada do usuário (produto, quantidade, etc)
+- Fluxo de conversa baseado em estados (Conversation Flow)
+- Validação de entrada do usuário
 - Criação automática de pedidos
-- Controle de estado da conversa por usuário
-- Armazenamento temporário dos dados da conversa utilizando Redis
-- Comunicação assíncrona através de Redis Streams
-- Processamento de eventos utilizando padrão Producer/Consumer
-- Uso de Domain Events para desacoplamento
+- Controle do estado da conversa por usuário
+- Persistência das conversas e pedidos no PostgreSQL
+- Uso de Domain Events para desacoplamento entre regras de negócio
+- Arquitetura modular e extensível para criação de novos fluxos
 
 ---
 
@@ -28,8 +26,6 @@ O projeto utiliza processamento assíncrono através de **Redis Streams**, permi
 - Backend: .NET
 - Banco de dados: PostgreSQL
 - ORM: Entity Framework Core
-- Cache e armazenamento temporário: Redis
-- Mensageria/Event Streaming: Redis Streams
 - Integração: Twilio (WhatsApp API)
 
 ---
@@ -40,28 +36,25 @@ Este projeto foi desenvolvido com foco em boas práticas de arquitetura e modela
 
 - Domain-Driven Design (DDD)
 - Clean Architecture
-- State Machine para controle do fluxo da conversa
-- Domain Events para comunicação entre partes do sistema
-- Value Objects para validação e consistência dos dados
-- Strategy Pattern para validação das mensagens do usuário
-- Redis para gerenciamento de estado temporário da conversa
-- Redis Streams para processamento assíncrono baseado em eventos
-- Producer/Consumer Pattern para desacoplamento entre publicação e processamento
+- Conversation Flow (State Machine)
+- Domain Events
+- Value Objects
+- Strategy Pattern para validação das mensagens
+- Repository Pattern
+- Dependency Injection
 
 ---
 
 ## 🔄 Como funciona
 
-1. O usuário envia uma mensagem via WhatsApp
-2. O Twilio encaminha a mensagem para o backend através de um Webhook
-3. O sistema identifica o estado atual da conversa armazenado no Redis
-4. A mensagem recebida é validada de acordo com o estado atual
-5. O próximo passo do fluxo é determinado
-6. Os dados temporários da conversa são atualizados no Redis
-7. Eventos são publicados no Redis Stream
-8. Consumers processam esses eventos de forma assíncrona
-9. O pedido é persistido no banco de dados
-10. O sistema responde automaticamente ao usuário
+1. O usuário envia uma mensagem pelo WhatsApp.
+2. O Twilio encaminha a mensagem para o backend através de um Webhook.
+3. O sistema identifica a conversa do usuário.
+4. O estado atual da conversa determina qual etapa do fluxo será executada.
+5. A mensagem é validada de acordo com as regras daquela etapa.
+6. Os dados da conversa são atualizados.
+7. Quando o fluxo é concluído, o pedido é persistido no banco de dados.
+8. O sistema responde automaticamente ao usuário.
 
 ---
 
@@ -72,14 +65,27 @@ Este projeto foi desenvolvido com foco em boas práticas de arquitetura e modela
 ```bash
 git clone https://github.com/GustavoFMarcial/AnuncieCompre.git
 ```
-### 2. Configurar o banco de dados
-PostgreSQL e Redis rodando localmente
 
-### 3. Configurar secrets
+### 2. Configurar o banco de dados
+
+Tenha uma instância do PostgreSQL em execução.
+
+### 3. Configurar os User Secrets
+
 ```bash
 dotnet user-secrets set "ConnectionStrings:AnuncieCompreContext" "SUA_CONNECTION_STRING"
+dotnet user-secrets set "Twilio:AccountSid" "SEU_ACCOUNT_SID"
+dotnet user-secrets set "Twilio:AuthToken" "SEU_AUTH_TOKEN"
 ```
-### 4. Rodar o projeto
+
+### 4. Aplicar as migrations
+
+```bash
+dotnet ef database update
+```
+
+### 5. Executar o projeto
+
 ```bash
 dotnet run
 ```
