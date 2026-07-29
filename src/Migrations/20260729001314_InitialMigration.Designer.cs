@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20260726231002_InitialMigration")]
+    [Migration("20260729001314_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -47,9 +47,6 @@ namespace AnuncieCompre.Migrations
 
                     b.Property<DateTime>("EndedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsProcessing")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -140,9 +137,6 @@ namespace AnuncieCompre.Migrations
 
                             b1.Property<Guid>("Id")
                                 .HasColumnType("uuid");
-
-                            b1.Property<bool>("IsProcessing")
-                                .HasColumnType("boolean");
 
                             b1.Property<int>("Status")
                                 .HasColumnType("integer");
