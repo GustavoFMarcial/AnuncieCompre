@@ -40,11 +40,9 @@ public class ConversationFlow
         {
             Id = "finish",
             Message = "Ok, até logo!",
-            NodeValidator = finishValidator,
-            DomainEventFactory = [userFinishedConversationDomainEventFactory],
         };
 
-        var askAnotherOrder = new OptionNode
+        var askAnotherOrder = new ConfirmationNode
         {
             Id = "ask_another_order",
             Message =
@@ -55,7 +53,8 @@ public class ConversationFlow
                 1 - Sim
                 2 - Não
                 """,
-            NodeValidator = askAnotherOrderValidator,
+            NodeValidator = askConfirmationValidator,
+            DomainEventFactory = [userFinishedConversationDomainEventFactory],
         };
 
         var askRegistrationConfirmation = new ConfirmationNode
@@ -145,7 +144,7 @@ public class ConversationFlow
             DomainEventFactory = [userSentCompanyCategoryDomainEventFactory],
         };
 
-        var start = new OptionNode
+        var start = new ConfirmationNode
         {
             Id = "start",
             Message =
@@ -156,13 +155,9 @@ public class ConversationFlow
                 1 - Sim
                 2 - Não
                 """,
-            NodeValidator = startValidator,
+            NodeValidator = askConfirmationValidator,
+            DomainEventFactory = [userFinishedConversationDomainEventFactory],
         };
-
-        //Transições de askUserType apenas para satisfazer o teste InitialRegistrationFlowTests
-        //Ver depois uma forma de não ficar essa gambiarra
-        // askUserType.Transitions["1"] = finish;
-        // askUserType.Transitions["2"] = finish;
 
         start.Transitions["1"] = askCompanyCategory;
         start.Transitions["2"] = finish;
