@@ -195,6 +195,39 @@ function cloneMock(): ConversationFlow[] {
     return structuredClone(mockFlows) as ConversationFlow[];
 }
 
+function genFlowId(): string {
+    return `flow_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
 export const mockStore = {
     flows: cloneMock(),
+
+    createFlow(input: { name: string; description: string; status: "Draft" | "Published" }): ConversationFlow {
+        const flow: ConversationFlow = {
+            id: genFlowId(),
+            name: input.name,
+            description: input.description,
+            status: input.status,
+            steps: 0,
+            updatedAt: new Date(),
+            nodes: [],
+        };
+        this.flows.push(flow);
+        return structuredClone(flow) as ConversationFlow;
+    },
+
+    updateFlow(id: string, input: { name: string; description: string; status: "Draft" | "Published" }): void {
+        const flow = this.flows.find((f) => f.id === id);
+        if (!flow) throw new Error("Fluxo não encontrado");
+        flow.name = input.name;
+        flow.description = input.description;
+        flow.status = input.status;
+        flow.updatedAt = new Date();
+    },
+
+    deleteFlow(id: string): void {
+        const idx = this.flows.findIndex((f) => f.id === id);
+        if (idx === -1) throw new Error("Fluxo não encontrado");
+        this.flows.splice(idx, 1);
+    },
 };

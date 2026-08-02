@@ -1,7 +1,9 @@
 import { api } from "../../../shared/lib/api";
 import type {
     ConversationFlow,
+    CreateFlowInput,
     CreateNodeInput,
+    UpdateFlowInput,
     UpdateNodeInput,
     UpdateTransitionsInput,
 } from "../types/conversation-flow";
@@ -27,14 +29,14 @@ async function withFallback<T>(real: () => Promise<T>, fallback: () => Promise<T
 export const conversationFlowService = {
     async getAll(): Promise<ConversationFlow[]> {
         return withFallback(
-            async () => (await api.get<ConversationFlow[]>("/api/conversation-flows")).data,
+            async () => (await api.get<ConversationFlow[]>("/api/flows")).data,
             () => structuredClone(mockStore.flows) as ConversationFlow[]
         );
     },
 
     async getById(id: string): Promise<ConversationFlow> {
         return withFallback(
-            async () => (await api.get<ConversationFlow>(`/api/conversation-flows/${id}`)).data,
+            async () => (await api.get<ConversationFlow>(`/api/flows/${id}`)).data,
             () => {
                 const found = mockStore.flows.find((f) => f.id === id);
                 if (!found) throw new Error("Fluxo não encontrado");
@@ -43,10 +45,44 @@ export const conversationFlowService = {
         );
     },
 
+    async createFlow(input: CreateFlowInput): Promise<ConversationFlow> {
+        return withFallback(
+            async () => (await api.post<ConversationFlow>("/api/flows", input)).data,
+            async () => {
+                await wait(200);
+                return mockStore.createFlow(input);
+            }
+        );
+    },
+
+    async updateFlow(id: string, input: UpdateFlowInput): Promise<void> {
+        await withFallback(
+            async () => {
+                await api.put(`/api/flows/${id}`, input);
+            },
+            async () => {
+                await wait(200);
+                mockStore.updateFlow(id, input);
+            }
+        );
+    },
+
+    async deleteFlow(id: string): Promise<void> {
+        await withFallback(
+            async () => {
+                await api.delete(`/api/flows/${id}`);
+            },
+            async () => {
+                await wait(200);
+                mockStore.deleteFlow(id);
+            }
+        );
+    },
+
     async createNode(flowId: string, input: CreateNodeInput): Promise<void> {
         await withFallback(
             async () => {
-                await api.post(`/api/conversation-flows/${flowId}/nodes`, input);
+                await api.post(`/api/flows/${flowId}/nodes`, input);
             },
             async () => {
                 await wait(200);
@@ -67,7 +103,7 @@ export const conversationFlowService = {
     async updateNode(flowId: string, nodeId: string, input: UpdateNodeInput): Promise<void> {
         await withFallback(
             async () => {
-                await api.put(`/api/conversation-flows/${flowId}/nodes/${nodeId}`, input);
+                await api.put(`/api/flows/${flowId}/nodes/${nodeId}`, input);
             },
             async () => {
                 await wait(200);
@@ -87,7 +123,7 @@ export const conversationFlowService = {
     async deleteNode(flowId: string, nodeId: string): Promise<void> {
         await withFallback(
             async () => {
-                await api.delete(`/api/conversation-flows/${flowId}/nodes/${nodeId}`);
+                await api.delete(`/api/flows/${flowId}/nodes/${nodeId}`);
             },
             async () => {
                 await wait(200);
@@ -107,7 +143,7 @@ export const conversationFlowService = {
         await withFallback(
             async () => {
                 await api.patch(
-                    `/api/conversation-flows/${flowId}/nodes/${nodeId}/transitions`,
+                    `/api/flows/${flowId}/nodes/${nodeId}/transitions`,
                     input
                 );
             },
