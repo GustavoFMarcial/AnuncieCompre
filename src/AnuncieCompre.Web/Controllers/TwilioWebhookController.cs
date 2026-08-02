@@ -8,7 +8,7 @@ using AnuncieCompre.UseCase.ProcessMessageUseCase;
 using AnuncieCompre.Domain.DTO;
 using System.Collections.ObjectModel;
 
-namespace AnuncieCompre.Web;
+namespace AnuncieCompre.Web.Controllers;
 
 [ApiController]
 [Route("webhooks/twilio")]
