@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AnuncieCompre.Web.DTO;
 
-public class TwilioIncomingMessageRequest
+public record TwilioIncomingMessageRequest
 {
     [FromForm(Name = "MessageSid")]
     public string MessageSid { get; set; } = string.Empty;
