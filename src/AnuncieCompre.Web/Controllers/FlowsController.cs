@@ -1,12 +1,13 @@
 using AnuncieCompre.Web.DTO;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AnuncieCompre.Web;
+namespace AnuncieCompre.Web.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AnuncieCompreController : ControllerBase
+public class FlowsController : ControllerBase
 {
+    [HttpGet("ok")]
     public ActionResult Get()
     {
         return Ok();
