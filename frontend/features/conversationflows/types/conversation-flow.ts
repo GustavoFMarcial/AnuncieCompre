@@ -46,6 +46,14 @@ export type FlowDraft = Omit<ConversationFlow, "id" | "steps" | "updatedAt"> & {
     id?: string;
 };
 
+export interface CreateFlowInput {
+    name: string;
+    description: string;
+    status: "Draft" | "Published";
+}
+
+export type UpdateFlowInput = CreateFlowInput;
+
 export interface CreateNodeInput {
     message: string;
     validationKind: NodeValidationKind | null;

@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, PanelRight, Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "../../../shared/components/ui";
 import { FlowCanvas } from "../components/FlowCanvas";
 import { NodeEditorPanel } from "../components/NodeEditorPanel";
+import { EditFlowDialog } from "../components/EditFlowDialog";
+import { DeleteFlowDialog } from "../components/DeleteFlowDialog";
 import { useConversationFlow } from "../hooks/useConversationFlows";
 
 export function FlowEditorPage() {
@@ -13,6 +15,8 @@ export function FlowEditorPage() {
     const { data: flow, isLoading, isError } = useConversationFlow(flowId);
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
     const [panelOpen, setPanelOpen] = useState(true);
+    const [editOpen, setEditOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
 
     const selectedNode = flow?.nodes?.find((n) => n.id === selectedNodeId) ?? null;
 
@@ -32,14 +36,33 @@ export function FlowEditorPage() {
                         </p>
                     </div>
                 </div>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setPanelOpen((v) => !v)}
-                >
-                    {panelOpen ? "Ocultar painel" : "Mostrar painel"}
-                    <ArrowRight className="h-4 w-4" />
-                </Button>
+                <div className="flex items-center gap-2">
+                    {flow && (
+                        <>
+                            <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>
+                                <Pencil className="h-4 w-4" />
+                                Editar fluxo
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                className="text-red-600 hover:bg-red-50"
+                                onClick={() => setDeleteOpen(true)}
+                            >
+                                <Trash2 className="h-4 w-4" />
+                                Excluir
+                            </Button>
+                        </>
+                    )}
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setPanelOpen((v) => !v)}
+                    >
+                        <PanelRight className="h-4 w-4" />
+                        {panelOpen ? "Ocultar painel" : "Mostrar painel"}
+                    </Button>
+                </div>
             </div>
 
             <div className="flex flex-1 overflow-hidden">
@@ -79,6 +102,18 @@ export function FlowEditorPage() {
                     />
                 )}
             </div>
+
+            {flow && (
+                <>
+                    <EditFlowDialog flow={flow} open={editOpen} onOpenChange={setEditOpen} />
+                    <DeleteFlowDialog
+                        flow={flow}
+                        open={deleteOpen}
+                        onOpenChange={setDeleteOpen}
+                        onDeleted={() => navigate("/flows")}
+                    />
+                </>
+            )}
         </div>
     );
 }

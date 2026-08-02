@@ -2,7 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { conversationFlowService } from "../services/conversation-flow.service";
 import type {
+    CreateFlowInput,
     CreateNodeInput,
+    UpdateFlowInput,
     UpdateNodeInput,
     UpdateTransitionsInput,
 } from "../types/conversation-flow";
@@ -21,6 +23,39 @@ export function useConversationFlow(flowId: string) {
         queryKey: ["conversation-flow", flowId] as const,
         queryFn: () => conversationFlowService.getById(flowId),
         enabled: !!flowId,
+    });
+}
+
+export function useCreateFlow() {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (input: CreateFlowInput) => conversationFlowService.createFlow(input),
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: FLOWS_KEY });
+        },
+    });
+}
+
+export function useUpdateFlow() {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, input }: { id: string; input: UpdateFlowInput }) =>
+            conversationFlowService.updateFlow(id, input),
+        onSuccess: (_, vars) => {
+            qc.invalidateQueries({ queryKey: FLOWS_KEY });
+            qc.invalidateQueries({ queryKey: ["conversation-flow", vars.id] });
+        },
+    });
+}
+
+export function useDeleteFlow() {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (id: string) => conversationFlowService.deleteFlow(id),
+        onSuccess: (_, id) => {
+            qc.removeQueries({ queryKey: ["conversation-flow", id] });
+            qc.invalidateQueries({ queryKey: FLOWS_KEY });
+        },
     });
 }
 
