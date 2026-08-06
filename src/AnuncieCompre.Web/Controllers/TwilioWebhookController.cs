@@ -4,7 +4,7 @@ using Twilio.AspNet.Core;
 using AnuncieCompre.Web.DTO;
 using AnuncieCompre.Web.Extensions;
 using Twilio.TwiML.Messaging;
-using AnuncieCompre.UseCase.ProcessMessageUseCase;
+using AnuncieCompre.Application.UseCases.ProcessMessageUseCase;
 using AnuncieCompre.Domain.DTO;
 using System.Collections.ObjectModel;
 

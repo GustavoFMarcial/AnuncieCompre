@@ -1,3 +1,5 @@
+using AnuncieCompre.Domain.Aggregates;
+
 namespace AnuncieCompre.Domain.Common;
 
 public class Result<T> : IResultValueObject where T : ValueObject

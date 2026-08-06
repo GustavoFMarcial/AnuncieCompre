@@ -1,6 +1,6 @@
 namespace AnuncieCompre.Domain.DTO;
 
-public class IncomingMessageRequest
+public record IncomingMessageRequest
 {
     public string MessageId { get; set; } = string.Empty;
     public string SenderPhone { get; set; } = string.Empty;
