@@ -5,18 +5,19 @@ using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.MessageAggregate;
 using AnuncieCompre.Domain.Aggregates.OrderAggregate;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
-using AnuncieCompre.UseCase.Interfaces;
+using AnuncieCompre.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 
 namespace AnuncieCompre.Infra.Data;
 
-public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options, IServiceProvider _serviceProvider) : DbContext(options)
+public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options) : DbContext(options)
 {
     public DbSet<User> Users { get; set; } = default!;
     public DbSet<Conversation> Conversations { get; set; } = default!;
     public DbSet<Message> Messages { get; set; } = default!;
     public DbSet<Order> Orders { get; set; } = default!;
-    private readonly IServiceProvider serviceProvider = _serviceProvider;
+    public DbSet<Flow> Flows { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

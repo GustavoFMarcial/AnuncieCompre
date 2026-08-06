@@ -1,0 +1,12 @@
+using AnuncieCompre.Domain.Interfaces;
+using AnuncieCompre.Domain.Aggregates;
+using AnuncieCompre.Domain.Aggregates.UserAggregate;
+
+namespace AnuncieCompre.Application.Interfaces;
+
+public interface IUserRepository : IBaseRepository<User>
+{
+    public Task<User?> GetUserByPhoneAsync(string userPhone);
+    public Task<User?> GetUserByIdAsync(Guid userId);
+    public Task ExecuteDeleteByUserIdAsync(Guid userId);
+}

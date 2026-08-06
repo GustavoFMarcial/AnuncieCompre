@@ -1,3 +1,6 @@
+using AnuncieCompre.Application.UseCases.Flows;
+using AnuncieCompre.Domain.Aggregates.FlowAggregate;
+using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.Web.DTO;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,17 +10,16 @@ namespace AnuncieCompre.Web.Controllers;
 [Route("api/[controller]")]
 public class FlowsController : ControllerBase
 {
-    [HttpGet("ok")]
-    public ActionResult Get()
+    [HttpGet("{id}")]
+    [HttpPost]
+    public ActionResult GetFlowById([FromQuery] int id)
     {
         return Ok();
     }
-
-    public ActionResult CreateNode([FromForm] CreateNodeData nodeData)
+    public async Task<ActionResult> CreateFlow([FromBody] CreateFlowInput input, [FromServices] CreateFlow createFlow)
     {
-        Console.WriteLine(nodeData.Text);
-        Console.WriteLine(nodeData.Validation);
-        
-        return Ok();
+        CreateFlowRequest request = input.ToCreateFlowRequest();
+        Flow flow = await createFlow.Handle(request);
+        return CreatedAtAction(nameof(GetFlowById), flow.Id, flow);
     }
 }

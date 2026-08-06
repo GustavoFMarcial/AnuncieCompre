@@ -8,13 +8,14 @@ using AnuncieCompre.Infra.Repositories.ConversationRepo;
 using AnuncieCompre.Infra.Repositories.MessageRepo;
 using AnuncieCompre.Infra.Repositories.OrderRepo;
 using AnuncieCompre.Infra.Repositories.UserRepo;
-using AnuncieCompre.UseCase.BackgroundServices;
-using AnuncieCompre.UseCase.Dispatchers;
-using AnuncieCompre.UseCase.DomainEventHandler.Conversation;
-using AnuncieCompre.UseCase.Interfaces;
-using AnuncieCompre.UseCase.ProcessMessageUseCase;
+using AnuncieCompre.Application.BackgroundServices;
+using AnuncieCompre.Application.Dispatchers;
+using AnuncieCompre.Application.DomainEventHandler.Conversation;
+using AnuncieCompre.Application.Interfaces;
+using AnuncieCompre.Application.UseCases.ProcessMessageUseCase;
 using Microsoft.EntityFrameworkCore;
 using Twilio;
+using AnuncieCompre.Application.UseCases.Flows;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,7 @@ builder.Services.AddScoped<IDomainEventHandler<UserFinishedConversationDomainEve
 builder.Services.AddScoped<IDomainEventHandler<UserSentEmailDomainEvent>, UserSentEmailDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<UserSentNameDomainEvent>, UserSentNameDomainEventHandler>();
 builder.Services.AddScoped<EventDispatcher>();
+builder.Services.AddScoped<CreateFlow>();
 // builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 
 //Hosted
