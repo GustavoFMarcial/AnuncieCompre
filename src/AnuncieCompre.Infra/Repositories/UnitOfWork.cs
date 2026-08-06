@@ -1,5 +1,5 @@
 using AnuncieCompre.Infra.Data;
-using AnuncieCompre.UseCase.Interfaces;
+using AnuncieCompre.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace AnuncieCompre.Infra.Repositories;
