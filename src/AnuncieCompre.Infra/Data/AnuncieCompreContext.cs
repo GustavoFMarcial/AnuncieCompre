@@ -8,6 +8,7 @@ using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
+using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 
 namespace AnuncieCompre.Infra.Data;
 
@@ -18,6 +19,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
     public DbSet<Message> Messages { get; set; } = default!;
     public DbSet<Order> Orders { get; set; } = default!;
     public DbSet<Flow> Flows { get; set; } = default!;
+    public DbSet<Node> Nodes { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
