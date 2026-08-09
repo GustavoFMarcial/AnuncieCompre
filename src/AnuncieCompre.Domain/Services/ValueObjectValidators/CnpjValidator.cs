@@ -6,10 +6,14 @@ namespace AnuncieCompre.Domain.Services.ValueObjectValidators;
 
 public class CnpjValidator : IValueObjectValidator
 {
-    public IResultValueObject Validate(string input)
+    public Result<ValueObject> Validate(string input)
     {
-        if (string.IsNullOrEmpty(input)) return Result<CNPJ>.Failure("CNPJ inválido");
+        if (string.IsNullOrEmpty(input)) return Result<ValueObject>.Failure("CNPJ inválido");
 
-        return CNPJ.Create(input.Trim());
+        Result<CNPJ> result = CNPJ.Create(input.Trim());
+
+        if (result.IsSuccess is false) return Result<ValueObject>.Failure(result.Message);
+
+        return Result<ValueObject>.Success(result.Value, result.Message);
     }
 }

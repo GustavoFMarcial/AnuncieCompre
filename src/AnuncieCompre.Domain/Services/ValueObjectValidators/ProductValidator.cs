@@ -6,10 +6,14 @@ namespace AnuncieCompre.Domain.Services.ValueObjectValidators;
 
 public class ProductValidator : IValueObjectValidator
 {
-    public IResultValueObject Validate(string input)
+    public Result<ValueObject> Validate(string input)
     {
-        if (string.IsNullOrEmpty(input)) return Result<Product>.Failure("Descrição do produto não pode ser em branco");
+        if (string.IsNullOrEmpty(input)) return Result<ValueObject>.Failure("Descrição do produto não pode ser em branco");
 
-        return Product.Create(input.Trim());
+        Result<Product> result = Product.Create(input.Trim());
+
+        if (result.IsSuccess is false) return Result<ValueObject>.Failure(result.Message);
+
+        return Result<ValueObject>.Success(result.Value, result.Message);
     }
 }

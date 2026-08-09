@@ -7,10 +7,14 @@ namespace AnuncieCompre.Domain.Services.ValueObjectValidators;
 public class OptionValidator(string[] options) : IValueObjectValidator
 {
     public string[] Options { get; private set; } = options;
-    public IResultValueObject Validate(string input)
+    public Result<ValueObject> Validate(string input)
     {
-        if (string.IsNullOrEmpty(input)) return Result<Phone>.Failure("Opção não pode ser em branco");
+        if (string.IsNullOrEmpty(input)) return Result<ValueObject>.Failure("Opção não pode ser em branco");
 
-        return Option.Create(Options, input.Trim());
+        Result<Option> result = Option.Create(Options, input);
+
+        if (result.IsSuccess is false) return Result<ValueObject>.Failure(result.Message);
+
+        return Result<ValueObject>.Success(result.Value, result.Message);
     }
 }
