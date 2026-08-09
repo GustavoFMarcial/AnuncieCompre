@@ -12,7 +12,7 @@ public class CompanyCategoryValidator : IValueObjectValidator
 
         Result<CompanyCategory> result = CompanyCategory.Create(input.Trim());
 
-        if (result.IsSuccess!) return Result<ValueObject>.Failure(result.Message);
+        if (result.IsSuccess is false) return Result<ValueObject>.Failure(result.Message);
 
         return Result<ValueObject>.Success(result.Value, result.Message);
     }

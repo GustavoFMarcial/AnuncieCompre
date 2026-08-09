@@ -12,7 +12,7 @@ public class PhoneValidator : IValueObjectValidator
 
         Result<Phone> result = Phone.Create(input.Trim());
 
-        if (result.IsSuccess!) return Result<ValueObject>.Failure(result.Message);
+        if (result.IsSuccess is false) return Result<ValueObject>.Failure(result.Message);
 
         return Result<ValueObject>.Success(result.Value, result.Message);
     }
