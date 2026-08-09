@@ -1,5 +1,5 @@
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
-using AnuncieCompre.UseCase.Interfaces;
+using AnuncieCompre.Application.Interfaces;
 
 namespace AnuncieCompre.Application.BackgroundServices;
 

@@ -6,10 +6,14 @@ namespace AnuncieCompre.Domain.Services.ValueObjectValidators;
 
 public class UserTypeValidator : IValueObjectValidator
 {
-    public IResultValueObject Validate(string input)
+    public Result<ValueObject> Validate(string input)
     {
-        if (string.IsNullOrEmpty(input)) return Result<UserType>.Failure("Tipo de usuário não pode ser em branco");
+        if (string.IsNullOrEmpty(input)) return Result<ValueObject>.Failure("Tipo de usuário não pode ser em branco");
 
-        return UserType.Create(input.Trim());
+        Result<UserType> result = UserType.Create(input.Trim());
+
+        if (result.IsSuccess!) return Result<ValueObject>.Failure(result.Message);
+
+        return Result<ValueObject>.Success(result.Value, result.Message);
     }
 }

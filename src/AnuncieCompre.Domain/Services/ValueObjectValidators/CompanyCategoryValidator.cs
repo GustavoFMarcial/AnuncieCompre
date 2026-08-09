@@ -6,10 +6,14 @@ namespace AnuncieCompre.Domain.Services.ValueObjectValidators;
 
 public class CompanyCategoryValidator : IValueObjectValidator
 {
-    public IResultValueObject Validate(string input)
+    public Result<ValueObject> Validate(string input)
     {
-        if (string.IsNullOrWhiteSpace(input)) return Result<CompanyCategory>.Failure("Opção não pode ser em branco");
+        if (string.IsNullOrWhiteSpace(input)) return Result<ValueObject>.Failure("Opção não pode ser em branco");
 
-        return CompanyCategory.Create(input.Trim());
+        Result<CompanyCategory> result = CompanyCategory.Create(input.Trim());
+
+        if (result.IsSuccess!) return Result<ValueObject>.Failure(result.Message);
+
+        return Result<ValueObject>.Success(result.Value, result.Message);
     }
 }

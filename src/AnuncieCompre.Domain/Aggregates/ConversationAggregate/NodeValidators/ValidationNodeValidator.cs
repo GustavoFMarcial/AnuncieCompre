@@ -10,7 +10,7 @@ public class ValidationNodeValidator(IValueObjectValidator valueObjectValidator)
 
     public NodeResult Validate(IConversationNode conversationNode, string message)
     {
-        IResultValueObject result = ValueObjectValidator.Validate(message);
+        Result<ValueObject> result = ValueObjectValidator.Validate(message);
 
         if (!result.IsSuccess)
         {

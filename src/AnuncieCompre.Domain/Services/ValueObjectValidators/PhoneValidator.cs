@@ -6,10 +6,14 @@ namespace AnuncieCompre.Domain.Services.ValueObjectValidators;
 
 public class PhoneValidator : IValueObjectValidator
 {
-    public IResultValueObject Validate(string input)
+    public Result<ValueObject> Validate(string input)
     {
-        if (string.IsNullOrEmpty(input)) return Result<Phone>.Failure("Número não pode ser em branco");
+        if (string.IsNullOrEmpty(input)) return Result<ValueObject>.Failure("Número não pode ser em branco");
 
-        return Phone.Create(input.Trim());
+        Result<Phone> result = Phone.Create(input.Trim());
+
+        if (result.IsSuccess!) return Result<ValueObject>.Failure(result.Message);
+
+        return Result<ValueObject>.Success(result.Value, result.Message);
     }
 }

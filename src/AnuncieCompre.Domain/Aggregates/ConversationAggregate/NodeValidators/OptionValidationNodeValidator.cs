@@ -4,7 +4,7 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Conversation.NodeValidators;
 
-public class OptionValidationNodeValidator(List<string> options, IValueObjectValidator valueObjectValidator) : INodeValidator
+public class OptionValidationNodeValidator(List<string> options, IValueObjectValidator valueObjectValidator) : INodeValidator 
 {
     private readonly List<string> Options = options;
     private readonly IValueObjectValidator valueObjectValidator = valueObjectValidator;
@@ -15,7 +15,7 @@ public class OptionValidationNodeValidator(List<string> options, IValueObjectVal
         {
             if (message == o)
             {
-                IResultValueObject result = valueObjectValidator.Validate(message);
+                Result<ValueObject> result = valueObjectValidator.Validate(message);
 
                 if (result.IsSuccess)
                 {
