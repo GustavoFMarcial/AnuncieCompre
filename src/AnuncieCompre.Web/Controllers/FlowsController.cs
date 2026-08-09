@@ -1,5 +1,6 @@
 using AnuncieCompre.Application.UseCases.Flows;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
+using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.Web.DTO;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ public class FlowsController : ControllerBase
     public async Task<ActionResult> CreateFlow([FromBody] CreateFlowInput input, [FromServices] CreateFlow createFlow)
     {
         CreateFlowRequest request = input.ToCreateFlowRequest();
-        Flow flow = await createFlow.Handle(request);
-        return CreatedAtAction(nameof(GetFlowById), flow.Id, flow);
+        Result<Flow> flow = await createFlow.Handle(request);
+        return CreatedAtAction(nameof(GetFlowById), flow.Value.Id, flow);
     }
 }
