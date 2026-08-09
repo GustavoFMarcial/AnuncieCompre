@@ -1,6 +1,6 @@
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 using AnuncieCompre.Domain.Interfaces;
-using AnuncieCompre.UseCase.Interfaces;
+using AnuncieCompre.Application.Interfaces;
 
 namespace AnuncieCompre.Application.Dispatchers;
 

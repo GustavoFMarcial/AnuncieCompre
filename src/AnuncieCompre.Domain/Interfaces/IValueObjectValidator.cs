@@ -4,5 +4,5 @@ namespace AnuncieCompre.Domain.Interfaces;
 
 public interface IValueObjectValidator
 {
-    public IResultValueObject Validate(string input);
+    public Result<ValueObject> Validate(string input);
 }

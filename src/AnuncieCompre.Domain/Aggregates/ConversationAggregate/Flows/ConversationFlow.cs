@@ -1,3 +1,5 @@
+using AnuncieCompre.Domain.Aggregates.ValueObjects;
+using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Conversation.NodeValidators;
 using AnuncieCompre.Domain.Enums;

@@ -6,10 +6,14 @@ namespace AnuncieCompre.Domain.Services.ValueObjectValidators;
 
 public class CpfValidator : IValueObjectValidator
 {
-    public IResultValueObject Validate(string input)
+    public Result<ValueObject> Validate(string input)
     {
-        if (string.IsNullOrWhiteSpace(input)) return Result<CPF>.Failure("CPF inválido");
+        if (string.IsNullOrWhiteSpace(input)) return Result<ValueObject>.Failure("CPF inválido");
 
-        return CPF.Create(input.Trim());
+        Result<CPF> result = CPF.Create(input.Trim());
+
+        if (result.IsSuccess is false) return Result<ValueObject>.Failure(result.Message);
+
+        return Result<ValueObject>.Success(result.Value, result.Message);
     }
 }
