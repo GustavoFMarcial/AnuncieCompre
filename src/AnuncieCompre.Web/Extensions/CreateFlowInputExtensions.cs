@@ -13,7 +13,7 @@ public static class CreateFlowInputExtensions
             {
                 Name = createFlowInput.Name,
                 Description = createFlowInput.Description,
-                Status = createFlowInput.Status switch
+                Status = createFlowInput.Status.Trim().ToLower() switch
                 {
                     "Publicado" => FlowStatus.Published,
                     "Rascunho" => FlowStatus.Draft,
