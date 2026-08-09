@@ -12,6 +12,7 @@ using AnuncieCompre.Application.UseCases.ProcessMessageUseCase;
 using Microsoft.EntityFrameworkCore;
 using Twilio;
 using AnuncieCompre.Application.UseCases.Flows;
+using AnuncieCompre.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,8 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IFlowRepository, FlowRepository>();
+builder.Services.AddScoped<INodeRepository, NodeRepository>();
 builder.Services.AddScoped<ConversationFlowProvider>();
 builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCase>();
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
