@@ -3,6 +3,7 @@ using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.Web.DTO;
+using AnuncieCompre.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnuncieCompre.Web.Controllers;
@@ -17,10 +18,15 @@ public class FlowsController : ControllerBase
     {
         return Ok();
     }
-    public async Task<ActionResult> CreateFlow([FromBody] CreateFlowInput input, [FromServices] CreateFlow createFlow)
+    public async Task<ActionResult> CreateFlow([FromBody] CreateFlowRequest input, [FromServices] CreateFlow createFlow)
     {
-        CreateFlowRequest request = input.ToCreateFlowRequest();
-        Result<Flow> flow = await createFlow.Handle(request);
-        return CreatedAtAction(nameof(GetFlowById), flow.Value.Id, flow);
+        CreateFlowInput request = input.ToCreateFlowRequest();
+        Result<Flow> result = await createFlow.Handle(request);
+
+        if (!result.IsSuccess) return BadRequest(result.Message);
+
+        CreateFlowResponse response = result.ToCreateFlowResponse();
+
+        return CreatedAtAction(nameof(GetFlowById), response.Id, response);
     }
 }
