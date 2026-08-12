@@ -12,16 +12,20 @@ namespace AnuncieCompre.Web.Controllers;
 [Route("api/[controller]")]
 public class FlowsController : ControllerBase
 {
-    [HttpGet("{id}")]
-    [HttpPost]
-    public ActionResult GetFlowById([FromQuery] int id)
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult> GetFlowById([FromRoute] Guid id, [FromServices] GetFlowById getFlowById)
     {
-        return Ok();
+        ConversationFlow? flow = await getFlowById.Handle(id);
+
+        if (flow is null) return BadRequest("Flow não encontrado");
+        
+        GetFlowByIdResponse response = flow.ToGetFlowByIdResponse();
+        return Ok(response);
     }
     public async Task<ActionResult> CreateFlow([FromBody] CreateFlowRequest input, [FromServices] CreateFlow createFlow)
     {
         CreateFlowInput request = input.ToCreateFlowRequest();
-        Result<Flow> result = await createFlow.Handle(request);
+        Result<ConversationFlow> result = await createFlow.Handle(request);
 
         if (!result.IsSuccess) return BadRequest(result.Message);
 

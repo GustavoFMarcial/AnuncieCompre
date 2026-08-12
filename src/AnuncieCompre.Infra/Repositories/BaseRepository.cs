@@ -9,7 +9,7 @@ namespace AnuncieCompre.Infra.Repositories;
 public class BaseRepository<T>(AnuncieCompreContext _context) : IBaseRepository<T> where T : BaseEntity
 {
     protected readonly DbContext context = _context;
-    public async Task<T?> GetByIdAsync(int id)
+    public async Task<T?> GetByIdAsync(Guid id)
     {
         return await context.Set<T>().FindAsync(id);
     }
