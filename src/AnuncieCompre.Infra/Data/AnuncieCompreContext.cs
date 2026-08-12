@@ -18,8 +18,8 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
     public DbSet<Conversation> Conversations { get; set; } = default!;
     public DbSet<Message> Messages { get; set; } = default!;
     public DbSet<Order> Orders { get; set; } = default!;
-    public DbSet<Flow> Flows { get; set; } = default!;
-    public DbSet<Node> Nodes { get; set; } = default!;
+    public DbSet<ConversationFlow> Flows { get; set; } = default!;
+    public DbSet<ConversationNode> Nodes { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -3,7 +3,7 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Application.Interfaces;
 
-public interface IFlowRepository : IBaseRepository<Flow>
+public interface IFlowRepository : IBaseRepository<ConversationFlow>
 {
     
 }
