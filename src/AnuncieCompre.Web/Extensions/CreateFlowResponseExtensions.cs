@@ -7,25 +7,22 @@ namespace AnuncieCompre.Web.Extensions;
 
 public static class CreateFlowResponseExtensions
 {
-    extension (Result<Flow> resultFlow)
+    public static CreateFlowResponse ToCreateFlowResponse(this Result<ConversationFlow> resultFlow)
     {
-        public CreateFlowResponse ToCreateFlowResponse()
+        return new CreateFlowResponse
         {
-            return new CreateFlowResponse
+            Id = resultFlow.Value.Id,
+            Name = resultFlow.Value.Name.Value,
+            Description = resultFlow.Value.Description,
+            Status = resultFlow.Value.Status switch
             {
-                Id = resultFlow.Value.Id,
-                Name = resultFlow.Value.Name.Value,
-                Description = resultFlow.Value.Description,
-                Status = resultFlow.Value.Status switch
-                {
-                    FlowStatus.Published => "Publicado",
-                    FlowStatus.Draft => "Rascunho",
-                    _ => "Rascunho",
-                },
-                Steps = resultFlow.Value.Nodes?.Count > 0 ? resultFlow.Value.Nodes.Count : 0,
-                CreatedAt = resultFlow.Value.CreatedAt,
+                FlowStatus.Published => "Publicado",
+                FlowStatus.Draft => "Rascunho",
+                _ => "Rascunho",
+            },
+            Steps = resultFlow.Value.Nodes?.Count > 0 ? resultFlow.Value.Nodes.Count : 0,
+            CreatedAt = resultFlow.Value.CreatedAt,
 
-            };
-        }
+        };
     }
 }

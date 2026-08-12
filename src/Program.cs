@@ -41,6 +41,7 @@ builder.Services.AddScoped<IDomainEventHandler<UserSentEmailDomainEvent>, UserSe
 builder.Services.AddScoped<IDomainEventHandler<UserSentNameDomainEvent>, UserSentNameDomainEventHandler>();
 builder.Services.AddScoped<EventDispatcher>();
 builder.Services.AddScoped<CreateFlow>();
+builder.Services.AddScoped<GetFlowById>();
 // builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 
 //Hosted

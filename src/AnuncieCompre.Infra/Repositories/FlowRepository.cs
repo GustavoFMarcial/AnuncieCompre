@@ -4,7 +4,7 @@ using AnuncieCompre.Infra.Data;
 
 namespace AnuncieCompre.Infra.Repositories;
 
-public class FlowRepository(AnuncieCompreContext _context) : BaseRepository<Flow>(_context), IFlowRepository
+public class FlowRepository(AnuncieCompreContext _context) : BaseRepository<ConversationFlow>(_context), IFlowRepository
 {
     
 }

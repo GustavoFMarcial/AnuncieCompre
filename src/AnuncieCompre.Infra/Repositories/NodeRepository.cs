@@ -4,7 +4,7 @@ using AnuncieCompre.Infra.Data;
 
 namespace AnuncieCompre.Infra.Repositories;
 
-public class NodeRepository(AnuncieCompreContext _context) : BaseRepository<Node>(_context), INodeRepository
+public class NodeRepository(AnuncieCompreContext _context) : BaseRepository<ConversationNode>(_context), INodeRepository
 {
     
 }

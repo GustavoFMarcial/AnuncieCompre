@@ -5,21 +5,18 @@ namespace AnuncieCompre.Web.DTO;
 
 public static class CreateFlowRequestExtensions
 {
-    extension(CreateFlowRequest createFlowInput)
+    public static CreateFlowInput ToCreateFlowRequest(this CreateFlowRequest createFlowInput)
     {
-        public CreateFlowInput ToCreateFlowRequest()
+        return new CreateFlowInput
         {
-            return new CreateFlowInput
+            Name = createFlowInput.Name,
+            Description = createFlowInput.Description,
+            Status = createFlowInput.Status.Trim().ToLower() switch
             {
-                Name = createFlowInput.Name,
-                Description = createFlowInput.Description,
-                Status = createFlowInput.Status.Trim().ToLower() switch
-                {
-                    "Publicado" => FlowStatus.Published,
-                    "Rascunho" => FlowStatus.Draft,
-                    _ => FlowStatus.Draft,
-                }
-            };
-        }
+                "Publicado" => FlowStatus.Published,
+                "Rascunho" => FlowStatus.Draft,
+                _ => FlowStatus.Draft,
+            }
+        };
     }
 }
