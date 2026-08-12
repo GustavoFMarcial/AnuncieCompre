@@ -9,13 +9,13 @@ namespace AnuncieCompre.Domain.Aggregates.FlowAggregate;
 public class Flow : BaseEntity
 {
     public Name Name { get; private set; } = default!;
-    public string Description { get; private set; } = default!;
+    public string? Description { get; private set; }
     public FlowStatus Status { get; private set; } = default!;
     public List<Node>? Nodes { get; private set; } = [];
 
     private Flow() {}
 
-    private Flow(Name name, string description, FlowStatus status)
+    private Flow(Name name, FlowStatus status, string description = default!)
     {
         Name = name;
         Description = description;
@@ -28,7 +28,7 @@ public class Flow : BaseEntity
 
         if (result.IsSuccess is false) return Result<Flow>.Failure(result.Message);
 
-        Flow flow = new Flow(result.Value, description, status);
+        Flow flow = new(result.Value, status, description);
         return Result<Flow>.Success(flow, "Flow criado com sucesso");
     }
 }

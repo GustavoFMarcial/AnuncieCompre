@@ -12,12 +12,15 @@ public class CreateFlow(IFlowRepository _flowRepository, IUnitOfWork _unitOfWork
     private readonly IFlowRepository flowRepository = _flowRepository;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    public async Task<Result<Flow>> Handle(CreateFlowRequest request)
+    public async Task<Result<Flow>> Handle(CreateFlowInput request)
     {
-        Result<Flow> flow = Flow.Create(request.Name, request.Description, request.Status);
-        flowRepository.Add(flow.Value);
+        Result<Flow> result = Flow.Create(request.Name, request.Description, request.Status);
+
+        if (!result.IsSuccess) return result;
+
+        flowRepository.Add(result.Value);
         await unitOfWork.SaveChangesAsync();
 
-        return flow;
+        return result;
     }
 }

@@ -3,13 +3,13 @@ using AnuncieCompre.Domain.Enums;
 
 namespace AnuncieCompre.Web.DTO;
 
-public static class CreateFlowInputExtensions
+public static class CreateFlowRequestExtensions
 {
-    extension(CreateFlowInput createFlowInput)
+    extension(CreateFlowRequest createFlowInput)
     {
-        public CreateFlowRequest ToCreateFlowRequest()
+        public CreateFlowInput ToCreateFlowRequest()
         {
-            return new CreateFlowRequest
+            return new CreateFlowInput
             {
                 Name = createFlowInput.Name,
                 Description = createFlowInput.Description,
