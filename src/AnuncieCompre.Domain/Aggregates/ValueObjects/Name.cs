@@ -15,7 +15,7 @@ public partial class Name : ValueObject
 
     public static Result<Name> Create(string fullName)
     {
-        if (fullName.Length <= 15) return Result<Name>.Failure("Nome deve ter 15 caracteres ou mais");
+        if (fullName.Length < 5) return Result<Name>.Failure("Nome deve ter 5 caracteres ou mais");
         if (fullName.Length > 40) return Result<Name>.Failure("Nome deve ter 40 caracteres ou menos");
         if (!NameIsValid(fullName)) return Result<Name>.Failure("Nome não poder conter caracteres especiais");
 
