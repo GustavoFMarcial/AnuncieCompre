@@ -1,5 +1,6 @@
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Conversation.NodeValidators;
+using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Domain.Services.ValueObjectValidators;
 using AnuncieCompre.Web.DTO;
 
@@ -13,25 +14,25 @@ public static class ConversationNodeExtensions
         {
             Id = c.Id,
             Message = c.Message,
-            ValidationKind = c.NodeValidator switch
+            ValidationKind = c.ValidationKind switch
             {
-                FinalNodeValidator => "Final",
-                OptionNodeValidator => "Option",
-                ConfirmationNodeValidator => "Confirmation",
-                ValidationNodeValidator => "Validation",
-                _ => null!,
+                ValidationKind.Final => "Final",
+                ValidationKind.Option => "Option",
+                ValidationKind.Confirmation => "Confirmation",
+                ValidationKind.Validation => "Validation",
+                _ => "None",
             },
             ValueObjectValidator = c.ValueObjectValidator switch
             {
-                EmailValidator => "Email",
-                NameValidator => "Name",
-                QuantityValidator => "Quantity",
-                ProductValidator => "Product",
-                CompanyCategoryValidator => "CompanyCategory",
-                CpfValidator => "CPF",
-                CnpjValidator => "CNPJ",
-                PhoneValidator => "Phone",
-                UserTypeValidator => "UserType",
+                ValueObjectValidator.Email => "Email",
+                ValueObjectValidator.Name => "Name",
+                ValueObjectValidator.Quantity => "Quantity",
+                ValueObjectValidator.Product => "Product",
+                ValueObjectValidator.CompanyCategory => "CompanyCategory",
+                ValueObjectValidator.CPF => "CPF",
+                ValueObjectValidator.CNPJ => "CNPJ",
+                ValueObjectValidator.Phone => "Phone",
+                ValueObjectValidator.UserType => "UserType",
                 _ => "None",
             },
             Options = c.Options,

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20260729001314_InitialMigration")]
+    [Migration("20260814000546_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -91,6 +91,35 @@ namespace AnuncieCompre.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.FlowAggregate.ConversationFlow", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Name", "AnuncieCompre.Domain.Aggregates.FlowAggregate.ConversationFlow.Name#Name", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Flows");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.MessageAggregate.Message", b =>
@@ -186,6 +215,49 @@ namespace AnuncieCompre.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ConversationFlowId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsFinal")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.PrimitiveCollection<string[]>("Options")
+                        .HasColumnType("text[]");
+
+                    b.Property<int>("ValidationKind")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ValueObjectValidator")
+                        .HasColumnType("integer");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Transitions", "AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode.Transitions#List<Transition>", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("Capacity")
+                                .HasColumnType("integer");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationFlowId");
+
+                    b.ToTable("Nodes");
+                });
+
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.OrderAggregate.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -273,6 +345,13 @@ namespace AnuncieCompre.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode", b =>
+                {
+                    b.HasOne("AnuncieCompre.Domain.Aggregates.FlowAggregate.ConversationFlow", null)
+                        .WithMany("Nodes")
+                        .HasForeignKey("ConversationFlowId");
+                });
+
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.OrderAggregate.Order", b =>
                 {
                     b.HasOne("AnuncieCompre.Domain.Aggregates.UserAggregate.User", "User")
@@ -287,6 +366,11 @@ namespace AnuncieCompre.Migrations
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.FlowAggregate.ConversationFlow", b =>
+                {
+                    b.Navigation("Nodes");
                 });
 #pragma warning restore 612, 618
         }
