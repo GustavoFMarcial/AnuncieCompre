@@ -8,7 +8,7 @@ public partial class Quantity : ValueObject
 {
     public string Value { get; private set; } = string.Empty;
 
-    private Quantity() { }
+    private Quantity(){}
     private Quantity(string quantity)
     {
         Value = quantity;
