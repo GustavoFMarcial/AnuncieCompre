@@ -1,3 +1,5 @@
+using AnuncieCompre.Domain.Aggregates.ValueObjects;
+
 namespace AnuncieCompre.Web.DTO;
 
 public record Node
@@ -7,6 +9,6 @@ public record Node
     public string ValidationKind { get; set; } = default!;
     public string ValueObjectValidator { get; set; } = default!;
     public string[]? Options { get; set; } = [];
-    public (string option, string targetNodeId)[] Transitions { get; set; } = [];
+    public List<Transition> Transitions { get; set; } = [];
     public bool IsFinal { get; set; }
  }

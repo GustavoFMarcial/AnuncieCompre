@@ -37,7 +37,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<Message>(m =>
         {
-            m.ComplexProperty(m => m.Conversation);
+            m.ComplexProperty(cp => cp.Conversation);
         });
 
         modelBuilder.Entity<Order>(o =>
@@ -46,6 +46,16 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
             o.ComplexProperty(cp => cp.Product);
             o.ComplexProperty(cp => cp.Quantity);
             o.ComplexProperty(cp => cp.Category);
+        });
+
+        modelBuilder.Entity<ConversationFlow>(cf =>
+        {
+            cf.ComplexProperty(cp => cp.Name);
+        });
+
+        modelBuilder.Entity<ConversationNode>(cf =>
+        {
+            cf.ComplexProperty(cp => cp.Transitions);
         });
     }
 }
