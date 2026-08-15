@@ -2,6 +2,7 @@ using System.Diagnostics;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
+using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.Domain.Enums;
 
 namespace AnuncieCompre.Domain.Aggregates.FlowAggregate;
@@ -30,5 +31,18 @@ public class ConversationFlow : BaseEntity
 
         ConversationFlow flow = new(result.Value, status, description);
         return Result<ConversationFlow>.Success(flow, "Flow criado com sucesso");
+    }
+
+    public Result EditFlow(EditFlowInput input)
+    {
+        Result<Name> result = Name.Create(input.Name);
+
+        if (!result.IsSuccess) return Result.Failure(result.Message);
+
+        Name = result.Value;
+        Description = input.Description;
+        Status = input.Status;
+
+        return Result.Success("Flow editado com sucesso");
     }
 }

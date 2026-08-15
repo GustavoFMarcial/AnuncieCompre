@@ -13,18 +13,21 @@ public partial class Name : ValueObject
         Value = fullName;
     }
 
-    public static Result<Name> Create(string fullName)
+    public static Result<Name> Create(string name)
     {
-        if (fullName.Length < 5) return Result<Name>.Failure("Nome deve ter 5 caracteres ou mais");
-        if (fullName.Length > 40) return Result<Name>.Failure("Nome deve ter 40 caracteres ou menos");
-        if (!NameIsValid(fullName)) return Result<Name>.Failure("Nome não poder conter caracteres especiais");
+        Result result = ValidateName(name);
+        if (!result.IsSuccess) return Result<Name>.Failure(result.Message);
 
-        return Result<Name>.Success(new Name(fullName), "VOName criado com sucesso");
+        return Result<Name>.Success(new Name(name), "VOName criado com sucesso");
     }
 
-    private static bool NameIsValid(string nome)
+    private static Result ValidateName(string name)
     {
-        return MyRegex().IsMatch(nome);
+        if (name.Length < 5) return Result.Failure("Nome deve ter 5 caracteres ou mais");
+        if (name.Length > 40) return Result.Failure("Nome deve ter 40 caracteres ou menos");
+        if (!MyRegex().IsMatch(name)) return Result.Failure("Nome não poder conter caracteres especiais");
+
+        return Result.Success("Nome validade com sucesso");
     }
 
     [GeneratedRegex(@"^[\p{L}\s'-]+$")]
