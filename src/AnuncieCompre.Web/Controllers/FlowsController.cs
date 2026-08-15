@@ -1,3 +1,4 @@
+using AnuncieCompre.Application.UseCases;
 using AnuncieCompre.Application.UseCases.Flows;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Common;
@@ -30,7 +31,14 @@ public class FlowsController : ControllerBase
         if (!result.IsSuccess) return BadRequest(result.Message);
 
         CreateFlowResponse response = result.ToCreateFlowResponse();
-
         return CreatedAtAction(nameof(GetFlowById), response.Id, response);
+    }
+
+    public async Task<ActionResult> GetFlows([FromServices] GetFlows getFlows)
+    {
+        List<ConversationFlow> flows = await getFlows.Handle();
+        List<GetFlowsResponse> response = flows.ToGetFlowsResponse();
+        
+        return Ok(response);
     }
 }
