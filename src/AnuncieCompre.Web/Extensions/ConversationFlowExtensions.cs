@@ -23,4 +23,14 @@ public static class ConversationFlowExtensions
             Nodes = conversationFlow.Nodes.ToNodeDTO(),
         };
     }
+
+    public static List<GetFlowsResponse> ToGetFlowsResponse(this List<ConversationFlow> conversationFlows)
+    {
+        return conversationFlows.Select(cf => new GetFlowsResponse
+        {
+            Name = cf.Name.Value,
+            Description = cf.Description,
+            Status = cf.Status.ToString(),
+        }).ToList();
+    }
 }

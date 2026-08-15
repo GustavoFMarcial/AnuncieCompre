@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Twilio;
 using AnuncieCompre.Application.UseCases.Flows;
 using AnuncieCompre.Domain.Interfaces;
+using AnuncieCompre.Application.UseCases;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,7 @@ builder.Services.AddScoped<IDomainEventHandler<UserSentNameDomainEvent>, UserSen
 builder.Services.AddScoped<EventDispatcher>();
 builder.Services.AddScoped<CreateFlow>();
 builder.Services.AddScoped<GetFlowById>();
+builder.Services.AddScoped<GetFlows>();
 // builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 
 //Hosted

@@ -5,5 +5,5 @@ namespace AnuncieCompre.Application.Interfaces;
 
 public interface IFlowRepository : IBaseRepository<ConversationFlow>
 {
-    
+    public Task<List<ConversationFlow>> GetFlowsToListAsync();
 }
