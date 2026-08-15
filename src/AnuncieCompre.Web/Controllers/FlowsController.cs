@@ -13,16 +13,15 @@ namespace AnuncieCompre.Web.Controllers;
 [Route("api/[controller]")]
 public class FlowsController : ControllerBase
 {
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult> GetFlowById([FromRoute] Guid id, [FromServices] GetFlowById getFlowById)
+    public async Task<ActionResult> GetFlows([FromServices] GetFlows getFlows)
     {
-        ConversationFlow? flow = await getFlowById.Handle(id);
+        List<ConversationFlow> flows = await getFlows.Handle();
+        List<GetFlowsResponse> response = flows.ToGetFlowsResponse();
 
-        if (flow is null) return BadRequest("Flow não encontrado");
-        
-        GetFlowByIdResponse response = flow.ToGetFlowByIdResponse();
         return Ok(response);
     }
+
+    [HttpPost]
     public async Task<ActionResult> CreateFlow([FromBody] CreateFlowRequest input, [FromServices] CreateFlow createFlow)
     {
         CreateFlowInput request = input.ToCreateFlowRequest();
@@ -34,11 +33,25 @@ public class FlowsController : ControllerBase
         return CreatedAtAction(nameof(GetFlowById), response.Id, response);
     }
 
-    public async Task<ActionResult> GetFlows([FromServices] GetFlows getFlows)
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult> GetFlowById([FromRoute] Guid id, [FromServices] GetFlowById getFlowById)
     {
-        List<ConversationFlow> flows = await getFlows.Handle();
-        List<GetFlowsResponse> response = flows.ToGetFlowsResponse();
-        
+        ConversationFlow? flow = await getFlowById.Handle(id);
+
+        if (flow is null) return BadRequest("Flow não encontrado");
+
+        GetFlowByIdResponse response = flow.ToGetFlowByIdResponse();
         return Ok(response);
+    }
+
+    [HttpPut("id:guid")]
+    public async Task<ActionResult> EditFlow([FromRoute] Guid id, [FromBody] EditFlowRequest editFlowRequest, [FromServices] EditFlow editFlow)
+    {
+        EditFlowInput editFlowInput = editFlowRequest.ToEditFlowInout();
+        Result result = await editFlow.Handle(id, editFlowInput);
+
+        if (!result.IsSuccess) return BadRequest(result.Message);
+    
+        return Ok(result.Message);
     }
 }
