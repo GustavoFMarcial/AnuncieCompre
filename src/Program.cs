@@ -45,6 +45,7 @@ builder.Services.AddScoped<CreateFlow>();
 builder.Services.AddScoped<GetFlowById>();
 builder.Services.AddScoped<GetFlows>();
 builder.Services.AddScoped<EditFlow>();
+builder.Services.AddScoped<DeleteFlow>();
 // builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 
 //Hosted

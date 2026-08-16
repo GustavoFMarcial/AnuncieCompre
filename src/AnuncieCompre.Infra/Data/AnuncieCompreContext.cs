@@ -51,6 +51,10 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
         modelBuilder.Entity<ConversationFlow>(cf =>
         {
             cf.ComplexProperty(cp => cp.Name);
+            cf.HasMany(f => f.Nodes)
+            .WithOne(n => n.ConversationFlow)
+            .HasForeignKey(n => n.ConversationFlowId)
+            .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<ConversationNode>(cf =>
