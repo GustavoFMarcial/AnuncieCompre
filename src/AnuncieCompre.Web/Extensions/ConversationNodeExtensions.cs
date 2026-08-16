@@ -43,4 +43,21 @@ public static class ConversationNodeExtensions
 
         return nodes;
     }
+
+    public static CreateConversationNodeResponse ToCreateConversationNodeResponse(this ConversationNode conversationNode)
+    {
+        return new CreateConversationNodeResponse
+        {
+            Id = conversationNode.Id.ToString(),
+            Message = conversationNode.Message,
+            ValidationKind = conversationNode.ValidationKind switch
+            {
+                ValidationKind.Final => "Final",
+                ValidationKind.Option => "Option",
+                ValidationKind.Confirmation => "Confirmation",
+                ValidationKind.Validation => "Validation",
+                _ => "None",
+            }
+        };
+    }
 }

@@ -7,9 +7,9 @@ namespace AnuncieCompre.Web.Extensions;
 
 public static class ConversationFlowExtensions
 {
-    public static GetFlowByIdResponse ToGetFlowByIdResponse(this ConversationFlow conversationFlow)
+    public static GetConversationFlowByIdResponse ToGetConversationFlowByIdResponse(this ConversationFlow conversationFlow)
     {
-        return new GetFlowByIdResponse
+        return new GetConversationFlowByIdResponse
         {
             Id = conversationFlow.Id,
             Name = conversationFlow.Name.Value,
@@ -24,9 +24,9 @@ public static class ConversationFlowExtensions
         };
     }
 
-    public static List<GetFlowsResponse> ToGetFlowsResponse(this List<ConversationFlow> conversationFlows)
+    public static List<GetConversationFlowsResponse> ToGetConversationFlowsResponse(this List<ConversationFlow> conversationFlows)
     {
-        return conversationFlows.Select(cf => new GetFlowsResponse
+        return conversationFlows.Select(cf => new GetConversationFlowsResponse
         {
             Name = cf.Name.Value,
             Description = cf.Description,

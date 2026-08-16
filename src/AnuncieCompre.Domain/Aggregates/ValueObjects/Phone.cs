@@ -2,7 +2,7 @@ using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Domain.Aggregates.ValueObjects;
 
-public class Phone : ValueObject
+public record Phone : ValueObject
 {
     public string Value { get; private set; } = string.Empty;
 

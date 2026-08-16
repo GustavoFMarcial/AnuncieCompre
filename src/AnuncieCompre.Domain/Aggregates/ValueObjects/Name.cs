@@ -3,7 +3,7 @@ using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Domain.Aggregates.ValueObjects;
 
-public partial class Name : ValueObject
+public partial record Name : ValueObject
 {
     public string Value { get; private set; } = default!;
 

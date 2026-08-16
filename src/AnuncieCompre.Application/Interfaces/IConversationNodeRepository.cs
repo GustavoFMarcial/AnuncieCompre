@@ -1,0 +1,10 @@
+using AnuncieCompre.Domain.Aggregates.NodeAggregate;
+using AnuncieCompre.Domain.Interfaces;
+using AnuncieCompre.Infra.Repositories;
+
+namespace AnuncieCompre.Application.Interfaces;
+
+public interface IConversationNodeRepository : IBaseRepository<ConversationNode>
+{
+    
+}

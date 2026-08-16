@@ -5,11 +5,11 @@ using AnuncieCompre.Web.DTO;
 
 namespace AnuncieCompre.Web.Extensions;
 
-public static class CreateFlowResponseExtensions
+public static class CreateConversationFlowResponseExtensions
 {
-    public static CreateFlowResponse ToCreateFlowResponse(this Result<ConversationFlow> resultFlow)
+    public static CreateConversationFlowResponse ToCreateConversationFlowResponse(this Result<ConversationFlow> resultFlow)
     {
-        return new CreateFlowResponse
+        return new CreateConversationFlowResponse
         {
             Id = resultFlow.Value.Id,
             Name = resultFlow.Value.Name.Value,

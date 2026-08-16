@@ -1,10 +1,11 @@
 namespace AnuncieCompre.Web.DTO;
 
-public record GetFlowByIdResponse
+public record CreateConversationFlowResponse
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = default!;
-    public string Description { get; set; } = default!;
+    public string? Description { get; set; }
     public string Status { get; set; } = default!;
-    public List<Node> Nodes { get; set; } = [];
+    public int Steps { get; set; }
+    public DateTime CreatedAt { get; set; }
 }

@@ -2,7 +2,7 @@ using AnuncieCompre.Domain.Enums;
 
 namespace AnuncieCompre.Domain.DTO;
 
-public record CreateFlowInput
+public record CreateConversationFlowInput
 {
     public string Name { get; set; } = default!;
     public string Description { get; set; } = default!;

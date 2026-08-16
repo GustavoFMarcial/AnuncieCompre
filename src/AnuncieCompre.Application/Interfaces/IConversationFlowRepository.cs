@@ -3,7 +3,7 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Application.Interfaces;
 
-public interface IFlowRepository : IBaseRepository<ConversationFlow>
+public interface IConversationFlowRepository : IBaseRepository<ConversationFlow>
 {
     public Task<List<ConversationFlow>> GetFlowsToListAsync();
 }

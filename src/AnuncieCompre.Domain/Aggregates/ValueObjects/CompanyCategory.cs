@@ -3,7 +3,7 @@ using AnuncieCompre.Domain.Enums;
 
 namespace AnuncieCompre.Domain.Aggregates.ValueObjects;
 
-public class CompanyCategory : ValueObject
+public record CompanyCategory : ValueObject
 {
     public Enums.CompanyCategory Value { get; private set; }
 

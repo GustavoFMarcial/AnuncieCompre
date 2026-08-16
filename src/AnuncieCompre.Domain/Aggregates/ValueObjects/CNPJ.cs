@@ -3,7 +3,7 @@ using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Domain.Aggregates.ValueObjects;
 
-public partial class CNPJ : ValueObject
+public partial record CNPJ : ValueObject
 {
     public string Value { get; private set; } = default!;
 
