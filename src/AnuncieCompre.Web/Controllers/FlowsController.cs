@@ -44,7 +44,7 @@ public class FlowsController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPut("id:guid")]
+    [HttpPut("{id:guid}")]
     public async Task<ActionResult> EditFlow([FromRoute] Guid id, [FromBody] EditFlowRequest editFlowRequest, [FromServices] EditFlow editFlow)
     {
         EditFlowInput editFlowInput = editFlowRequest.ToEditFlowInout();
@@ -53,5 +53,15 @@ public class FlowsController : ControllerBase
         if (!result.IsSuccess) return BadRequest(result.Message);
     
         return Ok(result.Message);
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> DeleteFlow([FromRoute] Guid id, [FromServices] DeleteFlow deleteFlow)
+    {
+        Result result = await deleteFlow.Handle(id);
+
+        if (!result.IsSuccess) return BadRequest(result.Message);
+
+        return NoContent();
     }
 }

@@ -1,3 +1,4 @@
+using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Enums;
@@ -6,6 +7,8 @@ namespace AnuncieCompre.Domain.Aggregates.NodeAggregate;
 
 public class ConversationNode : BaseEntity
 {
+    public Guid ConversationFlowId { get; private set; }
+    public ConversationFlow ConversationFlow { get; private set; } = default!;
     public string Message { get; private set; } = default!;
     public ValidationKind ValidationKind { get; private set; }
     public ValueObjectValidator ValueObjectValidator { get; private set; }
