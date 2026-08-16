@@ -4,7 +4,7 @@ using AnuncieCompre.Domain.Enums;
 
 namespace AnuncieCompre.Domain.Aggregates.ValueObjects;
 
-public class UserType : ValueObject
+public record UserType : ValueObject
 {
     public Enums.UserType Value { get; private set; }
 

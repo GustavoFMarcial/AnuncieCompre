@@ -3,7 +3,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace AnuncieCompre.Web.DTO;
 
-public record CreateFlowRequest
+public record CreateConversationFlowRequest
 {
     [Required(ErrorMessage = "Nome é obrigatório")]
     [Length(5, 40, ErrorMessage = "Nome deve ter entre 5 a 40 caracteres")]

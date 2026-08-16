@@ -1,6 +1,6 @@
 namespace AnuncieCompre.Web.DTO;
 
-public record GetFlowsResponse
+public record GetConversationFlowsResponse
 {
     public string Name { get; set; } = default!;
     public string? Description { get; set; }

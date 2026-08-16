@@ -3,7 +3,7 @@ using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Domain.Aggregates.ValueObjects;
 
-public partial class CPF : ValueObject
+public partial record CPF : ValueObject
 {
     public string Value { get; private set; } = default!;
 

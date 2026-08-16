@@ -7,12 +7,12 @@ using AnuncieCompre.Infra.Repositories;
 
 namespace AnuncieCompre.Application.UseCases.Flows;
 
-public class CreateFlow(IFlowRepository _flowRepository, IUnitOfWork _unitOfWork)
+public class CreateConversationFlow(IConversationFlowRepository _flowRepository, IUnitOfWork _unitOfWork)
 {
-    private readonly IFlowRepository flowRepository = _flowRepository;
+    private readonly IConversationFlowRepository flowRepository = _flowRepository;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    public async Task<Result<ConversationFlow>> Handle(CreateFlowInput request)
+    public async Task<Result<ConversationFlow>> Handle(CreateConversationFlowInput request)
     {
         Result<ConversationFlow> result = ConversationFlow.Create(request.Name, request.Description, request.Status);
 

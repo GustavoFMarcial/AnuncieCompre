@@ -28,8 +28,8 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
-builder.Services.AddScoped<IFlowRepository, FlowRepository>();
-builder.Services.AddScoped<INodeRepository, NodeRepository>();
+builder.Services.AddScoped<IConversationFlowRepository, ConversationFlowRepository>();
+builder.Services.AddScoped<IConversationNodeRepository, ConversationNodeRepository>();
 builder.Services.AddScoped<ConversationFlowProvider>();
 builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCase>();
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
@@ -41,11 +41,11 @@ builder.Services.AddScoped<IDomainEventHandler<UserFinishedConversationDomainEve
 builder.Services.AddScoped<IDomainEventHandler<UserSentEmailDomainEvent>, UserSentEmailDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<UserSentNameDomainEvent>, UserSentNameDomainEventHandler>();
 builder.Services.AddScoped<EventDispatcher>();
-builder.Services.AddScoped<CreateFlow>();
-builder.Services.AddScoped<GetFlowById>();
-builder.Services.AddScoped<GetFlows>();
-builder.Services.AddScoped<EditFlow>();
-builder.Services.AddScoped<DeleteFlow>();
+builder.Services.AddScoped<CreateConversationFlow>();
+builder.Services.AddScoped<GetConversationFlowById>();
+builder.Services.AddScoped<GetConversationFlows>();
+builder.Services.AddScoped<EditConversationFlow>();
+builder.Services.AddScoped<DeleteConversationFlow>();
 // builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 
 //Hosted

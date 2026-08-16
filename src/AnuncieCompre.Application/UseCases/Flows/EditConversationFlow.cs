@@ -5,16 +5,16 @@ using AnuncieCompre.Domain.DTO;
 
 namespace AnuncieCompre.Application.UseCases;
 
-public class EditFlow(IFlowRepository _flowRepository, IUnitOfWork _unitOfWork)
+public class EditConversationFlow(IConversationFlowRepository _flowRepository, IUnitOfWork _unitOfWork)
 {
-    private readonly IFlowRepository flowRepository = _flowRepository;
+    private readonly IConversationFlowRepository flowRepository = _flowRepository;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    public async Task<Result> Handle(Guid id, EditFlowInput input)
+    public async Task<Result> Handle(Guid id, EditConversationFlowInput input)
     {
         ConversationFlow? flow = await flowRepository.GetByIdAsync(id);
 
-        if (flow is null) return Result.Failure("Flow não encontrado");
+        if (flow is null) return Result.Failure("ConversationFlow não encontrado");
 
         Result result = flow.EditFlow(input);
 

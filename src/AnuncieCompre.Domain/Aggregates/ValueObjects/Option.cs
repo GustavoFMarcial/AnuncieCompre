@@ -2,7 +2,7 @@ using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Domain.Aggregates.ValueObjects;
 
-public class Option : ValueObject
+public record Option : ValueObject
 {
     public string Value { get; private set; } = default!;
 

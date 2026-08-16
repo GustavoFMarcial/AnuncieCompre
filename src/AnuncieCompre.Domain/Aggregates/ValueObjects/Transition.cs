@@ -2,7 +2,7 @@ using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Domain.Aggregates.ValueObjects;
 
-public class Transition : ValueObject
+public record Transition : ValueObject
 {
     public string Option { get; private set; } = default!;
     public string TargetNodeId { get; private set; } = default!;
