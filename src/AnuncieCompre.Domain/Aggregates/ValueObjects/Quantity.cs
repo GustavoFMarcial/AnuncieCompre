@@ -4,7 +4,7 @@ using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Domain.Aggregates.ValueObjects;
 
-public partial class Quantity : ValueObject
+public partial record Quantity : ValueObject
 {
     public string Value { get; private set; } = string.Empty;
 

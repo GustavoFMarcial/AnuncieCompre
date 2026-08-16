@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AnuncieCompre.Web.DTO;
 
-public record EditFlowRequest
+public record EditConversationFlowRequest
 {
     [Required(ErrorMessage = "Nome é obrigatório")]
     [Length(5, 40, ErrorMessage = "Nome deve ter entre 5 a 40 caracteres")]

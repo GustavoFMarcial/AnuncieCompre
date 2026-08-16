@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AnuncieCompre.Infra.Repositories;
 
-public class FlowRepository(AnuncieCompreContext _context) : BaseRepository<ConversationFlow>(_context), IFlowRepository
+public class ConversationFlowRepository(AnuncieCompreContext _context) : BaseRepository<ConversationFlow>(_context), IConversationFlowRepository
 {
     public async Task<List<ConversationFlow>> GetFlowsToListAsync()
     {

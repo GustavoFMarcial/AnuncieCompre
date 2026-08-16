@@ -3,11 +3,11 @@ using AnuncieCompre.Domain.Enums;
 
 namespace AnuncieCompre.Web.DTO;
 
-public static class CreateFlowRequestExtensions
+public static class CreateConversationFlowRequestExtensions
 {
-    public static CreateFlowInput ToCreateFlowRequest(this CreateFlowRequest createFlowInput)
+    public static CreateConversationFlowInput ToCreateConversationFlowRequest(this CreateConversationFlowRequest createFlowInput)
     {
-        return new CreateFlowInput
+        return new CreateConversationFlowInput
         {
             Name = createFlowInput.Name,
             Description = createFlowInput.Description,

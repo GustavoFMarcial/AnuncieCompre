@@ -1,6 +1,7 @@
 using AnuncieCompre.Application.UseCases;
 using AnuncieCompre.Application.UseCases.Flows;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
+using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.Web.DTO;
@@ -13,55 +14,66 @@ namespace AnuncieCompre.Web.Controllers;
 [Route("api/[controller]")]
 public class FlowsController : ControllerBase
 {
-    public async Task<ActionResult> GetFlows([FromServices] GetFlows getFlows)
+    public async Task<ActionResult> GetFlows([FromServices] GetConversationFlows getConversationFlows)
     {
-        List<ConversationFlow> flows = await getFlows.Handle();
-        List<GetFlowsResponse> response = flows.ToGetFlowsResponse();
+        List<ConversationFlow> flows = await getConversationFlows.Handle();
+        List<GetConversationFlowsResponse> response = flows.ToGetConversationFlowsResponse();
 
         return Ok(response);
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateFlow([FromBody] CreateFlowRequest input, [FromServices] CreateFlow createFlow)
+    public async Task<ActionResult> CreateFlow([FromBody] CreateConversationFlowRequest input, [FromServices] CreateConversationFlow createConversationFlow)
     {
-        CreateFlowInput request = input.ToCreateFlowRequest();
-        Result<ConversationFlow> result = await createFlow.Handle(request);
+        CreateConversationFlowInput request = input.ToCreateConversationFlowRequest();
+        Result<ConversationFlow> result = await createConversationFlow.Handle(request);
 
         if (!result.IsSuccess) return BadRequest(result.Message);
 
-        CreateFlowResponse response = result.ToCreateFlowResponse();
+        CreateConversationFlowResponse response = result.ToCreateConversationFlowResponse();
         return CreatedAtAction(nameof(GetFlowById), response.Id, response);
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult> GetFlowById([FromRoute] Guid id, [FromServices] GetFlowById getFlowById)
+    [HttpGet("{flowId:guid}")]
+    public async Task<ActionResult> GetFlowById([FromRoute] Guid flowId, [FromServices] GetConversationFlowById getConversationFlowById)
     {
-        ConversationFlow? flow = await getFlowById.Handle(id);
+        ConversationFlow? flow = await getConversationFlowById.Handle(flowId);
 
         if (flow is null) return BadRequest("Flow não encontrado");
 
-        GetFlowByIdResponse response = flow.ToGetFlowByIdResponse();
+        GetConversationFlowByIdResponse response = flow.ToGetConversationFlowByIdResponse();
         return Ok(response);
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<ActionResult> EditFlow([FromRoute] Guid id, [FromBody] EditFlowRequest editFlowRequest, [FromServices] EditFlow editFlow)
+    [HttpPut("{flowId:guid}")]
+    public async Task<ActionResult> EditFlow([FromRoute] Guid flowId, [FromBody] EditConversationFlowRequest editFlowRequest, [FromServices] EditConversationFlow editConversationFlow)
     {
-        EditFlowInput editFlowInput = editFlowRequest.ToEditFlowInout();
-        Result result = await editFlow.Handle(id, editFlowInput);
+        EditConversationFlowInput editFlowInput = editFlowRequest.ToConversationEditFlowInout();
+        Result result = await editConversationFlow.Handle(flowId, editFlowInput);
 
         if (!result.IsSuccess) return BadRequest(result.Message);
     
         return Ok(result.Message);
     }
 
-    [HttpDelete("{id:guid}")]
-    public async Task<ActionResult> DeleteFlow([FromRoute] Guid id, [FromServices] DeleteFlow deleteFlow)
+    [HttpDelete("{flowId:guid}")]
+    public async Task<ActionResult> DeleteFlow([FromRoute] Guid flowId, [FromServices] DeleteConversationFlow deleteConversationFlow)
     {
-        Result result = await deleteFlow.Handle(id);
+        Result result = await deleteConversationFlow.Handle(flowId);
 
         if (!result.IsSuccess) return BadRequest(result.Message);
 
         return NoContent();
+    }
+
+    [HttpPost("{flowId:guid}")]
+    public async Task<ActionResult> CreateNode([FromRoute] Guid flowId, [FromServices] CreateConversationNode createConversationNode)
+    {
+        Result<ConversationNode> result = await createConversationNode.Handle(flowId);
+
+        if (!result.IsSuccess) return BadRequest(result.Message);
+
+        CreateConversationNodeResponse response = result.Value.ToCreateConversationNodeResponse();
+        return Created(response.Id, response);
     }
 }

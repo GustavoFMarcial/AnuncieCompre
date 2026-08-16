@@ -33,7 +33,7 @@ public class ConversationFlow : BaseEntity
         return Result<ConversationFlow>.Success(flow, "Flow criado com sucesso");
     }
 
-    public Result EditFlow(EditFlowInput input)
+    public Result EditFlow(EditConversationFlowInput input)
     {
         Result<Name> result = Name.Create(input.Name);
 

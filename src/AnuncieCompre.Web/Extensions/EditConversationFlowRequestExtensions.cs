@@ -4,11 +4,11 @@ using AnuncieCompre.Web.DTO;
 
 namespace AnuncieCompre.Web.Extensions;
 
-public static class EditFlowRequestExtensions
+public static class EditConversationFlowRequestExtensions
 {
-    public static EditFlowInput ToEditFlowInout(this EditFlowRequest editFlowRequest)
+    public static EditConversationFlowInput ToConversationEditFlowInout(this EditConversationFlowRequest editFlowRequest)
     {
-        return new EditFlowInput
+        return new EditConversationFlowInput
         {
             Name = editFlowRequest.Name,
             Description = editFlowRequest.Description,
