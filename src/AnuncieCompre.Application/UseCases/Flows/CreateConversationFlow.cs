@@ -12,9 +12,9 @@ public class CreateConversationFlow(IConversationFlowRepository _flowRepository,
     private readonly IConversationFlowRepository flowRepository = _flowRepository;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    public async Task<Result<ConversationFlow>> Handle(CreateConversationFlowInput request)
+    public async Task<Result<ConversationFlow>> Handle(CreateConversationFlowInput input)
     {
-        Result<ConversationFlow> result = ConversationFlow.Create(request.Name, request.Description, request.Status);
+        Result<ConversationFlow> result = ConversationFlow.Create(input.Name, input.Description, input.Status);
 
         if (!result.IsSuccess) return result;
 

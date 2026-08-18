@@ -1,4 +1,5 @@
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
+using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Conversation.NodeValidators;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Domain.Services.ValueObjectValidators;
@@ -20,6 +21,7 @@ public static class ConversationNodeExtensions
                 ValidationKind.Option => "Option",
                 ValidationKind.Confirmation => "Confirmation",
                 ValidationKind.Validation => "Validation",
+                ValidationKind.None => "None",
                 _ => "None",
             },
             ValueObjectValidator = c.ValueObjectValidator switch
@@ -33,6 +35,7 @@ public static class ConversationNodeExtensions
                 ValueObjectValidator.CNPJ => "CNPJ",
                 ValueObjectValidator.Phone => "Phone",
                 ValueObjectValidator.UserType => "UserType",
+                ValueObjectValidator.None => "None",
                 _ => "None",
             },
             Options = c.Options,
@@ -58,6 +61,41 @@ public static class ConversationNodeExtensions
                 ValidationKind.Validation => "Validation",
                 _ => "None",
             }
+        };
+    }
+
+    public static EditConversationNodeResponse ToEditConversationNodeResponse(this Result<ConversationNode> conversationNode)
+    {
+        return new EditConversationNodeResponse
+        {
+            ConversationFlowId = conversationNode.Value.ConversationFlowId,
+            ConversationNodeId = conversationNode.Value.Id,
+            Message = conversationNode.Value.Message,
+            ValidationKind = conversationNode.Value.ValidationKind switch
+            {
+                ValidationKind.Final => "Final",
+                ValidationKind.Option => "Option",
+                ValidationKind.Confirmation => "Confirmation",
+                ValidationKind.Validation => "Validation",
+                ValidationKind.None => "None",
+                _ => "None",
+            },
+            ValueObjectValidator = conversationNode.Value.ValueObjectValidator switch
+            {
+                ValueObjectValidator.Email => "Email",
+                ValueObjectValidator.Name => "Name",
+                ValueObjectValidator.Quantity => "Quantity",
+                ValueObjectValidator.Product => "Product",
+                ValueObjectValidator.CompanyCategory => "CompanyCategory",
+                ValueObjectValidator.CPF => "CPF",
+                ValueObjectValidator.CNPJ => "CNPJ",
+                ValueObjectValidator.Phone => "Phone",
+                ValueObjectValidator.UserType => "UserType",
+                ValueObjectValidator.None => "None",
+                _ => "None",
+            },
+            Options = conversationNode.Value.Options,
+            IsFinal = conversationNode.Value.IsFinal,
         };
     }
 }
