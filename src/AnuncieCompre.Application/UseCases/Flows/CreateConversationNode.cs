@@ -11,9 +11,9 @@ public class CreateConversationNode(IConversationFlowRepository _conversationFlo
     private readonly IConversationNodeRepository conversationNodeRepository = _conversationNodeRepository;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    public async Task<Result<ConversationNode>> Handle(Guid flowId)
+    public async Task<Result<ConversationNode>> Handle(Guid id)
     {
-        ConversationFlow? flow = await conversationFlowRepository.GetByIdAsync(flowId);
+        ConversationFlow? flow = await conversationFlowRepository.GetByIdAsync(id);
 
         if (flow is null) return Result<ConversationNode>.Failure("ConversationFlow não encontrado");
 
