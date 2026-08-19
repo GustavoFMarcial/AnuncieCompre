@@ -88,4 +88,16 @@ public class FlowsController : ControllerBase
         EditConversationNodeResponse response = result.ToEditConversationNodeResponse();
         return Ok(response);
     }
+
+    [HttpPatch("{flowId:guid}/nodes/{nodeId:guid}/transitions")]
+    public async Task<ActionResult> EditConversationNodeTransition([FromRoute] Guid flowId, [FromRoute] Guid nodeId, [FromBody] List<EditConversationNodeTransitionRequest> request, [FromServices] EditConversationNodeTransitions service)
+    {
+        List<EditConversationNodeTransitionInput> input = request.ToEditConversationNodeTransitionInput();
+
+        Result result = await service.Handle(nodeId, input);
+
+        if (!result.IsSuccess) return BadRequest(result.Message);
+
+        return Ok();
+    }
 }

@@ -13,7 +13,7 @@ public class ConversationNode : BaseEntity
     public string Message { get; private set; } = default!;
     public ValidationKind ValidationKind { get; private set; } = ValidationKind.None;
     public ValueObjectValidator ValueObjectValidator { get; private set; }
-    public List<Transition> Transitions { get; private set; } = [];
+    public List<NodeTransition> Transitions { get; private set; } = [];
     public bool IsFinal { get; private set; }
     public string[]? Options { get; private set; } = [];
 
@@ -68,5 +68,20 @@ public class ConversationNode : BaseEntity
         if (input.Options?.Length > 0 && input.ValidationKind is ValidationKind.Validation) return Result<ConversationNode>.Failure("Apenas nodes de confirmação ou validação podem ter opções");
 
         return Result.Success("ConversationNode editado com sucesso");
+    }
+
+    public Result EditTransition(List<NodeTransition> transitions)
+    {
+        if (ValidationKind is ValidationKind.Final && (transitions.Count + Transitions.Count) != 1) return Result.Failure("Node final só pode ter uma transição");
+        if (ValidationKind is ValidationKind.Validation && (transitions.Count + Transitions.Count) != 1) return Result.Failure("Node de validação só pode ter uma transição");
+        if (ValidationKind is ValidationKind.Option && (transitions.Count + Transitions.Count) <= 1) return Result.Failure("Node de opção não pode ter só uma transição");
+        if (ValidationKind is ValidationKind.Confirmation && (transitions.Count + Transitions.Count) <= 1) return Result.Failure("Node de confirmação não pode ter só uma transição");
+
+        foreach (NodeTransition t in transitions)
+        {
+            Transitions.Add(t);
+        }
+
+        return Result.Success("Transições atualizadas com sucesso");
     }
 }
