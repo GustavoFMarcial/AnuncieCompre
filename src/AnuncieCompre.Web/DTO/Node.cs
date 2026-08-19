@@ -9,6 +9,6 @@ public record Node
     public string ValidationKind { get; set; } = default!;
     public string ValueObjectValidator { get; set; } = default!;
     public string[]? Options { get; set; } = [];
-    public List<Transition> Transitions { get; set; } = [];
+    public List<NodeTransition> Transitions { get; set; } = [];
     public bool IsFinal { get; set; }
  }
