@@ -6,13 +6,13 @@ namespace AnuncieCompre.Web.Extensions;
 
 public static class EditConversationFlowRequestExtensions
 {
-    public static EditConversationFlowInput ToConversationEditFlowInout(this EditConversationFlowRequest editFlowRequest)
+    public static EditConversationFlowInput ToConversationEditFlowInout(this EditConversationFlowRequest request)
     {
         return new EditConversationFlowInput
         {
-            Name = editFlowRequest.Name,
-            Description = editFlowRequest.Description,
-            Status = editFlowRequest.Status switch
+            Name = request.Name,
+            Description = request.Description,
+            Status = request.Status switch
             {
                 "Publicado" => FlowStatus.Published,
                 "Rascunho" => FlowStatus.Draft,

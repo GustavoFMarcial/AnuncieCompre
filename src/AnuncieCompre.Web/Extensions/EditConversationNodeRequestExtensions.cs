@@ -6,12 +6,12 @@ namespace AnuncieCompre.Web.Extensions;
 
 public static class EditConversationNodeRequestExtensions
 {
-    public static EditConversationNodeInput ToEditConversationNodeInput(this EditConversationNodeRequest editConversationNodeRequest)
+    public static EditConversationNodeInput ToEditConversationNodeInput(this EditConversationNodeRequest request)
     {
         return new EditConversationNodeInput
         {
-            Message = editConversationNodeRequest.Message,
-            ValidationKind = editConversationNodeRequest.ValidationKind switch
+            Message = request.Message,
+            ValidationKind = request.ValidationKind switch
             {
                 "Final" => ValidationKind.Final,
                 "Option" => ValidationKind.Option,
@@ -20,7 +20,7 @@ public static class EditConversationNodeRequestExtensions
                 "None" => ValidationKind.None,
                 _ => ValidationKind.None,
             },
-            ValueObjectValidator = editConversationNodeRequest.ValueObjectValidator switch
+            ValueObjectValidator = request.ValueObjectValidator switch
             {
                 "Email" => ValueObjectValidator.Email,
                 "Name" => ValueObjectValidator.Name,
@@ -34,8 +34,8 @@ public static class EditConversationNodeRequestExtensions
                 "None" => ValueObjectValidator.None,
                 _ => ValueObjectValidator.None,
             },
-            Options = editConversationNodeRequest.Options,
-            IsFinal = editConversationNodeRequest.IsFinal,
+            Options = request.Options,
+            IsFinal = request.IsFinal,
         };
     }
 }

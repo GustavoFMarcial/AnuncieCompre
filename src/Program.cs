@@ -47,6 +47,7 @@ builder.Services.AddScoped<GetConversationFlows>();
 builder.Services.AddScoped<EditConversationFlow>();
 builder.Services.AddScoped<DeleteConversationFlow>();
 builder.Services.AddScoped<EditConversationNode>();
+builder.Services.AddScoped<EditConversationNodeTransitions>();
 // builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 
 //Hosted
