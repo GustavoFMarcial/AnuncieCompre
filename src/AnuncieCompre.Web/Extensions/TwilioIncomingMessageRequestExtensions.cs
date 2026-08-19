@@ -5,15 +5,15 @@ namespace AnuncieCompre.Web.Extensions;
 
 public static class TwilioIncomingMessageRequestExtensions
 {
-    public static IncomingMessageRequest ToUseCaseRequest(this TwilioIncomingMessageRequest incomingMessageRequest)
+    public static IncomingMessageRequest ToUseCaseRequest(this TwilioIncomingMessageRequest request)
     {
         return new IncomingMessageRequest
         {
-            MessageId = incomingMessageRequest.MessageSid,
-            SenderPhone = incomingMessageRequest.From,
-            RecipientPhone = incomingMessageRequest.To,
-            Content = incomingMessageRequest.Body,
-            HasAttachments = incomingMessageRequest.NumMedia > 0,
+            MessageId = request.MessageSid,
+            SenderPhone = request.From,
+            RecipientPhone = request.To,
+            Content = request.Body,
+            HasAttachments = request.NumMedia > 0,
         };
     }
 }

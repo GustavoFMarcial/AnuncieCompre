@@ -5,13 +5,13 @@ namespace AnuncieCompre.Web.DTO;
 
 public static class CreateConversationFlowRequestExtensions
 {
-    public static CreateConversationFlowInput ToCreateConversationFlowRequest(this CreateConversationFlowRequest createFlowInput)
+    public static CreateConversationFlowInput ToCreateConversationFlowRequest(this CreateConversationFlowRequest request)
     {
         return new CreateConversationFlowInput
         {
-            Name = createFlowInput.Name,
-            Description = createFlowInput.Description,
-            Status = createFlowInput.Status.Trim().ToLower() switch
+            Name = request.Name,
+            Description = request.Description,
+            Status = request.Status.Trim().ToLower() switch
             {
                 "Publicado" => FlowStatus.Published,
                 "Rascunho" => FlowStatus.Draft,
