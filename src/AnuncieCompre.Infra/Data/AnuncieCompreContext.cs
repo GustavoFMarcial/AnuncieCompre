@@ -57,9 +57,9 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
             .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<ConversationNode>(cf =>
+        modelBuilder.Entity<ConversationNode>(cn =>
         {
-            cf.ComplexProperty(cp => cp.Transitions);
+            cn.ComplexProperty(cp => cp.Transitions);
         });
     }
 }

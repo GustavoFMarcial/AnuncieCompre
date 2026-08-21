@@ -53,4 +53,9 @@ public class ConversationNode : BaseEntity
 
         return Result.Success("Transições atualizadas com sucesso");
     }
+
+    public void RemoveTransition(Guid targetNodeId)
+    {
+        Transitions.RemoveAll(t => t.TargetNodeId == targetNodeId);
+    }
 }
