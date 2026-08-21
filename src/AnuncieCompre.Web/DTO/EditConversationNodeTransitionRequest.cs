@@ -8,5 +8,5 @@ public record EditConversationNodeTransitionRequest
     public string Option { get; set; } = default!;
 
     [Required(ErrorMessage = "Id do próximo Node é obrigatório")]
-    public string TargetNodeId { get; set; } = default!;
+    public Guid TargetNodeId { get; set; } = default!;
 }
