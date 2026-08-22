@@ -12,10 +12,10 @@ public static class EditConversationFlowRequestExtensions
         {
             Name = request.Name,
             Description = request.Description,
-            Status = request.Status switch
+            Status = request.Status.ToLower() switch
             {
-                "Publicado" => FlowStatus.Published,
-                "Rascunho" => FlowStatus.Draft,
+                "publicado" => FlowStatus.Published,
+                "rascunho" => FlowStatus.Draft,
                 _ => FlowStatus.Draft,
             }
         };

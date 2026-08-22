@@ -1,11 +1,7 @@
-using System.Text.Json;
-using AnuncieCompre.Domain.Aggregates;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Domain.Aggregates.MessageAggregate;
 using AnuncieCompre.Domain.Aggregates.OrderAggregate;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
-using AnuncieCompre.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
@@ -18,8 +14,8 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
     public DbSet<Conversation> Conversations { get; set; } = default!;
     public DbSet<Message> Messages { get; set; } = default!;
     public DbSet<Order> Orders { get; set; } = default!;
-    public DbSet<ConversationFlow> Flows { get; set; } = default!;
-    public DbSet<ConversationNode> Nodes { get; set; } = default!;
+    public DbSet<ConversationFlow> ConversationFlows { get; set; } = default!;
+    public DbSet<ConversationNode> ConversationNodes { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -59,7 +55,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<ConversationNode>(cn =>
         {
-            cn.ComplexProperty(cp => cp.Transitions);
+            cn.ComplexCollection(cp => cp.Transitions).ToJson();
         });
     }
 }
