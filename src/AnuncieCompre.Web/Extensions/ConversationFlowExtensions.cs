@@ -28,6 +28,7 @@ public static class ConversationFlowExtensions
     {
         return conversationFlows.Select(cf => new GetConversationFlowsResponse
         {
+            Id = cf.Id,
             Name = cf.Name.Value,
             Description = cf.Description,
             Status = cf.Status.ToString(),
