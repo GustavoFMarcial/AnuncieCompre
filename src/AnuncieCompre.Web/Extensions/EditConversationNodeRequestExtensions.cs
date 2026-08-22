@@ -11,27 +11,27 @@ public static class EditConversationNodeRequestExtensions
         return new EditConversationNodeInput
         {
             Message = request.Message,
-            ValidationKind = request.ValidationKind switch
+            ValidationKind = request.ValidationKind.ToLower() switch
             {
-                "Final" => ValidationKind.Final,
-                "Option" => ValidationKind.Option,
-                "Confirmation" => ValidationKind.Confirmation,
-                "Validation" => ValidationKind.Validation,
-                "None" => ValidationKind.None,
+                "final" => ValidationKind.Final,
+                "option" => ValidationKind.Option,
+                "confirmation" => ValidationKind.Confirmation,
+                "validation" => ValidationKind.Validation,
+                "none" => ValidationKind.None,
                 _ => ValidationKind.None,
             },
-            ValueObjectValidator = request.ValueObjectValidator switch
+            ValueObjectValidator = request.ValueObjectValidator.ToLower() switch
             {
-                "Email" => ValueObjectValidator.Email,
-                "Name" => ValueObjectValidator.Name,
-                "Quantity" => ValueObjectValidator.Quantity,
-                "Product" => ValueObjectValidator.Product,
-                "CompanyCategory" => ValueObjectValidator.CompanyCategory,
-                "CPF" => ValueObjectValidator.CPF,
-                "CNPJ" => ValueObjectValidator.CNPJ,
-                "Phone" => ValueObjectValidator.Phone,
-                "UserType" => ValueObjectValidator.UserType,
-                "None" => ValueObjectValidator.None,
+                "email" => ValueObjectValidator.Email,
+                "name" => ValueObjectValidator.Name,
+                "quantity" => ValueObjectValidator.Quantity,
+                "product" => ValueObjectValidator.Product,
+                "companycategory" => ValueObjectValidator.CompanyCategory,
+                "cpf" => ValueObjectValidator.CPF,
+                "cnpj" => ValueObjectValidator.CNPJ,
+                "phone" => ValueObjectValidator.Phone,
+                "usertype" => ValueObjectValidator.UserType,
+                "none" => ValueObjectValidator.None,
                 _ => ValueObjectValidator.None,
             },
             Options = request.Options,

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20260814000546_InitialMigration")]
+    [Migration("20260822194956_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -119,7 +119,7 @@ namespace AnuncieCompre.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Flows");
+                    b.ToTable("ConversationFlows");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.MessageAggregate.Message", b =>
@@ -221,7 +221,7 @@ namespace AnuncieCompre.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("ConversationFlowId")
+                    b.Property<Guid>("ConversationFlowId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -243,19 +243,25 @@ namespace AnuncieCompre.Migrations
                     b.Property<int>("ValueObjectValidator")
                         .HasColumnType("integer");
 
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Transitions", "AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode.Transitions#List<Transition>", b1 =>
+                    b.ComplexCollection(typeof(List<Dictionary<string, object>>), "Transitions", "AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode.Transitions#NodeTransition", b1 =>
                         {
                             b1.IsRequired();
 
-                            b1.Property<int>("Capacity")
-                                .HasColumnType("integer");
+                            b1.Property<string>("Option")
+                                .IsRequired();
+
+                            b1.Property<Guid>("TargetNodeId");
+
+                            b1
+                                .ToJson("Transitions")
+                                .HasColumnType("jsonb");
                         });
 
                     b.HasKey("Id");
 
                     b.HasIndex("ConversationFlowId");
 
-                    b.ToTable("Nodes");
+                    b.ToTable("ConversationNodes");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.OrderAggregate.Order", b =>
@@ -347,9 +353,13 @@ namespace AnuncieCompre.Migrations
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode", b =>
                 {
-                    b.HasOne("AnuncieCompre.Domain.Aggregates.FlowAggregate.ConversationFlow", null)
+                    b.HasOne("AnuncieCompre.Domain.Aggregates.FlowAggregate.ConversationFlow", "ConversationFlow")
                         .WithMany("Nodes")
-                        .HasForeignKey("ConversationFlowId");
+                        .HasForeignKey("ConversationFlowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ConversationFlow");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.OrderAggregate.Order", b =>

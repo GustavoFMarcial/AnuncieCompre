@@ -5,14 +5,17 @@ namespace AnuncieCompre.Web.Extensions;
 
 public static class EditConversationNodeTransitionExtensions
 {
-    public static List<EditConversationNodeTransitionInput> ToEditConversationNodeTransitionInput(this List<EditConversationNodeTransitionRequest> request)
+    public static EditConversationNodeTransitionInput ToEditConversationNodeTransitionInput(this EditConversationNodeTransitionRequest request)
     {
-        List<EditConversationNodeTransitionInput> input = request.Select(r => new EditConversationNodeTransitionInput
+        List<TransitonInput> transitons = request.Transitions.Select(r => new TransitonInput
         {
             Option = r.Option,
             TargetNodeId = r.TargetNodeId,
         }).ToList();
 
-        return input;
+        return new EditConversationNodeTransitionInput
+        {
+            Transitions = transitons,
+        };
     }
 }

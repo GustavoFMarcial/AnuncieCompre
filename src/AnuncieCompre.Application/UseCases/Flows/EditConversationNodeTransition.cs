@@ -3,6 +3,7 @@ using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.DTO;
+using AnuncieCompre.Web.DTO;
 
 namespace AnuncieCompre.Application.UseCases;
 
@@ -11,7 +12,7 @@ public class EditConversationNodeTransitions(IConversationNodeRepository _conver
     private readonly IConversationNodeRepository conversationNodeRepository = _conversationNodeRepository;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    public async Task<Result> Handle(Guid nodeId, List<EditConversationNodeTransitionInput> input)
+    public async Task<Result> Handle(Guid nodeId, EditConversationNodeTransitionInput input)
     {
         ConversationNode? node = await conversationNodeRepository.GetByIdAsync(nodeId);
 
@@ -19,7 +20,7 @@ public class EditConversationNodeTransitions(IConversationNodeRepository _conver
 
         List<NodeTransition> transitions = [];
 
-        foreach (EditConversationNodeTransitionInput i in input)
+        foreach (TransitonInput i in input.Transitions)
         {
             Result<NodeTransition> transitionResult = NodeTransition.Create(i.Option, i.TargetNodeId);
 

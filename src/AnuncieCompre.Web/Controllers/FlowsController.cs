@@ -14,6 +14,7 @@ namespace AnuncieCompre.Web.Controllers;
 [Route("api/[controller]")]
 public class FlowsController : ControllerBase
 {
+    [HttpGet]
     public async Task<ActionResult> GetConversationFlows([FromServices] GetConversationFlows service)
     {
         List<ConversationFlow> flows = await service.Handle();
@@ -23,25 +24,25 @@ public class FlowsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateConversationFlow([FromBody] CreateConversationFlowRequest input, [FromServices] CreateConversationFlow service)
+    public async Task<ActionResult> CreateConversationFlow([FromBody] CreateConversationFlowRequest request, [FromServices] CreateConversationFlow service)
     {
-        CreateConversationFlowInput request = input.ToCreateConversationFlowRequest();
-        Result<ConversationFlow> result = await service.Handle(request);
+        CreateConversationFlowInput input = request.ToCreateConversationFlowRequest();
+        Result<ConversationFlow> result = await service.Handle(input);
 
         if (!result.IsSuccess) return BadRequest(result.Message);
 
         CreateConversationFlowResponse response = result.ToCreateConversationFlowResponse();
-        return CreatedAtAction(nameof(GetConversationFlowById), response.Id, response);
+        return CreatedAtAction(nameof(GetConversationFlowById), new { flowId = response.Id }, response);
     }
 
     [HttpGet("{flowId:guid}")]
     public async Task<ActionResult> GetConversationFlowById([FromRoute] Guid flowId, [FromServices] GetConversationFlowById service)
     {
-        ConversationFlow? flow = await service.Handle(flowId);
+        Result<ConversationFlow> result = await service.Handle(flowId);
 
-        if (flow is null) return BadRequest("Flow não encontrado");
+        if (!result.IsSuccess) return BadRequest(result.Message);
 
-        GetConversationFlowByIdResponse response = flow.ToGetConversationFlowByIdResponse();
+        GetConversationFlowByIdResponse response = result.Value.ToGetConversationFlowByIdResponse();
         return Ok(response);
     }
 
@@ -66,7 +67,7 @@ public class FlowsController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("{flowId:guid}")]
+    [HttpPost("{flowId:guid}/nodes")]
     public async Task<ActionResult> CreateConversationNode([FromRoute] Guid flowId, [FromServices] CreateConversationNode service)
     {
         Result<ConversationNode> result = await service.Handle(flowId);
@@ -90,9 +91,9 @@ public class FlowsController : ControllerBase
     }
 
     [HttpPatch("{flowId:guid}/nodes/{nodeId:guid}/transitions")]
-    public async Task<ActionResult> EditConversationNodeTransition([FromRoute] Guid flowId, [FromRoute] Guid nodeId, [FromBody] List<EditConversationNodeTransitionRequest> request, [FromServices] EditConversationNodeTransitions service)
+    public async Task<ActionResult> EditConversationNodeTransition([FromRoute] Guid flowId, [FromRoute] Guid nodeId, [FromBody] EditConversationNodeTransitionRequest request, [FromServices] EditConversationNodeTransitions service)
     {
-        List<EditConversationNodeTransitionInput> input = request.ToEditConversationNodeTransitionInput();
+        EditConversationNodeTransitionInput input = request.ToEditConversationNodeTransitionInput();
 
         Result result = await service.Handle(nodeId, input);
 

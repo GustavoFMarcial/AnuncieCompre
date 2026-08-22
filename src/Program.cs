@@ -41,11 +41,12 @@ builder.Services.AddScoped<IDomainEventHandler<UserFinishedConversationDomainEve
 builder.Services.AddScoped<IDomainEventHandler<UserSentEmailDomainEvent>, UserSentEmailDomainEventHandler>();
 builder.Services.AddScoped<IDomainEventHandler<UserSentNameDomainEvent>, UserSentNameDomainEventHandler>();
 builder.Services.AddScoped<EventDispatcher>();
+builder.Services.AddScoped<GetConversationFlows>();
 builder.Services.AddScoped<CreateConversationFlow>();
 builder.Services.AddScoped<GetConversationFlowById>();
-builder.Services.AddScoped<GetConversationFlows>();
 builder.Services.AddScoped<EditConversationFlow>();
 builder.Services.AddScoped<DeleteConversationFlow>();
+builder.Services.AddScoped<CreateConversationNode>();
 builder.Services.AddScoped<EditConversationNode>();
 builder.Services.AddScoped<EditConversationNodeTransitions>();
 builder.Services.AddScoped<DeleteConversationNode>();
