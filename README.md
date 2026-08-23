@@ -1,60 +1,225 @@
-# 🤖 AnuncieCompre - Chatbot de Pedidos via WhatsApp
+# 🤖 AnuncieCompre — CRM de Atendimento via WhatsApp
 
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
 
-Chatbot backend para coleta estruturada de pedidos via WhatsApp, integrado com Twilio.
+O **AnuncieCompre** é um CRM para atendimento e automação de conversas via WhatsApp, integrado à API da **Twilio**.
 
-O sistema guia o usuário por um fluxo de conversa estruturado, validando as informações fornecidas e gerando pedidos automaticamente. A arquitetura é baseada em **Conversation Flow**, seguindo princípios de **Domain-Driven Design (DDD)** e **Clean Architecture**, priorizando organização, desacoplamento e facilidade de manutenção.
+O projeto começou como um sistema de **e-commerce reverso**, no qual usuários conversavam com um chatbot para criar pedidos de compra e fornecedores eram posteriormente envolvidos no processo.
+
+Durante o desenvolvimento, surgiu uma limitação importante: o fluxo de conversa era **hard coded**, fazendo com que cada novo cliente ou alteração no atendimento exigisse mudanças diretamente no código.
+
+Para resolver esse problema, o projeto está sendo transformado em um **CRM configurável**, no qual a própria empresa poderá definir como o chatbot deve se comportar através de fluxos, mensagens, validações e transições persistidos no banco de dados.
 
 ---
 
-## 🚀 Funcionalidades
+## 🚀 O que o sistema faz
 
-- Atendimento automatizado via WhatsApp (Twilio)
-- Fluxo de conversa baseado em estados (Conversation Flow)
-- Validação de entrada do usuário
-- Criação automática de pedidos
-- Controle do estado da conversa por usuário
-- Persistência das conversas e pedidos no PostgreSQL
-- Uso de Domain Events para desacoplamento entre regras de negócio
-- Arquitetura modular e extensível para criação de novos fluxos
+O CRM possui atualmente duas partes principais:
+
+### 💬 Atendimento
+
+Um painel permite que um operador acompanhe e converse com usuários que chegaram ao atendimento automatizado através do WhatsApp.
+
+### 🔀 Conversation Flows
+
+O sistema permite criar fluxos de conversa compostos por **Conversation Nodes**, onde cada node representa uma etapa do atendimento.
+
+Um node pode definir, por exemplo:
+
+* Mensagem enviada ao usuário
+* Tipo de validação da resposta
+* Value Object Validator
+* Opções disponíveis
+* Transições para outros nodes
+* Se o node representa o final do fluxo
+
+Os nodes podem ser conectados entre si, permitindo construir diferentes fluxos de atendimento sem precisar implementar cada conversa diretamente no código.
+
+---
+
+## 🧠 Evolução do projeto
+
+A primeira versão do AnuncieCompre possuía um fluxo de conversa específico para o processo de compra:
+
+```text
+Usuário
+   ↓
+Chatbot
+   ↓
+Coleta de informações
+   ↓
+Pedido de compra
+   ↓
+Notificação de fornecedores
+   ↓
+Processo de venda
+```
+
+Esse modelo funcionava para o caso inicial, mas não era adequado para transformar o sistema em uma solução reutilizável.
+
+A arquitetura está sendo evoluída para:
+
+```text
+                    ┌─────────────────┐
+                    │  CRM / Admin    │
+                    └────────┬────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │ Conversation    │
+                    │ Flow            │
+                    └────────┬────────┘
+                             │
+                ┌────────────┼────────────┐
+                ▼            ▼            ▼
+             Node 1       Node 2       Node 3
+                │            │            │
+                └────────────┴────────────┘
+                             │
+                             ▼
+                         WhatsApp
+```
+
+Dessa forma, o comportamento do chatbot deixa de depender exclusivamente de código e passa a ser definido pelos dados configurados no CRM.
 
 ---
 
 ## 🧱 Tecnologias
 
-- Backend: .NET
-- Banco de dados: PostgreSQL
-- ORM: Entity Framework Core
-- Integração: Twilio (WhatsApp API)
+### Backend
+
+* **.NET / ASP.NET Core**
+* **Entity Framework Core**
+* **PostgreSQL**
+
+### Frontend
+
+* **React**
+
+### Integrações
+
+* **Twilio**
 
 ---
 
-## 🧠 Arquitetura e Conceitos
+## 🏗️ Arquitetura e conceitos
 
-Este projeto foi desenvolvido com foco em boas práticas de arquitetura e modelagem de domínio:
+O projeto utiliza conceitos de arquitetura e modelagem de domínio com foco em desacoplamento e extensibilidade.
 
-- Domain-Driven Design (DDD)
-- Clean Architecture
-- Conversation Flow (State Machine)
-- Domain Events
-- Value Objects
-- Strategy Pattern para validação das mensagens
-- Repository Pattern
-- Dependency Injection
+Entre os principais conceitos utilizados:
+
+* **Domain-Driven Design (DDD)**
+* **Clean Architecture**
+* **Conversation Flow / State Machine**
+* **Value Objects**
+* **Domain Events**
+* **Strategy Pattern**
+* **Repository Pattern**
+* **Dependency Injection**
+
+A estrutura dos Conversation Flows permite que regras como mensagens, validações e transições sejam configuradas e persistidas, reduzindo a necessidade de alterar o código da aplicação para cada novo fluxo de atendimento.
 
 ---
 
-## 🔄 Como funciona
+## 🔄 Funcionamento
 
-1. O usuário envia uma mensagem pelo WhatsApp.
-2. O Twilio encaminha a mensagem para o backend através de um Webhook.
-3. O sistema identifica a conversa do usuário.
-4. O estado atual da conversa determina qual etapa do fluxo será executada.
-5. A mensagem é validada de acordo com as regras daquela etapa.
-6. Os dados da conversa são atualizados.
-7. Quando o fluxo é concluído, o pedido é persistido no banco de dados.
-8. O sistema responde automaticamente ao usuário.
+O objetivo do fluxo de atendimento é permitir que uma conversa seja processada de acordo com a configuração armazenada no sistema.
+
+De forma simplificada:
+
+```text
+Usuário envia mensagem
+        ↓
+Twilio recebe a mensagem
+        ↓
+Aplicação identifica a conversa
+        ↓
+Identifica o Flow e Node atual
+        ↓
+Executa a validação configurada
+        ↓
+Processa a transição
+        ↓
+Avança para o próximo Node
+        ↓
+Envia a resposta ao usuário
+```
+
+A API responsável pelo gerenciamento dos **Conversation Flows** já está implementada e os **Flows e Nodes já são persistidos no PostgreSQL**.
+
+A próxima etapa é implementar a API responsável pelo processamento da conversa com o usuário.
+
+---
+
+## 📌 Estado atual
+
+O projeto está em desenvolvimento e atualmente possui:
+
+* [x] Integração inicial com WhatsApp através da Twilio
+* [x] Estrutura de Conversation Flow
+* [x] Conversation Nodes
+* [x] Transições entre Nodes
+* [x] Configuração de mensagens
+* [x] Configuração de validações
+* [x] Persistência de Flows
+* [x] Persistência de Nodes
+* [x] API para gerenciamento de Conversation Flows
+* [x] Painel inicial do CRM para atendimento
+* [ ] API de processamento das conversas
+* [ ] Autenticação
+* [ ] Autorização
+* [ ] Multi-tenancy
+* [ ] Integração assíncrona entre Twilio e aplicação
+
+---
+
+## 🗺️ Próximos passos
+
+A evolução planejada do projeto inclui:
+
+### 1. API de conversas
+
+Implementar a lógica responsável por processar as mensagens recebidas, identificar o estado da conversa, executar as validações e realizar as transições entre nodes.
+
+### 2. Autenticação e autorização
+
+Adicionar controle de acesso ao CRM e às funcionalidades administrativas.
+
+### 3. Multi-tenancy
+
+Permitir que diferentes empresas utilizem a mesma aplicação mantendo seus dados e configurações isolados.
+
+### 4. Testes
+
+Aumentar a cobertura de testes unitários, principalmente sobre as regras de domínio e processamento dos Conversation Flows.
+
+### 5. Processamento assíncrono
+
+Adicionar uma fila entre a Twilio e a aplicação para desacoplar o recebimento das mensagens do processamento.
+
+A ideia é evoluir de:
+
+```text
+Twilio → API → Processamento → Resposta
+```
+
+para:
+
+```text
+Twilio
+   ↓
+API
+   ↓
+Queue
+   ↓
+Worker / Backend
+   ↓
+Processamento
+   ↓
+Twilio
+```
+
+Isso permitirá que o processamento das conversas seja mais assíncrono e resiliente.
 
 ---
 
@@ -64,28 +229,67 @@ Este projeto foi desenvolvido com foco em boas práticas de arquitetura e modela
 
 ```bash
 git clone https://github.com/GustavoFMarcial/AnuncieCompre.git
+
+cd AnuncieCompre
 ```
 
-### 2. Configurar o banco de dados
+### 2. Configurar o PostgreSQL
 
 Tenha uma instância do PostgreSQL em execução.
 
-### 3. Configurar os User Secrets
+Configure a connection string utilizando **User Secrets**:
 
 ```bash
 dotnet user-secrets set "ConnectionStrings:AnuncieCompreContext" "SUA_CONNECTION_STRING"
+```
+
+Configure também as credenciais da Twilio:
+
+```bash
 dotnet user-secrets set "Twilio:AccountSid" "SEU_ACCOUNT_SID"
+
 dotnet user-secrets set "Twilio:AuthToken" "SEU_AUTH_TOKEN"
 ```
 
-### 4. Aplicar as migrations
+### 3. Aplicar as migrations
 
 ```bash
 dotnet ef database update
 ```
 
-### 5. Executar o projeto
+### 4. Executar o backend
 
 ```bash
 dotnet run
 ```
+
+### 5. Executar o frontend
+
+Na pasta do frontend:
+
+```bash
+npm install
+
+npm run dev
+```
+
+---
+
+## 📚 Objetivo do projeto
+
+Além de ser um projeto de portfólio, o AnuncieCompre é utilizado para explorar na prática conceitos de:
+
+* Desenvolvimento de APIs com .NET
+* Modelagem de domínio
+* DDD e Clean Architecture
+* Entity Framework Core
+* PostgreSQL
+* React
+* Integração com APIs externas
+* Processamento de mensagens
+* Sistemas orientados a eventos
+* Arquitetura assíncrona
+* Multi-tenancy
+* Testes automatizados
+
+O projeto está sendo desenvolvido de forma incremental, evoluindo de uma aplicação específica para um sistema mais **genérico, configurável e extensível**.
