@@ -12,4 +12,9 @@ public class ConversationNodeRepository(AnuncieCompreContext _context) : BaseRep
     {
         return await context.Set<ConversationNode>().Where(n => n.Transitions.Any(t => t.TargetNodeId == targetNodeId)).ToListAsync();
     }
+
+    public async Task<List<Guid>> GetConversationNodesIdsByConversationFlowId(Guid flowId)
+    {
+        return await context.Set<ConversationNode>().Where(n => n.ConversationFlowId == flowId).Select(n => n.Id).ToListAsync();
+    }
 }
