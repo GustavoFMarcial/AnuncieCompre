@@ -18,10 +18,12 @@ public class EditConversationNodeTransitions(IConversationNodeRepository _conver
 
         if (node is null) return Result.Failure("ConversationNode não encontrado");
 
+        List<Guid> flowNodesIds = await conversationNodeRepository.GetConversationNodesIdsByConversationFlowId(node.ConversationFlowId);
         List<NodeTransition> transitions = [];
 
         foreach (TransitonInput i in input.Transitions)
         {
+            if (!flowNodesIds.Exists(n => n == i.TargetNodeId)) return Result.Failure("TargetNodeId não encontrado no ConversationFlow");
             Result<NodeTransition> transitionResult = NodeTransition.Create(i.Option, i.TargetNodeId);
 
             if (!transitionResult.IsSuccess) return Result.Failure(transitionResult.Message);
