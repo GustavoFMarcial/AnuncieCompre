@@ -14,7 +14,7 @@ public class ConversationFlow : BaseEntity
     public FlowStatus Status { get; private set; } = default;
     public List<ConversationNode> Nodes { get; private set; } = [];
 
-    private ConversationFlow() {}
+    private ConversationFlow() { }
 
     private ConversationFlow(Name name, FlowStatus status, string? description = default)
     {
@@ -30,7 +30,7 @@ public class ConversationFlow : BaseEntity
         if (result.IsSuccess is false) return Result<ConversationFlow>.Failure(result.Message);
 
         ConversationFlow flow = new(result.Value, status, description);
-        return Result<ConversationFlow>.Success(flow, "Flow criado com sucesso");
+        return Result<ConversationFlow>.Success(flow, "ConversationFlow criado com sucesso");
     }
 
     public Result EditFlow(EditConversationFlowInput input)
@@ -41,8 +41,22 @@ public class ConversationFlow : BaseEntity
 
         Name = result.Value;
         Description = input.Description;
-        Status = input.Status;
 
-        return Result.Success("Flow editado com sucesso");
+        return Result.Success("ConversationFlow editado com sucesso");
+    }
+
+    public Result EditStatus(EditConversationFlowStatusInput input, List<ConversationNode> nodes)
+    {
+        if (input.Status == FlowStatus.Draft)
+        {
+            Status = input.Status;
+        }
+        else
+        {
+            //Validações futuras
+            Status = input.Status;
+        }
+
+        return Result.Success("Status editado com sucesso");
     }
 }

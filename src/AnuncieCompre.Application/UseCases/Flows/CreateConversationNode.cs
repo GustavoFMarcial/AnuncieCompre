@@ -23,6 +23,6 @@ public class CreateConversationNode(IConversationFlowRepository _conversationFlo
 
         conversationNodeRepository.Add(result.Value);
         await unitOfWork.SaveChangesAsync();
-        return Result<ConversationNode>.Success(result.Value, "ConversationNode criado com sucesso");
+        return Result<ConversationNode>.Success(result.Value, result.Message);
     }
 }

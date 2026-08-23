@@ -7,7 +7,7 @@ namespace AnuncieCompre.Infra.Repositories;
 
 public class OrderRepository(AnuncieCompreContext _context) : BaseRepository<Order>(_context), IOrderRepository
 {
-    public async Task<Order?> GetLastOrderByUserId(Guid userId)
+    public async Task<Order?> GetLastOrderByUserIdAsync(Guid userId)
     {
         return await context.Set<Order>()
             .Where(o => o.User.Id == userId)

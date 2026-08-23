@@ -9,7 +9,5 @@ public record EditConversationFlowRequest
     public string Name { get; set; } = default!;
 
     public string? Description { get; set; }
-    
-    [Required(ErrorMessage = "Status é obrigatório")]
-    public string Status { get; set; } = default!;
+
 }

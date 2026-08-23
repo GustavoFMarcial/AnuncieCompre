@@ -45,6 +45,7 @@ builder.Services.AddScoped<GetConversationFlows>();
 builder.Services.AddScoped<CreateConversationFlow>();
 builder.Services.AddScoped<GetConversationFlowById>();
 builder.Services.AddScoped<EditConversationFlow>();
+builder.Services.AddScoped<EditConversationFlowStatus>();
 builder.Services.AddScoped<DeleteConversationFlow>();
 builder.Services.AddScoped<CreateConversationNode>();
 builder.Services.AddScoped<EditConversationNode>();
