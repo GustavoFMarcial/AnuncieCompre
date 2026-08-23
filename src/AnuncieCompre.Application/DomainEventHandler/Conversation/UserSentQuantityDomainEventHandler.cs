@@ -10,7 +10,7 @@ public class UserSentQuantityDomainEventHandler(IOrderRepository _orderRepositor
 
     public async Task HandleAsync(UserSentQuantityDomainEvent domainEvent)
     {
-        Order? order = await orderRepository.GetLastOrderByUserId(domainEvent.User.Id);
+        Order? order = await orderRepository.GetLastOrderByUserIdAsync(domainEvent.User.Id);
 
         if (order is null) return;
 
