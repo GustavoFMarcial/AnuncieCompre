@@ -275,21 +275,54 @@ npm run dev
 
 ---
 
+## 🔧 Práticas de Desenvolvimento
+
+O projeto também está sendo desenvolvido seguindo práticas de **Software Development Life Cycle (SDLC)**, buscando simular um ambiente de desenvolvimento profissional.
+
+### 📋 Planejamento
+
+* Utilização do **Jira** para gerenciamento do projeto
+* Backlog para organização e priorização das funcionalidades
+* Planejamento das tarefas que serão desenvolvidas
+* Utilização de **Sprints** para organizar e acompanhar o desenvolvimento
+* Acompanhamento das tarefas até sua conclusão
+
+### 🌿 Git Flow
+
+O desenvolvimento utiliza um fluxo organizado de branches, incluindo:
+
+* `main` — versão principal/estável
+* `develop` — branch de desenvolvimento
+* Branches específicas para novas funcionalidades e alterações
+
+As alterações são desenvolvidas em branches próprias e posteriormente integradas às branches principais através de merge.
+
+### 🔄 CI/CD
+
+O projeto possui **Continuous Integration (CI)** configurado para automatizar verificações durante o desenvolvimento, incluindo a execução dos testes.
+
+Como próxima etapa, será implementado **Continuous Delivery/Deployment (CD)** para automatizar o processo de entrega da aplicação.
+
+---
+
 ## 📚 Objetivo do projeto
 
-Além de ser um projeto de portfólio, o AnuncieCompre é utilizado para explorar na prática conceitos de:
+Além de ser um projeto de portfólio, o AnuncieCompre está sendo utilizado para aplicar na prática conceitos de desenvolvimento de software, arquitetura e engenharia de sistemas:
 
 * Desenvolvimento de APIs com .NET
+* React
+* Domain-Driven Design (DDD)
+* Clean Architecture
 * Modelagem de domínio
-* DDD e Clean Architecture
 * Entity Framework Core
 * PostgreSQL
-* React
 * Integração com APIs externas
 * Processamento de mensagens
 * Sistemas orientados a eventos
 * Arquitetura assíncrona
 * Multi-tenancy
 * Testes automatizados
-
-O projeto está sendo desenvolvido de forma incremental, evoluindo de uma aplicação específica para um sistema mais **genérico, configurável e extensível**.
+* Git e gerenciamento de branches
+* SDLC
+* Planejamento e gerenciamento de tarefas com Jira
+* CI/CD
