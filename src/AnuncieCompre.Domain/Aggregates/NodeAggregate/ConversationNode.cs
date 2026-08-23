@@ -17,7 +17,7 @@ public class ConversationNode : BaseEntity
     public bool IsFinal { get; private set; } = false;
     public string[]? Options { get; private set; } = [];
 
-    private ConversationNode(){}
+    private ConversationNode() { }
 
     private ConversationNode(ConversationFlow conversationFlow)
     {
@@ -48,20 +48,29 @@ public class ConversationNode : BaseEntity
         return Result.Success("ConversationNode editado com sucesso");
     }
 
-    public Result EditTransition(List<NodeTransition> transitions)
+    public Result EditTransition(List<NodeTransition> transitions, List<Guid> nodesIds)
     {
-        // if (ValidationKind is ValidationKind.Final && transitions.Count != 1) return Result.Failure("Node final só pode ter uma transição");
-        // if (ValidationKind is ValidationKind.Validation && transitions.Count != 1) return Result.Failure("Node de validação só pode ter uma transição");
-        // if (ValidationKind is ValidationKind.Option && transitions.Count <= 1) return Result.Failure("Node de opção não pode ter menos de uma transição");
-        // if (ValidationKind is ValidationKind.Confirmation && transitions.Count <= 1) return Result.Failure("Node de confirmação não pode ter só uma transição");
+        foreach (NodeTransition t in transitions)
+        {
+            if (!nodesIds.Exists(n => n == t.TargetNodeId)) return Result.Failure("TargetNodeId não encontrado no ConversationFlow");
+        }
 
         Transitions = transitions;
-
         return Result.Success("Transições atualizadas com sucesso");
     }
 
     public void RemoveTransition(Guid targetNodeId)
     {
         Transitions.RemoveAll(t => t.TargetNodeId == targetNodeId);
+    }
+
+    public Result ValidateTransitions()
+    {
+        if (ValidationKind is ValidationKind.Final && Transitions.Count != 1) return Result.Failure("Node final só pode ter uma transição");
+        if (ValidationKind is ValidationKind.Validation && Transitions.Count != 1) return Result.Failure("Node de validação só pode ter uma transição");
+        if (ValidationKind is ValidationKind.Option && Transitions.Count <= 1) return Result.Failure("Node de opção não pode ter menos de uma transição");
+        if (ValidationKind is ValidationKind.Confirmation && Transitions.Count <= 1) return Result.Failure("Node de confirmação não pode ter só uma transição");
+
+        return Result.Success("Transações validadas com sucesso");
     }
 }

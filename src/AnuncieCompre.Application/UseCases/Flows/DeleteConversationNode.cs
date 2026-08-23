@@ -17,7 +17,7 @@ public class DeleteConversationNode(IConversationNodeRepository _conversationNod
         if (node is null) return Result.Failure("ConversationNode não encontrado");
 
         conversationNodeRepository.Delete(node);
-        List<ConversationNode> nodes = await conversationNodeRepository.GetConversationNodeByTransitionTargetNodeId(nodeId);
+        List<ConversationNode> nodes = await conversationNodeRepository.GetConversationNodeByTransitionTargetNodeIdAsync(nodeId);
 
         foreach (ConversationNode n in nodes)
         {

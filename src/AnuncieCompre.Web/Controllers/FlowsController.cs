@@ -57,6 +57,17 @@ public class FlowsController : ControllerBase
         return Ok(result.Message);
     }
 
+    [HttpPatch("{flowId:guid}/status")]
+    public async Task<ActionResult> EditConversationFlowStatus([FromRoute] Guid flowId, [FromBody] EditConversationFlowStatusRequest request, [FromServices] EditConversationFlowStatus service)
+    {
+        EditConversationFlowStatusInput input = request.ToEditConversationFlowStatusInput();
+        Result result = await service.Handle(flowId, input);
+
+        if (!result.IsSuccess) return BadRequest(result.Message.Split(",").ToList());
+
+        return Ok(result.Message);
+    }
+
     [HttpDelete("{flowId:guid}")]
     public async Task<ActionResult> DeleteConversationFlow([FromRoute] Guid flowId, [FromServices] DeleteConversationFlow service)
     {
