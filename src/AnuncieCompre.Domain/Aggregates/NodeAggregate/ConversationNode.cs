@@ -64,8 +64,9 @@ public class ConversationNode : BaseEntity
         Transitions.RemoveAll(t => t.TargetNodeId == targetNodeId);
     }
 
-    public Result ValidateTransitions()
+    public Result ValidateTransitions(EditConversationFlowStatusInput input)
     {
+        if (input.Status == FlowStatus.Draft) return Result.Success("Transações validadas com sucesso");
         if (ValidationKind is ValidationKind.Final && Transitions.Count != 1) return Result.Failure("Node final só pode ter uma transição");
         if (ValidationKind is ValidationKind.Validation && Transitions.Count != 1) return Result.Failure("Node de validação só pode ter uma transição");
         if (ValidationKind is ValidationKind.Option && Transitions.Count <= 1) return Result.Failure("Node de opção não pode ter menos de uma transição");
