@@ -23,7 +23,7 @@ public class EditConversationFlowStatus(IConversationFlowRepository _conversatio
 
         foreach (ConversationNode n in nodes)
         {
-            Result nodeResult = n.ValidateTransitions();
+            Result nodeResult = n.ValidateTransitions(input);
 
             if (!nodeResult.IsSuccess)
             {
@@ -31,11 +31,14 @@ public class EditConversationFlowStatus(IConversationFlowRepository _conversatio
             }
         }
 
-        if (errors.Length > 0) return Result.Failure(errors);
-
         Result flowResult = flow.EditStatus(input, nodes);
 
-        if (!flowResult.IsSuccess) return Result.Failure(flowResult.Message);
+        if (!flowResult.IsSuccess)
+        {
+            errors += flowResult.Message;
+        }
+        
+        if (errors.Length > 0) return Result.Failure(errors);
 
         await unitOfWork.SaveChangesAsync();
         return Result.Success(flowResult.Message);
