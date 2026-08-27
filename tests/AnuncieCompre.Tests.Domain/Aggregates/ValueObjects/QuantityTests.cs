@@ -2,7 +2,7 @@ using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using FluentAssertions;
 
-namespace AnuncieCompre.Domain.Tests.Aggregates.ValueObjects;
+namespace AnuncieCompre.Tests.Domain.Aggregates.ConversationAggregate.Flows;
 
 public class QuantityTests
 {

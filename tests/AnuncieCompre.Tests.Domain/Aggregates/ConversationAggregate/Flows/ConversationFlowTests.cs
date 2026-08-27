@@ -4,7 +4,7 @@ using AnuncieCompre.Domain.Conversation.NodeValidators;
 using AnuncieCompre.Domain.Interfaces;
 using FluentAssertions;
 
-namespace AnuncieCompre.Domain.Tests.Aggregates.ConversationAggregate.Flows;
+namespace AnuncieCompre.Tests.Domain.Aggregates.ConversationAggregate.Flows;
 
 public class InitialRegistrationFlowTests
 {

@@ -7,6 +7,6 @@ public record EditConversationNodeResponse
     public string Message { get; set; } = default!;
     public string ValidationKind { get; set; } = default!;
     public string ValueObjectValidator { get; set; } = default!;
-    public string[]? Options { get; set; } = default!;
+    public List<string>? Options { get; set; } = default!;
     public bool IsFinal { get; set; }
 }

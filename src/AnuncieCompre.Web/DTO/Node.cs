@@ -8,7 +8,7 @@ public record Node
     public string Message { get; set; } = default!;
     public string ValidationKind { get; set; } = default!;
     public string ValueObjectValidator { get; set; } = default!;
-    public string[]? Options { get; set; } = [];
+    public List<string>? Options { get; set; } = [];
     public List<NodeTransition> Transitions { get; set; } = [];
     public bool IsFinal { get; set; }
  }

@@ -1,5 +1,6 @@
 using AnuncieCompre.Application.Interfaces;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
+using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.DTO;
 
@@ -16,7 +17,11 @@ public class EditConversationFlow(IConversationFlowRepository _flowRepository, I
 
         if (flow is null) return Result.Failure("ConversationFlow não encontrado");
 
-        Result result = flow.EditFlow(input);
+        Result<Name> nameResult = Name.Create(input.Name);
+
+        if (!nameResult.IsSuccess) return Result.Failure(nameResult.Message);
+
+        Result result = flow.EditFlow(nameResult.Value, input.Description);
 
         if (!result.IsSuccess) return Result.Failure(result.Message);
 
