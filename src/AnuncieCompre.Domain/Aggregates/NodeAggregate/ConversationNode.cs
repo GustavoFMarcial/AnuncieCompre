@@ -15,7 +15,7 @@ public class ConversationNode : BaseEntity
     public ValueObjectValidator ValueObjectValidator { get; private set; } = ValueObjectValidator.None;
     public List<NodeTransition> Transitions { get; private set; } = [];
     public bool IsFinal { get; private set; } = false;
-    public string[]? Options { get; private set; } = [];
+    public List<string>? Options { get; private set; } = [];
 
     private ConversationNode() { }
 
@@ -36,8 +36,8 @@ public class ConversationNode : BaseEntity
         if (input.ValidationKind is not ValidationKind.Final && input.IsFinal is true) return Result<ConversationNode>.Failure("Apenas node com validação final pode ser marcado como final");
         if (input.ValidationKind is ValidationKind.Validation && input.ValueObjectValidator is ValueObjectValidator.None) return Result<ConversationNode>.Failure("Node de validação deve possuir um validador");
         if (input.ValueObjectValidator is not ValueObjectValidator.None && input.ValidationKind is not ValidationKind.Validation) return Result<ConversationNode>.Failure("Apenas node de validação deve possuir um validador");
-        if (input.Options?.Length > 0 && input.ValidationKind is ValidationKind.Final) return Result<ConversationNode>.Failure("Apenas nodes de confirmação ou opção podem ter opções");
-        if (input.Options?.Length > 0 && input.ValidationKind is ValidationKind.Validation) return Result<ConversationNode>.Failure("Apenas nodes de confirmação ou validação podem ter opções");
+        if (input.Options?.Count > 0 && input.ValidationKind is ValidationKind.Final) return Result<ConversationNode>.Failure("Apenas nodes de confirmação ou opção podem ter opções");
+        if (input.Options?.Count > 0 && input.ValidationKind is ValidationKind.Validation) return Result<ConversationNode>.Failure("Apenas nodes de confirmação ou validação podem ter opções");
 
         Message = input.Message;
         ValidationKind = input.ValidationKind;
@@ -64,13 +64,14 @@ public class ConversationNode : BaseEntity
         Transitions.RemoveAll(t => t.TargetNodeId == targetNodeId);
     }
 
-    public Result ValidateTransitions(EditConversationFlowStatusInput input)
+    public Result ValidateTransitions(FlowStatus status)
     {
-        if (input.Status == FlowStatus.Draft) return Result.Success("Transações validadas com sucesso");
+        if (status == FlowStatus.Draft) return Result.Success("Transações validadas com sucesso");
         if (ValidationKind is ValidationKind.Final && Transitions.Count != 1) return Result.Failure("Node final só pode ter uma transição");
         if (ValidationKind is ValidationKind.Validation && Transitions.Count != 1) return Result.Failure("Node de validação só pode ter uma transição");
         if (ValidationKind is ValidationKind.Option && Transitions.Count <= 1) return Result.Failure("Node de opção não pode ter menos de uma transição");
         if (ValidationKind is ValidationKind.Confirmation && Transitions.Count <= 1) return Result.Failure("Node de confirmação não pode ter só uma transição");
+        if (Options?.Count != Transitions.Count) return Result.Failure("A quantia de opções deve ser igual a quantia de transições");
 
         return Result.Success("Transações validadas com sucesso");
     }

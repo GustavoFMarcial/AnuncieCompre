@@ -23,38 +23,34 @@ public class ConversationFlow : BaseEntity
         Status = status;
     }
 
-    public static Result<ConversationFlow> Create(string name, string? description, FlowStatus status)
+    public static Result<ConversationFlow> Create(Name name, string? description, FlowStatus status)
     {
-        Result<Name> result = Name.Create(name);
-
-        if (result.IsSuccess is false) return Result<ConversationFlow>.Failure(result.Message);
-
-        ConversationFlow flow = new(result.Value, status, description);
+        ConversationFlow flow = new(name, status, description);
         return Result<ConversationFlow>.Success(flow, "ConversationFlow criado com sucesso");
     }
 
-    public Result EditFlow(EditConversationFlowInput input)
+    public Result EditFlow(Name name, string? description)
     {
-        Result<Name> result = Name.Create(input.Name);
-
-        if (!result.IsSuccess) return Result.Failure(result.Message);
-
-        Name = result.Value;
-        Description = input.Description;
+        Name = name;
+        Description = description;
 
         return Result.Success("ConversationFlow editado com sucesso");
     }
 
-    public Result EditStatus(EditConversationFlowStatusInput input, List<ConversationNode> nodes)
+    public Result EditStatus(FlowStatus status)
     {
-        if (input.Status == FlowStatus.Draft)
+        if (status == FlowStatus.Draft)
         {
-            Status = input.Status;
+            Status = status;
         }
         else
         {
-            //Validações futuras
-            Status = input.Status;
+            List<ConversationNode> finalNodes = Nodes.FindAll(n => n.ValidationKind == ValidationKind.Final);
+            
+            if (finalNodes.Count > 1) return Result.Failure("ConversationFlow deve ter apenas um node marcado como final");
+            if (finalNodes.Count < 1) return Result.Failure("ConversationFlow deve ter um node marcado como final");
+
+            Status = status;
         }
 
         return Result.Success("Status editado com sucesso");

@@ -11,4 +11,9 @@ public class ConversationFlowRepository(AnuncieCompreContext _context) : BaseRep
     {
         return await context.Set<ConversationFlow>().ToListAsync();
     }
+
+    public async Task<ConversationFlow?> GetFlowByIdWithNodesAsync(Guid id)
+    {
+        return await context.Set<ConversationFlow>().Include(cf => cf.Nodes).FirstOrDefaultAsync(cf => cf.Id == id);
+    }
 }

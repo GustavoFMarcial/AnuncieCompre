@@ -14,7 +14,11 @@ public class CreateConversationFlow(IConversationFlowRepository _flowRepository,
 
     public async Task<Result<ConversationFlow>> Handle(CreateConversationFlowInput input)
     {
-        Result<ConversationFlow> result = ConversationFlow.Create(input.Name, input.Description, input.Status);
+        Result<Name> nameResult = Name.Create(input.Name);
+
+        if (!nameResult.IsSuccess) return Result<ConversationFlow>.Failure(nameResult.Message);
+
+        Result<ConversationFlow> result = ConversationFlow.Create(nameResult.Value, input.Description, input.Status);
 
         if (!result.IsSuccess) return result;
 
