@@ -14,6 +14,7 @@ using Twilio;
 using AnuncieCompre.Application.UseCases.Flows;
 using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Application.UseCases;
+using AnuncieCompre.Application.UseCases.Conversations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +52,7 @@ builder.Services.AddScoped<CreateConversationNode>();
 builder.Services.AddScoped<EditConversationNode>();
 builder.Services.AddScoped<EditConversationNodeTransitions>();
 builder.Services.AddScoped<DeleteConversationNode>();
+builder.Services.AddScoped<GetConversations>();
 // builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 
 //Hosted
