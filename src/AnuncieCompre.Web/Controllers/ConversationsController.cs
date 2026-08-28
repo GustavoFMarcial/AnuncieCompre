@@ -1,3 +1,8 @@
+using AnuncieCompre.Application.UseCases.Conversations;
+using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
+using AnuncieCompre.Domain.Enums;
+using AnuncieCompre.Web.DTO;
+using AnuncieCompre.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnuncieCompre.Web.Controllers;
@@ -6,5 +11,12 @@ namespace AnuncieCompre.Web.Controllers;
 [Route("api/[controller]")]
 public class ConversationsController : ControllerBase
 {
-    
+    [HttpGet]
+    public async Task<ActionResult> GetConversations([FromQuery] ConversationStatus? status, [FromServices] GetConversations service)
+    {
+        List<Conversation> conversations = await service.Handle(status);
+        GetConversationsResponse response = conversations.ToGetConversationsResponse();
+        
+        return Ok(response);
+    }
 }
