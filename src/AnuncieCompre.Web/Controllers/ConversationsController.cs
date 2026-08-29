@@ -19,4 +19,15 @@ public class ConversationsController : ControllerBase
         
         return Ok(response);
     }
+
+    [HttpGet]
+    public async Task<ActionResult> GetDetailedConversation([FromRoute] Guid id, [FromServices] GetDetailedConversation service)
+    {
+        Conversation? conversation = await service.Handle(id);
+
+        if (conversation is null) return BadRequest("Conversation não encontrada");
+
+        ConversationDTO response = conversation.ToConversationDTO();
+        return Ok(response);
+    }
 }

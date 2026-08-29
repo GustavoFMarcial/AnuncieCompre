@@ -29,11 +29,14 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
         modelBuilder.Entity<Conversation>(c =>
         {
             c.ComplexProperty(cp => cp.User);
+            c.HasMany(cp => cp.Messages)
+            .WithOne(m => m.Conversation)
+            .HasForeignKey(m => m.ConversationId);
         });
 
         modelBuilder.Entity<Message>(m =>
         {
-            m.ComplexProperty(cp => cp.Conversation);
+            // m.ComplexProperty(cp => cp.Conversation);
         });
 
         modelBuilder.Entity<Order>(o =>

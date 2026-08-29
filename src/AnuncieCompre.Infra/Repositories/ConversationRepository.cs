@@ -21,7 +21,7 @@ public class ConversationRepository(AnuncieCompreContext _context) : BaseReposit
 
     public async Task<List<Conversation>> GetConversationsByStatusToListAsync(ConversationStatus? status)
     {
-        IQueryable<Conversation> query = context.Set<Conversation>();
+        IQueryable<Conversation> query = context.Set<Conversation>().Include(c => c.Messages).Include(c => c.User);
 
         if (status.HasValue)
         {
@@ -29,5 +29,10 @@ public class ConversationRepository(AnuncieCompreContext _context) : BaseReposit
         }
 
         return await query.ToListAsync();
+    }
+
+    public async Task<Conversation?> GetConversationByIdWithMessagesAndUserAsync(Guid id)
+    {
+        return await context.Set<Conversation>().Include(c => c.Messages).Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
     }
 }

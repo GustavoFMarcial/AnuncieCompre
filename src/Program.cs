@@ -53,6 +53,7 @@ builder.Services.AddScoped<EditConversationNode>();
 builder.Services.AddScoped<EditConversationNodeTransitions>();
 builder.Services.AddScoped<DeleteConversationNode>();
 builder.Services.AddScoped<GetConversations>();
+builder.Services.AddScoped<GetDetailedConversation>();
 // builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 
 //Hosted
