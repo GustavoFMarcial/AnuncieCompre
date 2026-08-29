@@ -10,4 +10,5 @@ public interface IConversationRepository : IBaseRepository<Conversation>
     public Task<Conversation?> GetOpenConversationByUserIdAsync(Guid userId);
     public Task<List<Conversation>> GetOpenConversationsAttendantByBotToListAsync();
     public Task<List<Conversation>> GetConversationsByStatusToListAsync(ConversationStatus? status);
+    public Task<Conversation?> GetConversationByIdWithMessagesAndUserAsync(Guid id);
 }
