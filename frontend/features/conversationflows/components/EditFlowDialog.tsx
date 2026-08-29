@@ -18,21 +18,18 @@ export function EditFlowDialog({ flow, open, onOpenChange }: EditFlowDialogProps
         <Dialog open={open} onClose={close}>
             <DialogTitle>Editar fluxo</DialogTitle>
             <DialogDescription>
-                Atualize o nome, a descrição e o status do fluxo.
+                Atualize o nome e a descrição do fluxo. O status (rascunho/publicado) é alterado
+                pelo botão dedicado no editor.
             </DialogDescription>
             <FlowForm
                 key={`${flow.id}-${flow.updatedAt.getTime()}`}
-                initial={{
-                    name: flow.name,
-                    description: flow.description,
-                    status: flow.status,
-                }}
+                initial={{ name: flow.name, description: flow.description }}
                 submitting={updateFlow.isPending}
                 submitLabel="Salvar alterações"
                 onCancel={close}
-                onSubmit={(input) => {
+                onSubmit={({ name, description }) => {
                     updateFlow.mutate(
-                        { id: flow.id, input },
+                        { id: flow.id, input: { name, description } },
                         { onSuccess: close }
                     );
                 }}

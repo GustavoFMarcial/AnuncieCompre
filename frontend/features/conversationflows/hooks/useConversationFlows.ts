@@ -4,7 +4,8 @@ import { conversationFlowService } from "../services/conversation-flow.service";
 import type {
     CreateFlowInput,
     CreateNodeInput,
-    UpdateFlowInput,
+    UpdateFlowMetaInput,
+    UpdateFlowStatusInput,
     UpdateNodeInput,
     UpdateTransitionsInput,
 } from "../types/conversation-flow";
@@ -39,8 +40,20 @@ export function useCreateFlow() {
 export function useUpdateFlow() {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, input }: { id: string; input: UpdateFlowInput }) =>
+        mutationFn: ({ id, input }: { id: string; input: UpdateFlowMetaInput }) =>
             conversationFlowService.updateFlow(id, input),
+        onSuccess: (_, vars) => {
+            qc.invalidateQueries({ queryKey: FLOWS_KEY });
+            qc.invalidateQueries({ queryKey: ["conversation-flow", vars.id] });
+        },
+    });
+}
+
+export function useUpdateFlowStatus() {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, input }: { id: string; input: UpdateFlowStatusInput }) =>
+            conversationFlowService.updateFlowStatus(id, input),
         onSuccess: (_, vars) => {
             qc.invalidateQueries({ queryKey: FLOWS_KEY });
             qc.invalidateQueries({ queryKey: ["conversation-flow", vars.id] });

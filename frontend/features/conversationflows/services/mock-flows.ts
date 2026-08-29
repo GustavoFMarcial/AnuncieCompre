@@ -216,12 +216,18 @@ export const mockStore = {
         return structuredClone(flow) as ConversationFlow;
     },
 
-    updateFlow(id: string, input: { name: string; description: string; status: "Draft" | "Published" }): void {
+    updateFlow(id: string, input: { name: string; description: string }): void {
         const flow = this.flows.find((f) => f.id === id);
         if (!flow) throw new Error("Fluxo não encontrado");
         flow.name = input.name;
         flow.description = input.description;
-        flow.status = input.status;
+        flow.updatedAt = new Date();
+    },
+
+    updateFlowStatus(id: string, status: "Draft" | "Published"): void {
+        const flow = this.flows.find((f) => f.id === id);
+        if (!flow) throw new Error("Fluxo não encontrado");
+        flow.status = status;
         flow.updatedAt = new Date();
     },
 

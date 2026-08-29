@@ -17,19 +17,22 @@ export function CreateFlowDialog({ open, onOpenChange, onCreated }: CreateFlowDi
         <Dialog open={open} onClose={close}>
             <DialogTitle>Novo fluxo de conversa</DialogTitle>
             <DialogDescription>
-                Crie um fluxo em branco. Depois você adiciona os nodes no editor visual.
+                Crie um fluxo em rascunho. Depois você adiciona os nodes no editor visual.
             </DialogDescription>
             <FlowForm
                 submitting={createFlow.isPending}
                 submitLabel="Criar fluxo"
                 onCancel={close}
-                onSubmit={(input) => {
-                    createFlow.mutate(input, {
-                        onSuccess: (flow) => {
-                            close();
-                            onCreated?.(flow.id);
-                        },
-                    });
+                onSubmit={({ name, description }) => {
+                    createFlow.mutate(
+                        { name, description, status: "Draft" },
+                        {
+                            onSuccess: (flow) => {
+                                close();
+                                onCreated?.(flow.id);
+                            },
+                        }
+                    );
                 }}
             />
         </Dialog>

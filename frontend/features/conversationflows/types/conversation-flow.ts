@@ -52,7 +52,19 @@ export interface CreateFlowInput {
     status: "Draft" | "Published";
 }
 
-export type UpdateFlowInput = CreateFlowInput;
+export interface UpdateFlowMetaInput {
+    name: string;
+    description: string;
+}
+
+export interface UpdateFlowStatusInput {
+    status: "Draft" | "Published";
+}
+
+export interface FlowValidationErrors {
+    success: false;
+    errors: string[];
+}
 
 export interface CreateNodeInput {
     message: string;
