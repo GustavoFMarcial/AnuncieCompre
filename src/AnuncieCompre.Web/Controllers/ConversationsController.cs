@@ -1,5 +1,6 @@
 using AnuncieCompre.Application.UseCases.Conversations;
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
+using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Web.DTO;
 using AnuncieCompre.Web.Extensions;
@@ -20,7 +21,7 @@ public class ConversationsController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult> GetDetailedConversation([FromRoute] Guid id, [FromServices] GetDetailedConversation service)
     {
         Conversation? conversation = await service.Handle(id);
@@ -29,5 +30,15 @@ public class ConversationsController : ControllerBase
 
         ConversationDTO response = conversation.ToConversationDTO();
         return Ok(response);
+    }
+
+    [HttpPost("{id:guid}/messages")]
+    public async Task<ActionResult> SendMessage([FromRoute] Guid id, [FromBody] string text, [FromServices] SendMessage service)
+    {
+        Result result = await service.Handle(id, text);
+
+        if (!result.IsSuccess) return BadRequest(result.Message);
+        
+        return Ok();
     }
 }

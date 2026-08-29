@@ -9,10 +9,20 @@ public class TwilioMessageSender : IMessageSender
 {
     public async Task SendMessageAsync(string to, string message)
     {
-        await MessageResource.CreateAsync(
-            from: new PhoneNumber($"whatsapp:+14155238886"),
-            to: new PhoneNumber(to),
-            body: message
-        );
+        var messageOptions = new CreateMessageOptions(new PhoneNumber(to))
+        {
+            From = new PhoneNumber("whatsapp:+14155238886"),
+            Body = message
+        };
+
+        try
+        {
+            await MessageResource.CreateAsync(messageOptions);
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        
     }
 }
