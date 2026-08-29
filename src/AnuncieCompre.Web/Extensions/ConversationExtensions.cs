@@ -44,7 +44,7 @@ public static class ConversationExtensions
                     _ => "",
                 },
                 CreatedAt = m.CreatedAt,
-            }).OrderBy(m => m.CreatedAt).ToList(),
+            }).ToList(),
         }).ToList();
 
         return new GetConversationsResponse
@@ -91,7 +91,7 @@ public static class ConversationExtensions
                     _ => "",
                 },
                 CreatedAt = m.CreatedAt,
-            }).OrderBy(m => m.CreatedAt).ToList(), 
+            }).ToList(), 
         };
     }
 }
