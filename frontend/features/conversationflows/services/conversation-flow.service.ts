@@ -3,7 +3,8 @@ import type {
     ConversationFlow,
     CreateFlowInput,
     CreateNodeInput,
-    UpdateFlowInput,
+    UpdateFlowMetaInput,
+    UpdateFlowStatusInput,
     UpdateNodeInput,
     UpdateTransitionsInput,
 } from "../types/conversation-flow";
@@ -55,7 +56,7 @@ export const conversationFlowService = {
         );
     },
 
-    async updateFlow(id: string, input: UpdateFlowInput): Promise<void> {
+    async updateFlow(id: string, input: UpdateFlowMetaInput): Promise<void> {
         await withFallback(
             async () => {
                 await api.put(`/api/flows/${id}`, input);
@@ -63,6 +64,18 @@ export const conversationFlowService = {
             async () => {
                 await wait(200);
                 mockStore.updateFlow(id, input);
+            }
+        );
+    },
+
+    async updateFlowStatus(id: string, input: UpdateFlowStatusInput): Promise<void> {
+        await withFallback(
+            async () => {
+                await api.patch(`/api/flows/${id}/status`, input);
+            },
+            async () => {
+                await wait(200);
+                mockStore.updateFlowStatus(id, input.status);
             }
         );
     },

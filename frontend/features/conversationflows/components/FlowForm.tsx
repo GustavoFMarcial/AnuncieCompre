@@ -1,12 +1,11 @@
 import { useState, type FormEvent } from "react";
 
-import { Button, Input, Label, Select, Textarea } from "../../../shared/components/ui";
-import type { CreateFlowInput } from "../types/conversation-flow";
+import { Button, Input, Label, Textarea } from "../../../shared/components/ui";
 
 interface FlowFormProps {
-    initial?: CreateFlowInput;
+    initial?: { name: string; description: string };
     submitting?: boolean;
-    onSubmit: (input: CreateFlowInput) => void;
+    onSubmit: (input: { name: string; description: string }) => void;
     onCancel: () => void;
     submitLabel?: string;
 }
@@ -20,12 +19,11 @@ export function FlowForm({
 }: FlowFormProps) {
     const [name, setName] = useState(initial?.name ?? "");
     const [description, setDescription] = useState(initial?.description ?? "");
-    const [status, setStatus] = useState<CreateFlowInput["status"]>(initial?.status ?? "Draft");
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (!name.trim()) return;
-        onSubmit({ name: name.trim(), description: description.trim(), status });
+        onSubmit({ name: name.trim(), description: description.trim() });
     };
 
     return (
@@ -50,18 +48,6 @@ export function FlowForm({
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Para que serve este fluxo?"
                 />
-            </div>
-
-            <div className="space-y-1.5">
-                <Label htmlFor="flow-status">Status</Label>
-                <Select
-                    id="flow-status"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as CreateFlowInput["status"])}
-                >
-                    <option value="Draft">Rascunho</option>
-                    <option value="Published">Publicado</option>
-                </Select>
             </div>
 
             <div className="flex justify-end gap-2 pt-2">

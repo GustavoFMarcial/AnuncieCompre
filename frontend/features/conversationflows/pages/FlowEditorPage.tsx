@@ -1,24 +1,48 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, PanelRight, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, PanelRight, Pencil, Rocket, Trash2, Undo2 } from "lucide-react";
+import type { AxiosError } from "axios";
 
 import { Button } from "../../../shared/components/ui";
 import { FlowCanvas } from "../components/FlowCanvas";
 import { NodeEditorPanel } from "../components/NodeEditorPanel";
 import { EditFlowDialog } from "../components/EditFlowDialog";
 import { DeleteFlowDialog } from "../components/DeleteFlowDialog";
-import { useConversationFlow } from "../hooks/useConversationFlows";
+import { PublishErrorsDialog } from "../components/PublishErrorsDialog";
+import { useConversationFlow, useUpdateFlowStatus } from "../hooks/useConversationFlows";
+import type { FlowValidationErrors } from "../types/conversation-flow";
 
 export function FlowEditorPage() {
     const { flowId = "" } = useParams();
     const navigate = useNavigate();
     const { data: flow, isLoading, isError } = useConversationFlow(flowId);
+    const updateFlowStatus = useUpdateFlowStatus();
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
     const [panelOpen, setPanelOpen] = useState(true);
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
+    const [errorsOpen, setErrorsOpen] = useState(false);
+    const [errors, setErrors] = useState<string[]>([]);
 
     const selectedNode = flow?.nodes?.find((n) => n.id === selectedNodeId) ?? null;
+    const isPublished = flow?.status === "Published";
+
+    const handleTogglePublish = () => {
+        const nextStatus = isPublished ? "Draft" : "Published";
+        updateFlowStatus.mutate(
+            { id: flowId, input: { status: nextStatus } },
+            {
+                onError: (err) => {
+                    const axiosErr = err as AxiosError<FlowValidationErrors>;
+                    const msgs = axiosErr.response?.data?.errors;
+                    if (msgs && msgs.length > 0) {
+                        setErrors(msgs);
+                        setErrorsOpen(true);
+                    }
+                },
+            }
+        );
+    };
 
     return (
         <div className="-m-8 flex h-full flex-col">
@@ -39,6 +63,26 @@ export function FlowEditorPage() {
                 <div className="flex items-center gap-2">
                     {flow && (
                         <>
+                            {isPublished ? (
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={handleTogglePublish}
+                                    disabled={updateFlowStatus.isPending}
+                                >
+                                    <Undo2 className="h-4 w-4" />
+                                    Tornar rascunho
+                                </Button>
+                            ) : (
+                                <Button
+                                    size="sm"
+                                    onClick={handleTogglePublish}
+                                    disabled={updateFlowStatus.isPending}
+                                >
+                                    <Rocket className="h-4 w-4" />
+                                    Publicar
+                                </Button>
+                            )}
                             <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>
                                 <Pencil className="h-4 w-4" />
                                 Editar fluxo
@@ -111,6 +155,11 @@ export function FlowEditorPage() {
                         open={deleteOpen}
                         onOpenChange={setDeleteOpen}
                         onDeleted={() => navigate("/flows")}
+                    />
+                    <PublishErrorsDialog
+                        open={errorsOpen}
+                        onOpenChange={setErrorsOpen}
+                        errors={errors}
                     />
                 </>
             )}
