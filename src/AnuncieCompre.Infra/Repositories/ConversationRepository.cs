@@ -35,4 +35,9 @@ public class ConversationRepository(AnuncieCompreContext _context) : BaseReposit
     {
         return await context.Set<Conversation>().Include(c => c.Messages.OrderBy(m => m.CreatedAt)).Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
     }
+
+    public async Task<Conversation?> GetConversationByIdWithUserAsync(Guid id)
+    {
+        return await context.Set<Conversation>().Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
+    }
 }
