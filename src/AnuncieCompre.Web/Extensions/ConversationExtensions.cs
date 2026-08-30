@@ -11,7 +11,7 @@ public static class ConversationExtensions
         List<ConversationDTO> conversations = conversationList.Select(c => new ConversationDTO
         {
             ConversationId = c.Id,
-            UserId = c.UserId,
+            UserId = c.CustomerId,
             UserPhone = c.Customer.Phone.Value,
             UserName = c.Customer.Name?.Value ?? "",
             Status = c.Status switch
@@ -58,7 +58,7 @@ public static class ConversationExtensions
         return new ConversationDTO
         {
             ConversationId = conversation.Id,
-            UserId = conversation.UserId,
+            UserId = conversation.CustomerId,
             UserPhone = conversation.Customer.Phone.Value,
             UserName = conversation.Customer.Name?.Value ?? "",
             Status = conversation.Status switch
