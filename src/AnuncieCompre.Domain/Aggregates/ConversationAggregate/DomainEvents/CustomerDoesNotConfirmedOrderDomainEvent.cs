@@ -4,8 +4,8 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 
-public class UserDoesNotConfirmedOrderDomainEvent(User user) : IDomainEvent
+public class CustomerDoesNotConfirmedOrderDomainEvent(Customer customer) : IDomainEvent
 {
-    public User User { get; set; } = user;
+    public Customer Customer { get; set; } = customer;
     public string EventType { get; private set; } = "customer-confirmed-order";
 }

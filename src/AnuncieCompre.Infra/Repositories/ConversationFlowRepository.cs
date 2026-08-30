@@ -9,7 +9,7 @@ public class ConversationFlowRepository(AnuncieCompreContext _context) : BaseRep
 {
     public async Task<List<ConversationFlow>> GetFlowsToListAsync()
     {
-        return await context.Set<ConversationFlow>().ToListAsync();
+        return await context.Set<ConversationFlow>().OrderBy(cf => cf.CreatedAt).ToListAsync();
     }
 
     public async Task<ConversationFlow?> GetFlowByIdWithNodesAsync(Guid id)

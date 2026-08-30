@@ -11,7 +11,7 @@ public class ConversationRepository(AnuncieCompreContext _context) : BaseReposit
 {
     public async Task<Conversation?> GetOpenConversationByUserIdAsync(Guid userId)
     {
-        return await context.Set<Conversation>().FirstOrDefaultAsync(c => c.UserId == userId && c.Status == ConversationStatus.Open);
+        return await context.Set<Conversation>().FirstOrDefaultAsync(c => c.CustomerId == userId && c.Status == ConversationStatus.Open);
     }
 
     public async Task<List<Conversation>> GetOpenConversationsAttendantByBotToListAsync()
@@ -21,7 +21,7 @@ public class ConversationRepository(AnuncieCompreContext _context) : BaseReposit
 
     public async Task<List<Conversation>> GetConversationsByStatusToListAsync(ConversationStatus? status)
     {
-        IQueryable<Conversation> query = context.Set<Conversation>().Include(c => c.Messages.OrderBy(m => m.CreatedAt)).Include(c => c.User);
+        IQueryable<Conversation> query = context.Set<Conversation>().Include(c => c.Messages.OrderBy(m => m.CreatedAt)).Include(c => c.Customer);
 
         if (status.HasValue)
         {
@@ -33,11 +33,11 @@ public class ConversationRepository(AnuncieCompreContext _context) : BaseReposit
 
     public async Task<Conversation?> GetConversationByIdWithMessagesAndUserAsync(Guid id)
     {
-        return await context.Set<Conversation>().Include(c => c.Messages.OrderBy(m => m.CreatedAt)).Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
+        return await context.Set<Conversation>().Include(c => c.Messages.OrderBy(m => m.CreatedAt)).Include(c => c.Customer).FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<Conversation?> GetConversationByIdWithUserAsync(Guid id)
     {
-        return await context.Set<Conversation>().Include(c => c.User).FirstOrDefaultAsync(c => c.Id == id);
+        return await context.Set<Conversation>().Include(c => c.Customer).FirstOrDefaultAsync(c => c.Id == id);
     }
 }

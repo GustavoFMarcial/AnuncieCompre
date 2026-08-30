@@ -4,13 +4,13 @@ using AnuncieCompre.Application.Interfaces;
 
 namespace AnuncieCompre.Application.DomainEventHandler.Conversation;
 
-public class UserSentCompanyCategoryDomainEventHandler(IOrderRepository _orderRepository) : IDomainEventHandler<UserSentCompanyCategoryDomainEvent>
+public class CustomerSentCompanyCategoryDomainEventHandler(IOrderRepository _orderRepository) : IDomainEventHandler<CustomerSentCompanyCategoryDomainEvent>
 {
     private readonly IOrderRepository orderRepository = _orderRepository;
 
-    public async Task HandleAsync(UserSentCompanyCategoryDomainEvent domainEvent)
+    public async Task HandleAsync(CustomerSentCompanyCategoryDomainEvent domainEvent)
     {
-        Order order = Order.Create(domainEvent.User, domainEvent.CompanyCategory);
+        Order order = Order.Create(domainEvent.Customer, domainEvent.CompanyCategory);
 
         orderRepository.Add(order);
     }

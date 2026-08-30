@@ -2,32 +2,32 @@ using AnuncieCompre.Domain.Aggregates.ValueObjects;
 
 namespace AnuncieCompre.Domain.Aggregates.UserAggregate;
 
-public class User : BaseEntity
+public class Customer : BaseEntity
 {
     public Phone Phone { get; private set; } = default!;
-    public Name? Name { get; private set; } = default!;
-    public Email? Email { get; private set; } = default!;
+    public Name? Name { get; private set; }
+    public Email? Email { get; private set; }
     public List<ConversationAggregate.Conversation> Conversations = [];
 
-    private User(){}
+    private Customer(){}
 
-    private User(Phone phone)
+    private Customer(Phone phone)
     {
         Phone = phone;
     }
 
-    public static User Create(Phone phone)
+    public static Customer Create(Phone phone)
     {
-        return new User(phone);
+        return new Customer(phone);
     }
 
-    public User SetName(Name name)
+    public Customer SetName(Name name)
     {
         Name = name;
         return this;
     }
 
-    public User SetEmail(Email email)
+    public Customer SetEmail(Email email)
     {
         Email = email;
         return this;
