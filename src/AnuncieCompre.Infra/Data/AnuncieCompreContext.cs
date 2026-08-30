@@ -10,7 +10,7 @@ namespace AnuncieCompre.Infra.Data;
 
 public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options) : DbContext(options)
 {
-    public DbSet<User> Users { get; set; } = default!;
+    public DbSet<Customer> Customers { get; set; } = default!;
     public DbSet<Conversation> Conversations { get; set; } = default!;
     public DbSet<Message> Messages { get; set; } = default!;
     public DbSet<Order> Orders { get; set; } = default!;
@@ -19,7 +19,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>(u =>
+        modelBuilder.Entity<Customer>(u =>
         {
             u.ComplexProperty(cp => cp.Phone);
             u.ComplexProperty(cp => cp.Name);
@@ -28,7 +28,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<Conversation>(c =>
         {
-            c.ComplexProperty(cp => cp.User);
+            c.ComplexProperty(cp => cp.Customer);
             c.HasMany(cp => cp.Messages)
             .WithOne(m => m.Conversation)
             .HasForeignKey(m => m.ConversationId);
@@ -41,7 +41,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<Order>(o =>
         {
-            o.HasOne(cp => cp.User);
+            o.HasOne(cp => cp.Customer);
             o.ComplexProperty(cp => cp.Product);
             o.ComplexProperty(cp => cp.Quantity);
             o.ComplexProperty(cp => cp.Category);

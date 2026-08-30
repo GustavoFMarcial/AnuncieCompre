@@ -4,12 +4,12 @@ using AnuncieCompre.Application.Interfaces;
 
 namespace AnuncieCompre.Application.DomainEventHandler.Conversation;
 
-public class UserDoesNotConfirmedOrderDomainEventHandler(IOrderRepository _orderRepository) : IDomainEventHandler<UserDoesNotConfirmedOrderDomainEvent>
+public class CustomerDoesNotConfirmedOrderDomainEventHandler(IOrderRepository _orderRepository) : IDomainEventHandler<CustomerDoesNotConfirmedOrderDomainEvent>
 {
     private readonly IOrderRepository orderRepository = _orderRepository;
 
-    public async Task HandleAsync(UserDoesNotConfirmedOrderDomainEvent domainEvent)
+    public async Task HandleAsync(CustomerDoesNotConfirmedOrderDomainEvent domainEvent)
     {
-        await orderRepository.ExecuteDeleteByUserIdAsync(domainEvent.User.Id);
+        await orderRepository.ExecuteDeleteByUserIdAsync(domainEvent.Customer.Id);
     }
 }

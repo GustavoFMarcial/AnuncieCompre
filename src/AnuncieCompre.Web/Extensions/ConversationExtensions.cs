@@ -12,8 +12,8 @@ public static class ConversationExtensions
         {
             ConversationId = c.Id,
             UserId = c.UserId,
-            UserPhone = c.User.Phone.Value,
-            UserName = c.User.Name?.Value ?? "",
+            UserPhone = c.Customer.Phone.Value,
+            UserName = c.Customer.Name?.Value ?? "",
             Status = c.Status switch
             {
                 ConversationStatus.Closed => "Encerrada",
@@ -59,8 +59,8 @@ public static class ConversationExtensions
         {
             ConversationId = conversation.Id,
             UserId = conversation.UserId,
-            UserPhone = conversation.User.Phone.Value,
-            UserName = conversation.User.Name?.Value ?? "",
+            UserPhone = conversation.Customer.Phone.Value,
+            UserName = conversation.Customer.Name?.Value ?? "",
             Status = conversation.Status switch
             {
                 ConversationStatus.Closed => "Encerrada",

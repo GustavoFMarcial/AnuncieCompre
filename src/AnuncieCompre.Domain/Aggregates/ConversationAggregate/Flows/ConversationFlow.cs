@@ -29,14 +29,14 @@ public class ConversationFlow
         INodeValidator askCompanyCategoryValidator = new ValidationNodeValidator(companyCategoryValidator);
         INodeValidator startValidator = new OptionNodeValidator(["1", "2"]);
 
-        IDomainEventFactory userSentNameDomainEventFactory = new UserSentNameDomainEventFactory();
-        IDomainEventFactory userSentEmailDomainEventFactory = new UserSentEmailDomainEventFactory();
-        IDomainEventFactory userDoesNotConfirmedRegistrationDomainEventFactory = new UserDoesNotConfirmedRegistrationDomainEventFactory();
-        IDomainEventFactory userDoesNotConfirmedOrderDomainEventFactory = new UserDoesNotConfirmedOrderDomainEventFactory();
-        IDomainEventFactory userSentQuantityDomainEventFactory = new UserSentQuantityDomainEventFactory();
-        IDomainEventFactory userSentProductDomainEventFactory = new UserSentProductDomainEventFactory();
-        IDomainEventFactory userSentCompanyCategoryDomainEventFactory = new UserSentCompanyCategoryDomainEventFactory();
-        IDomainEventFactory userFinishedConversationDomainEventFactory = new UserFinishedConversationDomainEventFactory();
+        IDomainEventFactory userSentNameDomainEventFactory = new CustomerSentNameDomainEventFactory();
+        IDomainEventFactory userSentEmailDomainEventFactory = new CustomerSentEmailDomainEventFactory();
+        IDomainEventFactory userDoesNotConfirmedRegistrationDomainEventFactory = new CustomerDoesNotConfirmedRegistrationDomainEventFactory();
+        IDomainEventFactory userDoesNotConfirmedOrderDomainEventFactory = new CustomerDoesNotConfirmedOrderDomainEventFactory();
+        IDomainEventFactory userSentQuantityDomainEventFactory = new CustomerSentQuantityDomainEventFactory();
+        IDomainEventFactory userSentProductDomainEventFactory = new CustomerSentProductDomainEventFactory();
+        IDomainEventFactory userSentCompanyCategoryDomainEventFactory = new CustomerSentCompanyCategoryDomainEventFactory();
+        IDomainEventFactory userFinishedConversationDomainEventFactory = new CustomerFinishedConversationDomainEventFactory();
 
         var finish = new FinalNode
         {

@@ -10,7 +10,7 @@ public class OrderRepository(AnuncieCompreContext _context) : BaseRepository<Ord
     public async Task<Order?> GetLastOrderByUserIdAsync(Guid userId)
     {
         return await context.Set<Order>()
-            .Where(o => o.User.Id == userId)
+            .Where(o => o.Customer.Id == userId)
             .OrderByDescending(o => o.CreatedAt)
             .FirstOrDefaultAsync();
     }
@@ -18,7 +18,7 @@ public class OrderRepository(AnuncieCompreContext _context) : BaseRepository<Ord
     public async Task ExecuteDeleteByUserIdAsync(Guid userId)
     {
         await context.Set<Order>()
-            .Where(o => o.User.Id == userId)
+            .Where(o => o.Customer.Id == userId)
             .OrderByDescending(o => o.CreatedAt)
             .ExecuteDeleteAsync();
     }

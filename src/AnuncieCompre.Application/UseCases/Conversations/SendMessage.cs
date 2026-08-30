@@ -18,7 +18,7 @@ public class SendMessage(IConversationRepository _conversationRepository, IMessa
 
         if (conversation is null) return Result.Failure("Conversation não encontrada");
 
-        await messageSender.SendMessageAsync(conversation.User.Phone.Value, text);
+        await messageSender.SendMessageAsync(conversation.Customer.Phone.Value, text);
 
         Message message = Message.Create(conversation, text, Domain.Enums.MessageSenderType.Operator, Domain.Enums.MessageDirection.Outgoing);
         messageRepository.Add(message);
