@@ -6,5 +6,5 @@ namespace AnuncieCompre.Domain.Interfaces;
 
 public interface IDomainEventFactory
 {
-    public IDomainEvent Handle(User user, ValueObject tempData);
+    public IDomainEvent Handle(Customer customer, ValueObject tempData);
 }

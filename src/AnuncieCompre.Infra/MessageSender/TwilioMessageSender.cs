@@ -21,6 +21,7 @@ public class TwilioMessageSender : IMessageSender
         }
         catch(Exception e)
         {
+            //TODO - incluir tratamento de exception
             Console.WriteLine(e);
         }
         

@@ -11,9 +11,9 @@ public static class ConversationExtensions
         List<ConversationDTO> conversations = conversationList.Select(c => new ConversationDTO
         {
             ConversationId = c.Id,
-            UserId = c.UserId,
-            UserPhone = c.User.Phone.Value,
-            UserName = c.User.Name?.Value ?? "",
+            UserId = c.CustomerId,
+            UserPhone = c.Customer.Phone.Value,
+            UserName = c.Customer.Name?.Value ?? "",
             Status = c.Status switch
             {
                 ConversationStatus.Closed => "Encerrada",
@@ -58,9 +58,9 @@ public static class ConversationExtensions
         return new ConversationDTO
         {
             ConversationId = conversation.Id,
-            UserId = conversation.UserId,
-            UserPhone = conversation.User.Phone.Value,
-            UserName = conversation.User.Name?.Value ?? "",
+            UserId = conversation.CustomerId,
+            UserPhone = conversation.Customer.Phone.Value,
+            UserName = conversation.Customer.Name?.Value ?? "",
             Status = conversation.Status switch
             {
                 ConversationStatus.Closed => "Encerrada",

@@ -6,11 +6,11 @@ using StackExchange.Redis;
 
 namespace AnuncieCompre.Application.DomainEventHandler.Conversation;
 
-public class UserSentEmailDomainEventHandler() : IDomainEventHandler<UserSentEmailDomainEvent>
+public class CustomerSentNameDomainEventHandler() : IDomainEventHandler<CustomerSentNameDomainEvent>
 {
 
-    public async Task HandleAsync(UserSentEmailDomainEvent domainEvent)
+    public async Task HandleAsync(CustomerSentNameDomainEvent domainEvent)
     {
-        domainEvent.User.SetEmail(domainEvent.Email);
+        domainEvent.Customer.SetName(domainEvent.Name);
     }
 }

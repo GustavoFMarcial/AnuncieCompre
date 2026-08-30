@@ -9,8 +9,8 @@ namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
 public class Conversation : BaseEntity
 {
-    public Guid UserId { get; private set; }
-    public User User { get; private set; } = default!;
+    public Guid CustomerId { get; private set; }
+    public Customer Customer { get; private set; } = default!;
     public string AwaitingResponseNodeId { get; private set; } = "start";
     public DateTime DateTimeLastMessage { get; private set; }
     public ConversationAttendant Attendant { get; private set; } = ConversationAttendant.Bot;
@@ -20,18 +20,18 @@ public class Conversation : BaseEntity
 
     private Conversation() { }
 
-    private Conversation(User user)
+    private Conversation(Customer customer)
     {
-        UserId = user.Id;
-        User = user;
+        CustomerId = customer.Id;
+        Customer = customer;
     }
 
-    public static Conversation Create(User user)
+    public static Conversation Create(Customer user)
     {
         return new Conversation(user);
     }
 
-    public ReadOnlyCollection<string> HandleMessage(IConversationNode awaitingResponseNode, string message, User user)
+    public ReadOnlyCollection<string> HandleMessage(IConversationNode awaitingResponseNode, string message, Customer customer)
     {
         DateTimeLastMessage = DateTime.UtcNow;
 
@@ -48,7 +48,7 @@ public class Conversation : BaseEntity
         {
             foreach (var domainEventFactory in awaitingResponseNode.DomainEventFactory)
             {
-                AddDomainEvent(domainEventFactory.Handle(user, result.Value));
+                AddDomainEvent(domainEventFactory.Handle(customer, result.Value));
             }
         }
 
