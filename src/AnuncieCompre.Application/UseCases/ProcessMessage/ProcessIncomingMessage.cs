@@ -9,13 +9,13 @@ using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Domain.Aggregates.MessageAggregate;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Application.Dispatchers;
-using AnuncieCompre.Application.Services;
+using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 
 namespace AnuncieCompre.Application.UseCases.ProcessMessageUseCase;
 
 public class ProcessIncomingMessageUseCase(
     ICustomerRepository _customerRepository,
-    ConversationFlowsMenu _conversationFlowsMenu,
+    IConversationFlowRepository _conversationFlowRepository,
     IConversationRepository _conversationRepository, 
     IMessageRepository _messageRepository, 
     ConversationFlowProvider _conversationFlowProvider, 
@@ -23,7 +23,7 @@ public class ProcessIncomingMessageUseCase(
     IUnitOfWork _unitOfWork) : IProcessIncomingMessage
 {
     private readonly ICustomerRepository customerRepository = _customerRepository;
-    private readonly ConversationFlowsMenu conversationFlowsMenu = _conversationFlowsMenu;
+    private readonly IConversationFlowRepository conversationFlowRepository = _conversationFlowRepository;
     private readonly IConversationRepository conversationRepository = _conversationRepository;
     private readonly IMessageRepository messageRepository = _messageRepository;
     private readonly ConversationFlowProvider conversationFlowProvider = _conversationFlowProvider;
@@ -33,25 +33,33 @@ public class ProcessIncomingMessageUseCase(
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
         Customer? customer = await customerRepository.GetCustomerByPhoneAsync(incomingMessage.SenderPhone);
+        Conversation? conversation;
 
         if (customer is null)
         {
             customer = Customer.Create(Phone.Create(incomingMessage.SenderPhone).Value);
+            conversation = Conversation.Create(customer);
             customerRepository.Add(customer);
+            conversationRepository.Add(conversation);
+            List<ConversationFlow> flows = await conversationFlowRepository.GetFlowsToListAsync();
+
+            return conversation.InitialMenu(flows);
         }
 
-        Conversation? conversation = await conversationRepository.GetOpenConversationByUserIdAsync(customer.Id);
+        conversation = await conversationRepository.GetOpenConversationByUserIdAsync(customer.Id);
 
         if (conversation is null)
         {
             conversation = Conversation.Create(customer);
             conversationRepository.Add(conversation);
-            return await conversationFlowsMenu.CreateFlowsMenu();
+            List<ConversationFlow> flows = await conversationFlowRepository.GetFlowsToListAsync();
+
+            return conversation.InitialMenu(flows);
         }
 
         IConversationNode awaitingRespondeNode = conversationFlowProvider.GetById(conversation.AwaitingResponseNodeId);
 
-        ReadOnlyCollection<string> response = conversation.HandleMessage(awaitingRespondeNode, incomingMessage.Content, customer);
+        ReadOnlyCollection<string> response = conversation.HandleMessage(awaitingRespondeNode, incomingMessage.Content, conversation.Customer);
 
         await dispatcher.DispatchAsync(conversation);
         

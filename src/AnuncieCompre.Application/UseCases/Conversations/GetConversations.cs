@@ -10,6 +10,6 @@ public class GetConversations(IConversationRepository _conversationRepository)
 
     public async Task<List<Conversation>> Handle(ConversationStatus? status)
     {
-        return await conversationRepository.GetConversationsByStatusToListAsync(status);
+        return await conversationRepository.GetConversationsByStatusWithMessagesAndCustomerToListAsync(status);
     }
 }

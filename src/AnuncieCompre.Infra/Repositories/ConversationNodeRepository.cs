@@ -1,4 +1,5 @@
 using AnuncieCompre.Application.Interfaces;
+using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Infra.Data;
@@ -18,8 +19,18 @@ public class ConversationNodeRepository(AnuncieCompreContext _context) : BaseRep
         return await context.Set<ConversationNode>().Where(n => n.ConversationFlowId == flowId).Select(n => n.Id).ToListAsync();
     }
 
-        public async Task<List<ConversationNode>> GetConversationNodesByFlowIdAsync(Guid flowId)
+    public async Task<List<ConversationNode>> GetConversationNodesByFlowIdAsync(Guid flowId)
     {
         return await context.Set<ConversationNode>().Where(n => n.ConversationFlowId == flowId).ToListAsync();
+    }
+
+    public async Task<ConversationNode?> GetMenuConversationNodeAsync()
+    {
+        return await context.Set<ConversationNode>().FirstOrDefaultAsync(cn => cn.IsMenu == true);
+    }
+
+    public async Task<List<ConversationNode>> GetInitialConversationNodesToListAsync()
+    {
+        return await context.Set<ConversationNode>().Where(cn => cn.IsInitial == true).ToListAsync();
     }
 }

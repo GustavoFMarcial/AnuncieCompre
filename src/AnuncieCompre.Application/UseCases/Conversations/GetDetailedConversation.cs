@@ -9,6 +9,6 @@ public class GetDetailedConversation(IConversationRepository _conversationReposi
 
     public async Task<Conversation?> Handle(Guid id)
     {
-        return await conversationRepository.GetConversationByIdWithMessagesAndUserAsync(id);
+        return await conversationRepository.GetConversationByIdWithMessagesAndCustomerAsync(id);
     }
 }

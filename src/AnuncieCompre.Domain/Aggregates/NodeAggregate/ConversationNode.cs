@@ -14,8 +14,10 @@ public class ConversationNode : BaseEntity
     public ValidationKind ValidationKind { get; private set; } = ValidationKind.None;
     public ValueObjectValidator ValueObjectValidator { get; private set; } = ValueObjectValidator.None;
     public List<NodeTransition> Transitions { get; private set; } = [];
+    public bool IsInitial { get; private set; } = false;
     public bool IsFinal { get; private set; } = false;
-    public List<string>? Options { get; private set; } = [];
+    public bool IsMenu { get; private set; } = false;
+    public List<string?> Options { get; private set; } = [];
 
     private ConversationNode() { }
 
@@ -25,9 +27,25 @@ public class ConversationNode : BaseEntity
         ConversationFlow = conversationFlow;
     }
 
+    private ConversationNode(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<NodeTransition> transitions, List<string?> options)
+    {
+        ConversationFlowId = conversationFlow.Id;
+        ConversationFlow = conversationFlow;
+        Message = message;
+        ValidationKind = validationKind;
+        IsMenu = isMenu;
+        Transitions = transitions;
+        Options = options;
+    }
+
     public static Result<ConversationNode> Create(ConversationFlow conversationFlow)
     {
         return Result<ConversationNode>.Success(new ConversationNode(conversationFlow), "ConversationNode criado com sucesso");
+    }
+
+    public static Result<ConversationNode> Create(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<NodeTransition> transitions, List<string?> options)
+    {
+        return Result<ConversationNode>.Success(new ConversationNode(conversationFlow, message, validationKind, isMenu, transitions, options), "ConversationNode criado com sucesso");
     }
 
     public Result Edit(EditConversationNodeInput input)
@@ -42,8 +60,9 @@ public class ConversationNode : BaseEntity
         Message = input.Message;
         ValidationKind = input.ValidationKind;
         ValueObjectValidator = input.ValueObjectValidator;
+        IsInitial = input.IsInitial;
         IsFinal = input.IsFinal;
-        Options = input.Options;
+        Options = input.Options ?? [];
 
         return Result.Success("ConversationNode editado com sucesso");
     }
