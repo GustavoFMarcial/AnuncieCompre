@@ -11,7 +11,7 @@ namespace AnuncieCompre.Domain.Conversation.Flows;
 
 public class ConversationFlow
 {
-    public static IReadOnlyDictionary<string, IConversationNode> Build()
+    public static IReadOnlyDictionary<Guid, IConversationNode> Build()
     {
         IValueObjectValidator emailValidator = new EmailValidator();
         IValueObjectValidator nameValidator = new NameValidator();
@@ -40,13 +40,13 @@ public class ConversationFlow
 
         var finish = new FinalNode
         {
-            Id = "finish",
+            Id = Guid.NewGuid(),
             Message = "Ok, até logo!",
         };
 
         var askAnotherOrder = new ConfirmationNode
         {
-            Id = "ask_another_order",
+            Id = Guid.NewGuid(),
             Message =
                 """
                 Pedido criado com sucesso!
@@ -61,7 +61,7 @@ public class ConversationFlow
 
         var askRegistrationConfirmation = new ConfirmationNode
         {
-            Id = "registration_ask_confirmation",
+            Id = Guid.NewGuid(),
             Message =
                 """
                 Nome e email passados estão corretos para que possamos colocar junto ao pedido ?
@@ -75,7 +75,7 @@ public class ConversationFlow
 
         var askEmail = new ValidationNode
         {
-            Id = "ask_email",
+            Id = Guid.NewGuid(),
             Message = "Qual email para cadastro?",
             NodeValidator = askEmailValidator,
             DomainEventFactory = [userSentEmailDomainEventFactory],
@@ -83,7 +83,7 @@ public class ConversationFlow
 
         var askName = new ValidationNode
         {
-            Id = "ask_name",
+            Id = Guid.NewGuid(),
             Message = "Qual seu nome?",
             NodeValidator = askNameValidator,
             DomainEventFactory = [userSentNameDomainEventFactory],
@@ -91,7 +91,7 @@ public class ConversationFlow
 
         var askRegistration = new ConfirmationNode
         {
-            Id = "ask_registration",
+            Id = Guid.NewGuid(),
             Message =
                 """
                 Para que possamos prosseguir com o envio do pedido aos fornecedores precisamos de seu nome completo e um email, deseja continuar ?
@@ -105,7 +105,7 @@ public class ConversationFlow
 
         var askOrderConfirmation = new ConfirmationNode
         {
-            Id = "order_ask_confirmation",
+            Id = Guid.NewGuid(),
             Message =
                 """
                 As informações passadas estão corretas para que possamos enviar o pedido aos fornecedores?
@@ -119,7 +119,7 @@ public class ConversationFlow
 
         var askQuantity = new ValidationNode
         {
-            Id = "ask_quantity",
+            Id = Guid.NewGuid(),
             Message = "Qual quantia deseja comprar?",
             NodeValidator = askQuantityValidator,
             DomainEventFactory = [userSentQuantityDomainEventFactory],
@@ -127,7 +127,7 @@ public class ConversationFlow
 
         var askProduct = new ValidationNode
         {
-            Id = "ask_product",
+            Id = Guid.NewGuid(),
             Message = "Qual produto deseja comprar?",
             NodeValidator = askProductValidator,
             DomainEventFactory = [userSentProductDomainEventFactory],
@@ -135,7 +135,7 @@ public class ConversationFlow
 
         var askCompanyCategory = new ValidationNode
         {
-            Id = "ask_company_category",
+            Id = Guid.NewGuid(),
             Message =
                 $"""
                 Qual categoria de produto deseja comprar?
@@ -148,7 +148,7 @@ public class ConversationFlow
 
         var start = new ConfirmationNode
         {
-            Id = "start",
+            Id = Guid.NewGuid(),
             Message =
                 """
                 Olá, bem-vindo ao AnuncieCompre.
@@ -187,7 +187,7 @@ public class ConversationFlow
 
         finish.Transitions["next"] = start;
 
-        return new Dictionary<string, IConversationNode>
+        return new Dictionary<Guid, IConversationNode>
         {
             { start.Id, start },
             {askCompanyCategory.Id, askCompanyCategory},

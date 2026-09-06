@@ -15,6 +15,7 @@ using AnuncieCompre.Application.UseCases.Flows;
 using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Application.UseCases;
 using AnuncieCompre.Application.UseCases.Conversations;
+using AnuncieCompre.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,7 @@ builder.Services.AddScoped<DeleteConversationNode>();
 builder.Services.AddScoped<GetConversations>();
 builder.Services.AddScoped<GetDetailedConversation>();
 builder.Services.AddScoped<SendMessage>();
+builder.Services.AddScoped<MenuService>();
 // builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
 
 //Hosted
