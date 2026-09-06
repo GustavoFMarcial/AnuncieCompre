@@ -5,11 +5,11 @@ public enum ValueObjectValidator
     Email,
     Name,
     Quantity,
-    Product,
-    CompanyCategory,
+    // Product,
+    // CompanyCategory,
     CPF,
     CNPJ,
     Phone,
-    UserType,
+    // UserType,
     None
 }

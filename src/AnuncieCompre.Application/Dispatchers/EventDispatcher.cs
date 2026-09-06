@@ -1,6 +1,7 @@
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Application.Interfaces;
+using AnuncieCompre.Domain.Aggregates;
 
 namespace AnuncieCompre.Application.Dispatchers;
 
@@ -8,11 +9,11 @@ public class EventDispatcher(IServiceProvider _serviceProvider)
 {
     private readonly IServiceProvider serviceProvider = _serviceProvider;
 
-    public async Task DispatchAsync(Conversation conversation)
+    public async Task DispatchAsync(BaseEntity entity)
     {
-        List<IDomainEvent> domainEvents = conversation.DomainEvents.ToList();
+        List<IDomainEvent> domainEvents = entity.DomainEvents.ToList();
 
-        conversation.ClearDomainEvents();
+        entity.ClearDomainEvents();
 
         foreach (var domainEvent in domainEvents)
         {
