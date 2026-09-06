@@ -1,3 +1,4 @@
+using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Interfaces;
@@ -8,7 +9,7 @@ public class ValidationNodeValidator(IValueObjectValidator valueObjectValidator)
 {
     private readonly IValueObjectValidator ValueObjectValidator = valueObjectValidator;
 
-    public NodeResult Validate(IConversationNode conversationNode, string message)
+    public NodeResult Validate(ConversationNode conversationNode, string message)
     {
         Result<ValueObject> result = ValueObjectValidator.Validate(message);
 
@@ -17,6 +18,6 @@ public class ValidationNodeValidator(IValueObjectValidator valueObjectValidator)
             return NodeResult.Failure(result.Message, conversationNode.Id);
         }
 
-        return NodeResult.Success(result.Value!, conversationNode.Transitions["next"].Message, conversationNode.Transitions["next"].Id);
+        return NodeResult.Success(conversationNode.Transitions[0].TargetNodeId);
     }
 }

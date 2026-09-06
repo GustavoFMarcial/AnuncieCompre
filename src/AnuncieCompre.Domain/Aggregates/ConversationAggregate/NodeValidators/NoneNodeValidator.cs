@@ -4,7 +4,7 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Conversation.NodeValidators;
 
-public class FinalNodeValidator : INodeValidator
+public class NoneNodeValidator : INodeValidator
 {
     public NodeResult Validate(ConversationNode conversationNode, string message)
     {

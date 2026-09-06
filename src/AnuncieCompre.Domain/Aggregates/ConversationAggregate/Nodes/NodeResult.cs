@@ -34,6 +34,17 @@ public class NodeResult : Result<ValueObject>
         return result;
     }
 
+    public static NodeResult Success(Guid nextStepId)
+    {
+        NodeResult result = new()
+        {
+            IsSuccess = true,
+            NextStepId = nextStepId,
+        };
+
+        return result;
+    }
+
     public static NodeResult Failure(string message, Guid nextStepId)
     {
         NodeResult result = new()
@@ -45,5 +56,10 @@ public class NodeResult : Result<ValueObject>
         };
 
         return result;
+    }
+
+    internal static NodeResult Success(object id)
+    {
+        throw new NotImplementedException();
     }
 }
