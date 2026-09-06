@@ -5,14 +5,14 @@ namespace AnuncieCompre.Infra.Providers;
 
 public class ConversationFlowProvider
 {
-    private readonly IReadOnlyDictionary<string, IConversationNode> InitialRegistration;
+    private readonly IReadOnlyDictionary<Guid, IConversationNode> InitialRegistration;
 
     public ConversationFlowProvider()
     {
         InitialRegistration = ConversationFlow.Build();
     }
     
-    public IConversationNode GetById(string id)
+    public IConversationNode GetById(Guid id)
     {
         IConversationNode? conversationNode;
 

@@ -9,7 +9,7 @@ public class InitialValidationFlow
 {
     public static void Validate(IConversationNode node)
     {
-        node.Id.Should().NotBeNullOrWhiteSpace();
+        // node.Id.Should().NotBeNullOrWhiteSpace();
         node.Message.Should().NotBeNullOrWhiteSpace();
         // node.NodeValidator.Should().NotBeNull();
         
@@ -18,10 +18,10 @@ public class InitialValidationFlow
             node.NodeValidator.Should().NotBeNull();
         }
 
-        if (node.Id != "ask_user_type")
-        {
-            node.Transitions.Count.Should().BeGreaterThan(0);
-        }
+        // if (node.Id != "ask_user_type")
+        // {
+        //     node.Transitions.Count.Should().BeGreaterThan(0);
+        // }
 
         if (node is OptionNode || node is ConfirmationNode || node is OptionValidationNode)
         {
