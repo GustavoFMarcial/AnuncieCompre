@@ -1,3 +1,4 @@
+using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Interfaces;
@@ -9,17 +10,25 @@ public class OptionValidationNodeValidator(List<string> options, IValueObjectVal
     private readonly List<string> Options = options;
     private readonly IValueObjectValidator valueObjectValidator = valueObjectValidator;
 
-    public NodeResult Validate(IConversationNode conversationNode, string message)
+    public NodeResult Validate(ConversationNode conversationNode, string message)
     {
+        List<int> options = [];
+
         foreach (string o in Options)
         {
-            if (message == o)
+            _ = int.TryParse(o, out int result);
+            options.Add(result);
+        }
+
+        foreach (int o in options)
+        {
+            if (message == o.ToString())
             {
                 Result<ValueObject> result = valueObjectValidator.Validate(message);
 
                 if (result.IsSuccess)
                 {
-                    return NodeResult.Success(result.Value!, conversationNode.Transitions[o].Message, conversationNode.Transitions[o].Id);
+                    return NodeResult.Success(conversationNode.Transitions[o].TargetNodeId);
                 }
                 else
                 {

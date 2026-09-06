@@ -13,7 +13,7 @@ public class Conversation : BaseEntity
     public Guid CustomerId { get; private set; }
     public Customer Customer { get; private set; } = default!;
     public Dictionary<string, (Guid flowId, string flowName)> Menu { get; private set; } = [];
-    public Guid AwaitingResponseNodeId { get; private set; }
+    public Guid AwaitingResponseNodeId { get; private set; } = Guid.Empty;
     public DateTime DateTimeLastMessage { get; private set; }
     public ConversationAttendant Attendant { get; private set; } = ConversationAttendant.Bot;
     public ConversationStatus Status { get; private set; } = ConversationStatus.JustCreated;
@@ -33,29 +33,34 @@ public class Conversation : BaseEntity
         return new Conversation(user);
     }
 
-    public ReadOnlyCollection<string> HandleMessage(IConversationNode awaitingResponseNode, string message, Customer customer)
+    // public ReadOnlyCollection<string> HandleMessage(Guid nextStepId, string message, Customer customer)
+    // {
+    //     DateTimeLastMessage = DateTime.UtcNow;
+
+    //     if (Status == ConversationStatus.JustCreated)
+    //     {
+    //         Status = ConversationStatus.Menu;
+    //         AwaitingResponseNodeId = awaitingResponseNode.Id;
+    //         return [awaitingResponseNode.Message];
+    //     }
+
+    //     NodeResult result = awaitingResponseNode.NodeValidator.Validate(awaitingResponseNode, message);
+
+    //     if (result.IsSuccess && result.ProcDomainEvent && awaitingResponseNode.DomainEventFactory.Count > 0)
+    //     {
+    //         foreach (var domainEventFactory in awaitingResponseNode.DomainEventFactory)
+    //         {
+    //             AddDomainEvent(domainEventFactory.Handle(customer, result.Value));
+    //         }
+    //     }
+
+    //     AwaitingResponseNodeId = result.NextStepId;
+    //     return [result.Message];
+    // }
+
+    public void UpdateAwaitingResponseNodeId(Guid id)
     {
-        DateTimeLastMessage = DateTime.UtcNow;
-
-        if (Status == ConversationStatus.JustCreated)
-        {
-            Status = ConversationStatus.Menu;
-            AwaitingResponseNodeId = awaitingResponseNode.Id;
-            return [awaitingResponseNode.Message];
-        }
-
-        NodeResult result = awaitingResponseNode.NodeValidator.Validate(awaitingResponseNode, message);
-
-        if (result.IsSuccess && result.ProcDomainEvent && awaitingResponseNode.DomainEventFactory.Count > 0)
-        {
-            foreach (var domainEventFactory in awaitingResponseNode.DomainEventFactory)
-            {
-                AddDomainEvent(domainEventFactory.Handle(customer, result.Value));
-            }
-        }
-
-        AwaitingResponseNodeId = result.NextStepId;
-        return [result.Message];
+        AwaitingResponseNodeId = id;
     }
 
     public void Close()

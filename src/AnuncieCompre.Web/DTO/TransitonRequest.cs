@@ -4,6 +4,6 @@ namespace AnuncieCompre.Web.DTO;
 
 public record TransitonRequest
 {
-    public string? Option { get; set; }
-    public Guid? TargetNodeId { get; set; }
+    public string Option { get; set; } = default!;
+    public Guid TargetNodeId { get; set; }
 }

@@ -1,3 +1,4 @@
+using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Interfaces;
 
@@ -7,15 +8,15 @@ public class ConfirmationNodeValidator(List<string> options) : INodeValidator
 {
     private readonly List<string> Options = options;
 
-    public NodeResult Validate(IConversationNode conversationNode, string message)
+    public NodeResult Validate(ConversationNode conversationNode, string message)
     {
         if (message == Options[0])
         {
-            return NodeResult.Success(conversationNode.Transitions[message].Message, conversationNode.Transitions[message].Id, false);
+            return NodeResult.Success(conversationNode.Transitions[0].TargetNodeId);
         }
         else if (message == Options[1])
         {
-            return NodeResult.Success(conversationNode.Transitions[message].Message, conversationNode.Transitions[message].Id);   
+            return NodeResult.Success(conversationNode.Transitions[1].TargetNodeId);   
         }
 
         return NodeResult.Failure("Opção inválida, escolha novamente", conversationNode.Id);

@@ -17,7 +17,7 @@ public class ConversationNode : BaseEntity
     public bool IsInitial { get; private set; } = false;
     public bool IsFinal { get; private set; } = false;
     public bool IsMenu { get; private set; } = false;
-    public List<string?> Options { get; private set; } = [];
+    public List<string> Options { get; private set; } = [];
 
     private ConversationNode() { }
 
@@ -27,7 +27,7 @@ public class ConversationNode : BaseEntity
         ConversationFlow = conversationFlow;
     }
 
-    private ConversationNode(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<NodeTransition> transitions, List<string?> options)
+    private ConversationNode(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<NodeTransition> transitions, List<string> options)
     {
         ConversationFlowId = conversationFlow.Id;
         ConversationFlow = conversationFlow;
@@ -43,7 +43,7 @@ public class ConversationNode : BaseEntity
         return Result<ConversationNode>.Success(new ConversationNode(conversationFlow), "ConversationNode criado com sucesso");
     }
 
-    public static Result<ConversationNode> Create(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<NodeTransition> transitions, List<string?> options)
+    public static Result<ConversationNode> Create(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<NodeTransition> transitions, List<string> options)
     {
         return Result<ConversationNode>.Success(new ConversationNode(conversationFlow, message, validationKind, isMenu, transitions, options), "ConversationNode criado com sucesso");
     }
@@ -54,15 +54,15 @@ public class ConversationNode : BaseEntity
         if (input.ValidationKind is not ValidationKind.Final && input.IsFinal is true) return Result<ConversationNode>.Failure("Apenas node com validação final pode ser marcado como final");
         if (input.ValidationKind is ValidationKind.Validation && input.ValueObjectValidator is ValueObjectValidator.None) return Result<ConversationNode>.Failure("Node de validação deve possuir um validador");
         if (input.ValueObjectValidator is not ValueObjectValidator.None && input.ValidationKind is not ValidationKind.Validation) return Result<ConversationNode>.Failure("Apenas node de validação deve possuir um validador");
-        if (input.Options?.Count > 0 && input.ValidationKind is ValidationKind.Final) return Result<ConversationNode>.Failure("Apenas nodes de confirmação ou opção podem ter opções");
-        if (input.Options?.Count > 0 && input.ValidationKind is ValidationKind.Validation) return Result<ConversationNode>.Failure("Apenas nodes de confirmação ou validação podem ter opções");
+        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Final) return Result<ConversationNode>.Failure("Apenas nodes de confirmação ou opção podem ter opções");
+        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Validation) return Result<ConversationNode>.Failure("Apenas nodes de confirmação ou validação podem ter opções");
 
         Message = input.Message;
         ValidationKind = input.ValidationKind;
         ValueObjectValidator = input.ValueObjectValidator;
         IsInitial = input.IsInitial;
         IsFinal = input.IsFinal;
-        Options = input.Options ?? [];
+        Options = input.Options;
 
         return Result.Success("ConversationNode editado com sucesso");
     }

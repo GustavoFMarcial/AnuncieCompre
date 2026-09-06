@@ -4,6 +4,6 @@ namespace AnuncieCompre.Domain.DTO;
 
 public record TransitonInput
 {
-    public string? Option { get; set; }
-    public Guid? TargetNodeId { get; set; }
+    public string Option { get; set; } = default!;
+    public Guid TargetNodeId { get; set; }
 }
