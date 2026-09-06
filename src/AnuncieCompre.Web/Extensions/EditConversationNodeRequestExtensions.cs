@@ -36,6 +36,7 @@ public static class EditConversationNodeRequestExtensions
             },
             Options = request.Options,
             IsFinal = request.IsFinal,
+            IsInitial = request.IsInitial,
         };
     }
 }
