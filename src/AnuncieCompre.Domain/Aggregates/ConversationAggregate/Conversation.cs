@@ -13,7 +13,7 @@ public class Conversation : BaseEntity
     public Guid CustomerId { get; private set; }
     public Customer Customer { get; private set; } = default!;
     public Dictionary<string, (Guid flowId, string flowName)> Menu { get; private set; } = [];
-    public string AwaitingResponseNodeId { get; private set; } = "start";
+    public Guid AwaitingResponseNodeId { get; private set; }
     public DateTime DateTimeLastMessage { get; private set; }
     public ConversationAttendant Attendant { get; private set; } = ConversationAttendant.Bot;
     public ConversationStatus Status { get; private set; } = ConversationStatus.JustCreated;

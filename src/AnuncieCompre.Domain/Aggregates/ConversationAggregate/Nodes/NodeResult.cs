@@ -4,10 +4,10 @@ namespace AnuncieCompre.Domain.Conversation.Nodes;
 
 public class NodeResult : Result<ValueObject>
 {
-    public string NextStepId { get; set; } = default!;
+    public Guid NextStepId { get; set; } = default!;
     public bool ProcDomainEvent { get; set; }
 
-    public static NodeResult Success(ValueObject value, string message, string nextStepId, bool procDomainevent = true)
+    public static NodeResult Success(ValueObject value, string message, Guid nextStepId, bool procDomainevent = true)
     {
         NodeResult result = new()
         {
@@ -21,7 +21,7 @@ public class NodeResult : Result<ValueObject>
         return result;
     }
 
-    public static NodeResult Success(string message, string nextStepId, bool procDomainEvent = true)
+    public static NodeResult Success(string message, Guid nextStepId, bool procDomainEvent = true)
     {
         NodeResult result = new()
         {
@@ -34,7 +34,7 @@ public class NodeResult : Result<ValueObject>
         return result;
     }
 
-    public static NodeResult Failure(string message, string nextStepId)
+    public static NodeResult Failure(string message, Guid nextStepId)
     {
         NodeResult result = new()
         {

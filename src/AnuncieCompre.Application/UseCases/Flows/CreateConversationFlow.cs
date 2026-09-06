@@ -1,4 +1,5 @@
 using AnuncieCompre.Application.Interfaces;
+using AnuncieCompre.Application.Services;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
@@ -7,10 +8,11 @@ using AnuncieCompre.Infra.Repositories;
 
 namespace AnuncieCompre.Application.UseCases.Flows;
 
-public class CreateConversationFlow(IConversationFlowRepository _flowRepository, IUnitOfWork _unitOfWork)
+public class CreateConversationFlow(IConversationFlowRepository _flowRepository, IUnitOfWork _unitOfWork, MenuService _menuService)
 {
     private readonly IConversationFlowRepository flowRepository = _flowRepository;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
+    private readonly MenuService menuService = _menuService;
 
     public async Task<Result<ConversationFlow>> Handle(CreateConversationFlowInput input)
     {
@@ -24,6 +26,7 @@ public class CreateConversationFlow(IConversationFlowRepository _flowRepository,
 
         flowRepository.Add(result.Value);
         await unitOfWork.SaveChangesAsync();
+        await menuService.UpdateMenuConversationNode();
 
         return result;
     }

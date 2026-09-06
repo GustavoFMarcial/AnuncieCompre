@@ -94,4 +94,19 @@ public class ConversationNode : BaseEntity
 
         return Result.Success("Transações validadas com sucesso");
     }
+
+    public void SetTransitions(List<NodeTransition> transitions)
+    {
+        Transitions = transitions;
+    }
+
+    public void SetMessage(string message)
+    {
+        Message = message;
+    }
+
+    public void SetOptions(List<string> options)
+    {
+        Options = options!;
+    }
 }

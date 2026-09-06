@@ -15,7 +15,6 @@ namespace AnuncieCompre.Application.UseCases.ProcessMessageUseCase;
 
 public class ProcessIncomingMessageUseCase(
     ICustomerRepository _customerRepository,
-    IConversationFlowRepository _conversationFlowRepository,
     IConversationRepository _conversationRepository, 
     IMessageRepository _messageRepository, 
     ConversationFlowProvider _conversationFlowProvider, 
@@ -23,7 +22,6 @@ public class ProcessIncomingMessageUseCase(
     IUnitOfWork _unitOfWork) : IProcessIncomingMessage
 {
     private readonly ICustomerRepository customerRepository = _customerRepository;
-    private readonly IConversationFlowRepository conversationFlowRepository = _conversationFlowRepository;
     private readonly IConversationRepository conversationRepository = _conversationRepository;
     private readonly IMessageRepository messageRepository = _messageRepository;
     private readonly ConversationFlowProvider conversationFlowProvider = _conversationFlowProvider;
@@ -41,9 +39,6 @@ public class ProcessIncomingMessageUseCase(
             conversation = Conversation.Create(customer);
             customerRepository.Add(customer);
             conversationRepository.Add(conversation);
-            List<ConversationFlow> flows = await conversationFlowRepository.GetFlowsToListAsync();
-
-            return conversation.InitialMenu(flows);
         }
 
         conversation = await conversationRepository.GetOpenConversationByUserIdAsync(customer.Id);
@@ -52,9 +47,6 @@ public class ProcessIncomingMessageUseCase(
         {
             conversation = Conversation.Create(customer);
             conversationRepository.Add(conversation);
-            List<ConversationFlow> flows = await conversationFlowRepository.GetFlowsToListAsync();
-
-            return conversation.InitialMenu(flows);
         }
 
         IConversationNode awaitingRespondeNode = conversationFlowProvider.GetById(conversation.AwaitingResponseNodeId);
