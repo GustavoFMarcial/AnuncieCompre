@@ -14,7 +14,7 @@ public class SendMessage(IConversationRepository _conversationRepository, IMessa
 
     public async Task<Result> Handle(Guid id, string text)
     {
-        Conversation? conversation = await conversationRepository.GetConversationByIdWithUserAsync(id);
+        Conversation? conversation = await conversationRepository.GetConversationByIdWithCustomerAsync(id);
 
         if (conversation is null) return Result.Failure("Conversation não encontrada");
 

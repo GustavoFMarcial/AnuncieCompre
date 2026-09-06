@@ -1,5 +1,6 @@
 using AnuncieCompre.Application.Interfaces;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
+using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 

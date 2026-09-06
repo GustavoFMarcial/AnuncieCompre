@@ -4,6 +4,7 @@ using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Aggregates.MessageAggregate;
 using AnuncieCompre.Domain.Enums;
+using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
@@ -11,6 +12,7 @@ public class Conversation : BaseEntity
 {
     public Guid CustomerId { get; private set; }
     public Customer Customer { get; private set; } = default!;
+    public Dictionary<string, (Guid flowId, string flowName)> Menu { get; private set; } = [];
     public string AwaitingResponseNodeId { get; private set; } = "start";
     public DateTime DateTimeLastMessage { get; private set; }
     public ConversationAttendant Attendant { get; private set; } = ConversationAttendant.Bot;
@@ -37,7 +39,7 @@ public class Conversation : BaseEntity
 
         if (Status == ConversationStatus.JustCreated)
         {
-            Status = ConversationStatus.Open;
+            Status = ConversationStatus.Menu;
             AwaitingResponseNodeId = awaitingResponseNode.Id;
             return [awaitingResponseNode.Message];
         }
@@ -60,5 +62,20 @@ public class Conversation : BaseEntity
     {
         EndedAt = DateTime.UtcNow;
         Status = ConversationStatus.Closed;
+    }
+
+    public ReadOnlyCollection<string> InitialMenu(List<ConversationFlow> flows)
+    {
+        Collection<string> message = [];
+        Dictionary<string, (Guid flowId, string flowName)> menu = [];
+
+        for (int i = 0; i >= flows.Count - 1; i++)
+        {
+            message[0] += $"{i + 1} - {flows[i].Name}\n";
+            menu.Add((i + 1).ToString(), (flowId: flows[i].Id, flowName: flows[i].Name.Value));
+        }
+
+        Menu = menu;
+        return message.AsReadOnly();
     }
 }
