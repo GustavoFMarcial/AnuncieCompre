@@ -10,19 +10,10 @@ public class OptionNodeValidator(List<string> options) : INodeValidator
 
     public NodeResult Validate(ConversationNode conversationNode, string message)
     {
-        List<int> options = [];
+        conversationNode.Transitions.TryGetValue(message, out ConversationNode? targetConversationNode);
 
-        foreach (string o in Options)
-        {
-            _ = int.TryParse(o, out int result);
-            options.Add(result);
-        }
+        if (targetConversationNode is null) return NodeResult.Failure("Opção inválida, escolha novamente", conversationNode.Id);
 
-        foreach (int o in options)
-        {
-            if (message == o.ToString()) return NodeResult.Success(conversationNode.Transitions[o].TargetNodeId);
-        }
-
-        return NodeResult.Failure("Opção inválida, escolha novamente", conversationNode.Id);
+        return NodeResult.Success(targetConversationNode.Id, targetConversationNode.Message);
     }
 }

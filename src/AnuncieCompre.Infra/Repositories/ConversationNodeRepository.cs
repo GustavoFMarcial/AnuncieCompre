@@ -11,12 +11,12 @@ public class ConversationNodeRepository(AnuncieCompreContext _context) : BaseRep
 {
     public async Task<List<ConversationNode>> GetConversationNodeByTransitionTargetNodeIdAsync(Guid targetNodeId)
     {
-        return await context.Set<ConversationNode>().Where(n => n.Transitions.Any(t => t.TargetNodeId == targetNodeId)).ToListAsync();
+        return await context.Set<ConversationNode>().Where(n => n.Transitions.Any(t => t.Value.Id == targetNodeId)).ToListAsync();
     }
 
-    public async Task<List<Guid>> GetConversationNodesIdsByConversationFlowIdAsync(Guid flowId)
+    public async Task<List<ConversationNode>> GetConversationNodesByConversationFlowIdAsync(Guid flowId)
     {
-        return await context.Set<ConversationNode>().Where(n => n.ConversationFlowId == flowId).Select(n => n.Id).ToListAsync();
+        return await context.Set<ConversationNode>().Where(n => n.ConversationFlowId == flowId).ToListAsync();
     }
 
     public async Task<List<ConversationNode>> GetConversationNodesByFlowIdAsync(Guid flowId)

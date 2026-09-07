@@ -1,9 +1,7 @@
 using AnuncieCompre.Application.Interfaces;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
-using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.DTO;
-using AnuncieCompre.Web.DTO;
 
 namespace AnuncieCompre.Application.UseCases;
 
@@ -18,18 +16,8 @@ public class EditConversationNodeTransitions(IConversationNodeRepository _conver
 
         if (node is null) return Result.Failure("ConversationNode não encontrado");
 
-        List<Guid> flowNodesIds = await conversationNodeRepository.GetConversationNodesIdsByConversationFlowIdAsync(node.ConversationFlowId);
-        List<NodeTransition> transitions = [];
-
-        foreach (TransitonInput i in input.Transitions)
-        {
-            Result<NodeTransition> transitionResult = NodeTransition.Create(i.Option, i.TargetNodeId);
-
-            if (!transitionResult.IsSuccess) return Result.Failure(transitionResult.Message);
-            transitions.Add(transitionResult.Value);
-        }
-
-        Result nodeResult = node.EditTransition(transitions, flowNodesIds);
+        List<ConversationNode> flowNodes = await conversationNodeRepository.GetConversationNodesByFlowIdAsync(node.ConversationFlowId);
+        Result nodeResult = node.EditTransition(input.Transitions, flowNodes);
 
         if (!nodeResult.IsSuccess) return Result.Failure(nodeResult.Message);
 
