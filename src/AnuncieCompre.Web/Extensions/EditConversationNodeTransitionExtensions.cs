@@ -7,7 +7,7 @@ public static class EditConversationNodeTransitionExtensions
 {
     public static EditConversationNodeTransitionInput ToEditConversationNodeTransitionInput(this EditConversationNodeTransitionRequest request)
     {
-        List<TransitonInput> transitons = request.Transitions.Select(r => new TransitonInput
+        List<Transiton> transitons = request.Transitions.Select(r => new Transiton
         {
             Option = r.Option,
             TargetNodeId = r.TargetNodeId,

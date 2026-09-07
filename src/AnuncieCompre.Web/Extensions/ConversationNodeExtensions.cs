@@ -1,6 +1,7 @@
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Conversation.NodeValidators;
+using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Domain.Services.ValueObjectValidators;
 using AnuncieCompre.Web.DTO;
@@ -36,7 +37,11 @@ public static class ConversationNodeExtensions
                 _ => "None",
             },
             Options = c.Options,
-            Transitions = c.Transitions,
+            Transitions = c.Transitions.Select(t => new Transiton
+            {
+                Option = t.Key,
+                TargetNodeId = t.Value.Id,
+            }).ToList(),
             IsFinal = c.IsFinal,
 
         }).ToList();

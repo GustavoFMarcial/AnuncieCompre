@@ -10,15 +10,10 @@ public class ConfirmationNodeValidator(List<string> options) : INodeValidator
 
     public NodeResult Validate(ConversationNode conversationNode, string message)
     {
-        if (message == Options[0])
-        {
-            return NodeResult.Success(conversationNode.Transitions[0].TargetNodeId);
-        }
-        else if (message == Options[1])
-        {
-            return NodeResult.Success(conversationNode.Transitions[1].TargetNodeId);   
-        }
+        conversationNode.Transitions.TryGetValue(message, out ConversationNode? targetConversationNode);
 
-        return NodeResult.Failure("Opção inválida, escolha novamente", conversationNode.Id);
+        if (targetConversationNode is null) return NodeResult.Failure("Opção inválida, escolha novamente", conversationNode.Id);
+
+        return NodeResult.Success(targetConversationNode.Id, targetConversationNode.Message);
     }
 }

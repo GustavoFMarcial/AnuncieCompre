@@ -4,5 +4,5 @@ namespace AnuncieCompre.Domain.DTO;
 
 public record EditConversationNodeTransitionInput
 {
-    public List<TransitonInput> Transitions { get; set; } = [];
+    public List<Transiton> Transitions { get; set; } = [];
 }

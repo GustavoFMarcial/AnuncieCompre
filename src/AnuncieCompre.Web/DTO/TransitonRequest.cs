@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace AnuncieCompre.Web.DTO;
 
 public record TransitonRequest
