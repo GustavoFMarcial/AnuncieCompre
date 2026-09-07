@@ -1,3 +1,4 @@
+using AnuncieCompre.Domain.Aggregates.MessageAggregate;
 using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Domain.Conversation.Nodes;
@@ -34,11 +35,12 @@ public class NodeResult : Result<ValueObject>
         return result;
     }
 
-    public static NodeResult Success(Guid nextStepId)
+    public static NodeResult Success(Guid nextStepId, string message)
     {
         NodeResult result = new()
         {
             IsSuccess = true,
+            Message = message,
             NextStepId = nextStepId,
         };
 

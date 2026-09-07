@@ -18,6 +18,6 @@ public class ValidationNodeValidator(IValueObjectValidator valueObjectValidator)
             return NodeResult.Failure(result.Message, conversationNode.Id);
         }
 
-        return NodeResult.Success(conversationNode.Transitions[0].TargetNodeId);
+        return NodeResult.Success(conversationNode.Transitions["1"].Id);
     }
 }

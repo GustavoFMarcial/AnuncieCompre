@@ -16,13 +16,13 @@ public class MenuService(IConversationFlowRepository _conversationFlowRepository
         ConversationNode? menuNode = await conversationNodeRepository.GetMenuConversationNodeAsync();
         List<ConversationNode> initialNodes = await conversationNodeRepository.GetInitialConversationNodesToListAsync();
         List<ConversationFlow> conversationFlows = await conversationFlowRepository.GetPublishedFlowsToListAsync();
-        List<NodeTransition> nodeTransitions = [];
+        Dictionary<string, ConversationNode> nodeTransitions = [];
         string message = "Bem vindo, escolha uma opção para melhor te atender\n\n";
         List<string> options = [];
 
         for (int i = 0; i <= initialNodes.Count - 1; i++)
         {
-            nodeTransitions.Add(NodeTransition.Create((i + 1).ToString(), initialNodes[i].Id).Value);
+            nodeTransitions.Add((i + 1).ToString(), initialNodes[i]);
             options.Add((i + 1).ToString());
         }
 
