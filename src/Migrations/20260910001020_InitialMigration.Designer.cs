@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20260909224932_InitialMigration")]
+    [Migration("20260910001020_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -179,6 +179,10 @@ namespace AnuncieCompre.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
+                    b.Property<string>("Transitions")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("ValidationKind")
                         .HasColumnType("integer");
 
@@ -292,26 +296,7 @@ namespace AnuncieCompre.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("System.Collections.Generic.Dictionary<string, AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode>", "Transitions", b1 =>
-                        {
-                            b1.Property<Guid>("ConversationNodeId");
-
-                            b1.HasKey("ConversationNodeId");
-
-                            b1.ToTable("ConversationNodes");
-
-                            b1
-                                .ToJson("Transitions")
-                                .HasColumnType("jsonb");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ConversationNodeId");
-                        });
-
                     b.Navigation("ConversationFlow");
-
-                    b.Navigation("Transitions")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.OrderAggregate.Order", b =>

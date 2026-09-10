@@ -74,12 +74,12 @@ namespace AnuncieCompre.Migrations
                     Message = table.Column<string>(type: "text", nullable: false),
                     ValidationKind = table.Column<int>(type: "integer", nullable: false),
                     ValueObjectValidator = table.Column<int>(type: "integer", nullable: false),
+                    Transitions = table.Column<string>(type: "text", nullable: false),
                     IsInitial = table.Column<bool>(type: "boolean", nullable: false),
                     IsFinal = table.Column<bool>(type: "boolean", nullable: false),
                     IsMenu = table.Column<bool>(type: "boolean", nullable: false),
                     Options = table.Column<List<string>>(type: "text[]", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Transitions = table.Column<string>(type: "jsonb", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
