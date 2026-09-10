@@ -12,15 +12,15 @@ public class OptionValidationNodeValidator(List<string> options, IValueObjectVal
 
     public NodeResult Validate(ConversationNode conversationNode, string message)
     {
-        conversationNode.Transitions.TryGetValue(message, out ConversationNode? targetConversationNode);
+        bool isValidOption = conversationNode.Transitions.TryGetValue(message, out Guid targetConversationNodeId);
 
-        if (targetConversationNode is null) return NodeResult.Failure("Opção inválida, escolha novamente", conversationNode.Id);
+        if (isValidOption is false) return NodeResult.Failure("Opção inválida, escolha novamente", conversationNode.Id);
 
         Result<ValueObject> result = valueObjectValidator.Validate(message);
 
         if (result.IsSuccess)
         {
-            return NodeResult.Success(targetConversationNode.Id, targetConversationNode.Message);
+            return NodeResult.Success(targetConversationNodeId);
         }
         else
         {

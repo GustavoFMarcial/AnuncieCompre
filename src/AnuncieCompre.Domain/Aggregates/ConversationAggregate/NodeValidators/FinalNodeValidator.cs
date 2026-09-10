@@ -8,6 +8,6 @@ public class FinalNodeValidator : INodeValidator
 {
     public NodeResult Validate(ConversationNode conversationNode, string message)
     {
-        return NodeResult.Success(conversationNode.Transitions["1"].Id, conversationNode.Message);
+        return NodeResult.Success(conversationNode.Transitions["1"]);
     }
 }

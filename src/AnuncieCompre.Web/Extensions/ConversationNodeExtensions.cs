@@ -40,7 +40,7 @@ public static class ConversationNodeExtensions
             Transitions = c.Transitions.Select(t => new Transiton
             {
                 Option = t.Key,
-                TargetNodeId = t.Value.Id,
+                TargetNodeId = t.Value,
             }).ToList(),
             IsFinal = c.IsFinal,
 

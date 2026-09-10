@@ -12,7 +12,6 @@ public class Conversation : BaseEntity
 {
     public Guid CustomerId { get; private set; }
     public Customer Customer { get; private set; } = default!;
-    public Dictionary<string, (Guid flowId, string flowName)> Menu { get; private set; } = [];
     public Guid AwaitingResponseNodeId { get; private set; } = Guid.Empty;
     public DateTime DateTimeLastMessage { get; private set; }
     public ConversationAttendant Attendant { get; private set; } = ConversationAttendant.Bot;
@@ -67,20 +66,5 @@ public class Conversation : BaseEntity
     {
         EndedAt = DateTime.UtcNow;
         Status = ConversationStatus.Closed;
-    }
-
-    public ReadOnlyCollection<string> InitialMenu(List<ConversationFlow> flows)
-    {
-        Collection<string> message = [];
-        Dictionary<string, (Guid flowId, string flowName)> menu = [];
-
-        for (int i = 0; i >= flows.Count - 1; i++)
-        {
-            message[0] += $"{i + 1} - {flows[i].Name}\n";
-            menu.Add((i + 1).ToString(), (flowId: flows[i].Id, flowName: flows[i].Name.Value));
-        }
-
-        Menu = menu;
-        return message.AsReadOnly();
     }
 }

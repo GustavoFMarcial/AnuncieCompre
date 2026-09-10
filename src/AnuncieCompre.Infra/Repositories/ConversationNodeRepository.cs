@@ -11,7 +11,7 @@ public class ConversationNodeRepository(AnuncieCompreContext _context) : BaseRep
 {
     public async Task<List<ConversationNode>> GetConversationNodeByTransitionTargetNodeIdAsync(Guid targetNodeId)
     {
-        return await context.Set<ConversationNode>().Where(n => n.Transitions.Any(t => t.Value.Id == targetNodeId)).ToListAsync();
+        return await context.Set<ConversationNode>().Where(n => n.Transitions.Any(t => t.Value == targetNodeId)).ToListAsync();
     }
 
     public async Task<List<ConversationNode>> GetConversationNodesByConversationFlowIdAsync(Guid flowId)

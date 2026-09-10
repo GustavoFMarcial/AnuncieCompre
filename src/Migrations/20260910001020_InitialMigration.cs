@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -31,17 +32,17 @@ namespace AnuncieCompre.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AwaitingResponseNodeId = table.Column<string>(type: "text", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AwaitingResponseNodeId = table.Column<Guid>(type: "uuid", nullable: false),
                     DateTimeLastMessage = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Attendant = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     EndedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    User_CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    User_Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    User_Email_Value = table.Column<string>(type: "text", nullable: true),
-                    User_Name_Value = table.Column<string>(type: "text", nullable: true),
-                    User_Phone_Value = table.Column<string>(type: "text", nullable: false),
+                    Customer_CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Customer_Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Customer_Email_Value = table.Column<string>(type: "text", nullable: true),
+                    Customer_Name_Value = table.Column<string>(type: "text", nullable: true),
+                    Customer_Phone_Value = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -50,7 +51,7 @@ namespace AnuncieCompre.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "Customers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -61,7 +62,7 @@ namespace AnuncieCompre.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_Customers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -73,10 +74,12 @@ namespace AnuncieCompre.Migrations
                     Message = table.Column<string>(type: "text", nullable: false),
                     ValidationKind = table.Column<int>(type: "integer", nullable: false),
                     ValueObjectValidator = table.Column<int>(type: "integer", nullable: false),
+                    Transitions = table.Column<string>(type: "text", nullable: false),
+                    IsInitial = table.Column<bool>(type: "boolean", nullable: false),
                     IsFinal = table.Column<bool>(type: "boolean", nullable: false),
-                    Options = table.Column<string[]>(type: "text[]", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Transitions = table.Column<string>(type: "jsonb", nullable: false)
+                    IsMenu = table.Column<bool>(type: "boolean", nullable: false),
+                    Options = table.Column<List<string>>(type: "text[]", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -98,19 +101,6 @@ namespace AnuncieCompre.Migrations
                     Text = table.Column<string>(type: "text", nullable: false),
                     SenderType = table.Column<int>(type: "integer", nullable: false),
                     Direction = table.Column<int>(type: "integer", nullable: false),
-                    Conversation_Attendant = table.Column<int>(type: "integer", nullable: false),
-                    Conversation_AwaitingResponseNodeId = table.Column<string>(type: "text", nullable: false),
-                    Conversation_CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Conversation_DateTimeLastMessage = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Conversation_EndedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Conversation_Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Conversation_Status = table.Column<int>(type: "integer", nullable: false),
-                    Conversation_UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Conversation_User_CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Conversation_User_Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Conversation_User_Email_Value = table.Column<string>(type: "text", nullable: true),
-                    Conversation_User_Name_Value = table.Column<string>(type: "text", nullable: true),
-                    Conversation_User_Phone_Value = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -130,6 +120,7 @@ namespace AnuncieCompre.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     Category_Value = table.Column<int>(type: "integer", nullable: false),
                     Product_Value = table.Column<string>(type: "text", nullable: true),
                     Quantity_Value = table.Column<string>(type: "text", nullable: true),
@@ -139,9 +130,9 @@ namespace AnuncieCompre.Migrations
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_Orders_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -157,9 +148,9 @@ namespace AnuncieCompre.Migrations
                 column: "ConversationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_UserId",
+                name: "IX_Orders_CustomerId",
                 table: "Orders",
-                column: "UserId");
+                column: "CustomerId");
         }
 
         /// <inheritdoc />
@@ -181,7 +172,7 @@ namespace AnuncieCompre.Migrations
                 name: "Conversations");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Customers");
         }
     }
 }

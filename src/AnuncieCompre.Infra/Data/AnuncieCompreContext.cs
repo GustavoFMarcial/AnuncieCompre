@@ -5,6 +5,7 @@ using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using Microsoft.EntityFrameworkCore;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
+using System.Text.Json;
 
 namespace AnuncieCompre.Infra.Data;
 
@@ -58,7 +59,13 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<ConversationNode>(cn =>
         {
-            cn.ComplexCollection(cp => cp.Transitions).ToJson();
+            cn.Property(x => x.Transitions)
+            .HasConversion(
+                options => JsonSerializer.Serialize(options, (JsonSerializerOptions?)null),
+                json => JsonSerializer.Deserialize<Dictionary<string, Guid>>(
+                    json,
+                    (JsonSerializerOptions?)null
+                )!);
         });
     }
 }
