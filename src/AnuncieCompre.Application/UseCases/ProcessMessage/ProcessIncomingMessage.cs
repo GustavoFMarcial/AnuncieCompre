@@ -20,8 +20,8 @@ namespace AnuncieCompre.Application.UseCases.ProcessMessageUseCase;
 public class ProcessIncomingMessageUseCase(
     ICustomerRepository _customerRepository,
     IConversationRepository _conversationRepository,
-    IConversationNodeRepository _conversationNodeRepository, 
-    IMessageRepository _messageRepository, 
+    IConversationNodeRepository _conversationNodeRepository,
+    IMessageRepository _messageRepository,
     // EventDispatcher _dispatcher, 
     IUnitOfWork _unitOfWork) : IProcessIncomingMessage
 {
@@ -34,20 +34,19 @@ public class ProcessIncomingMessageUseCase(
 
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
-        Customer? customer = await customerRepository.GetCustomerByPhoneAsync(incomingMessage.SenderPhone);
-        Conversation? conversation;
+        Conversation? conversation = await conversationRepository.GetNotClosedConversationBySenderPhoneWithCustomerAsync(incomingMessage.SenderPhone);
         Collection<string> response = [];
-
-        if (customer is null)
-        {
-            customer = Customer.Create(Phone.Create(incomingMessage.SenderPhone).Value);
-            customerRepository.Add(customer);
-        }
-
-        conversation = await conversationRepository.GetOpenConversationByUserIdAsync(customer.Id);
 
         if (conversation is null)
         {
+            Customer? customer = await customerRepository.GetCustomerByPhoneAsync(incomingMessage.SenderPhone);
+
+            if (customer is null)
+            {
+                customer = Customer.Create(Phone.Create(incomingMessage.SenderPhone).Value);
+                customerRepository.Add(customer);
+            }
+
             conversation = Conversation.Create(customer);
             conversationRepository.Add(conversation);
         }
@@ -55,12 +54,28 @@ public class ProcessIncomingMessageUseCase(
         ConversationNode awaitingResponseNode = await conversationNodeRepository.GetNodeOrMenuByIdAsync(conversation.AwaitingResponseNodeId);
         INodeValidator nodeValidator = NodeValidatorFactory.Handle(awaitingResponseNode);
         NodeResult result = nodeValidator.Validate(awaitingResponseNode, incomingMessage.Content);
-        response.Add(result.Message);
+
+        if (result.IsSuccess is true)
+        {
+            ConversationNode? nextNode = await conversationNodeRepository.GetByIdAsync(result.NextStepId);
+
+            if (nextNode is null)
+            {
+                response.Add("Próximo node não encontrado");
+                return response.AsReadOnly();
+            }
+            
+            response.Add(nextNode.Message);
+        }
+        else
+        {
+            response.Add(result.Message);
+        }
 
         conversation.UpdateAwaitingResponseNodeId(result.NextStepId);
 
         // await dispatcher.DispatchAsync(conversation);
-        
+
         Message userMessage = Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming);
         Message botMessage = Message.Create(conversation, response[0], MessageSenderType.Bot, MessageDirection.Outgoing);
         messageRepository.Add(userMessage);
