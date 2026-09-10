@@ -32,12 +32,14 @@ namespace AnuncieCompre.Migrations
                     b.Property<int>("Attendant")
                         .HasColumnType("integer");
 
-                    b.Property<string>("AwaitingResponseNodeId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("AwaitingResponseNodeId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("DateTimeLastMessage")
                         .HasColumnType("timestamp with time zone");
@@ -48,10 +50,7 @@ namespace AnuncieCompre.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "User", "AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation.User#User", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Customer", "AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation.Customer#Customer", b1 =>
                         {
                             b1.IsRequired();
 
@@ -61,21 +60,21 @@ namespace AnuncieCompre.Migrations
                             b1.Property<Guid>("Id")
                                 .HasColumnType("uuid");
 
-                            b1.ComplexProperty(typeof(Dictionary<string, object>), "Email", "AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation.User#User.Email#Email", b2 =>
+                            b1.ComplexProperty(typeof(Dictionary<string, object>), "Email", "AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation.Customer#Customer.Email#Email", b2 =>
                                 {
                                     b2.Property<string>("Value")
                                         .IsRequired()
                                         .HasColumnType("text");
                                 });
 
-                            b1.ComplexProperty(typeof(Dictionary<string, object>), "Name", "AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation.User#User.Name#Name", b2 =>
+                            b1.ComplexProperty(typeof(Dictionary<string, object>), "Name", "AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation.Customer#Customer.Name#Name", b2 =>
                                 {
                                     b2.Property<string>("Value")
                                         .IsRequired()
                                         .HasColumnType("text");
                                 });
 
-                            b1.ComplexProperty(typeof(Dictionary<string, object>), "Phone", "AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation.User#User.Phone#Phone", b2 =>
+                            b1.ComplexProperty(typeof(Dictionary<string, object>), "Phone", "AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation.Customer#Customer.Phone#Phone", b2 =>
                                 {
                                     b2.IsRequired();
 
@@ -141,70 +140,6 @@ namespace AnuncieCompre.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Conversation", "AnuncieCompre.Domain.Aggregates.MessageAggregate.Message.Conversation#Conversation", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("Attendant")
-                                .HasColumnType("integer");
-
-                            b1.Property<string>("AwaitingResponseNodeId")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<DateTime>("CreatedAt")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime>("DateTimeLastMessage")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime>("EndedAt")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<Guid>("Id")
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("Status")
-                                .HasColumnType("integer");
-
-                            b1.Property<Guid>("UserId")
-                                .HasColumnType("uuid");
-
-                            b1.ComplexProperty(typeof(Dictionary<string, object>), "User", "AnuncieCompre.Domain.Aggregates.MessageAggregate.Message.Conversation#Conversation.User#User", b2 =>
-                                {
-                                    b2.IsRequired();
-
-                                    b2.Property<DateTime>("CreatedAt")
-                                        .HasColumnType("timestamp with time zone");
-
-                                    b2.Property<Guid>("Id")
-                                        .HasColumnType("uuid");
-
-                                    b2.ComplexProperty(typeof(Dictionary<string, object>), "Email", "AnuncieCompre.Domain.Aggregates.MessageAggregate.Message.Conversation#Conversation.User#User.Email#Email", b3 =>
-                                        {
-                                            b3.Property<string>("Value")
-                                                .IsRequired()
-                                                .HasColumnType("text");
-                                        });
-
-                                    b2.ComplexProperty(typeof(Dictionary<string, object>), "Name", "AnuncieCompre.Domain.Aggregates.MessageAggregate.Message.Conversation#Conversation.User#User.Name#Name", b3 =>
-                                        {
-                                            b3.Property<string>("Value")
-                                                .IsRequired()
-                                                .HasColumnType("text");
-                                        });
-
-                                    b2.ComplexProperty(typeof(Dictionary<string, object>), "Phone", "AnuncieCompre.Domain.Aggregates.MessageAggregate.Message.Conversation#Conversation.User#User.Phone#Phone", b3 =>
-                                        {
-                                            b3.IsRequired();
-
-                                            b3.Property<string>("Value")
-                                                .IsRequired()
-                                                .HasColumnType("text");
-                                        });
-                                });
-                        });
-
                     b.HasKey("Id");
 
                     b.HasIndex("ConversationId");
@@ -227,11 +162,18 @@ namespace AnuncieCompre.Migrations
                     b.Property<bool>("IsFinal")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsInitial")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsMenu")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.PrimitiveCollection<string[]>("Options")
+                    b.PrimitiveCollection<List<string>>("Options")
+                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.Property<int>("ValidationKind")
@@ -239,20 +181,6 @@ namespace AnuncieCompre.Migrations
 
                     b.Property<int>("ValueObjectValidator")
                         .HasColumnType("integer");
-
-                    b.ComplexCollection(typeof(List<Dictionary<string, object>>), "Transitions", "AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode.Transitions#NodeTransition", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("Option")
-                                .IsRequired();
-
-                            b1.Property<Guid>("TargetNodeId");
-
-                            b1
-                                .ToJson("Transitions")
-                                .HasColumnType("jsonb");
-                        });
 
                     b.HasKey("Id");
 
@@ -269,6 +197,9 @@ namespace AnuncieCompre.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -297,12 +228,12 @@ namespace AnuncieCompre.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.User", b =>
+            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.Customer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -311,21 +242,21 @@ namespace AnuncieCompre.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Email", "AnuncieCompre.Domain.Aggregates.UserAggregate.User.Email#Email", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Email", "AnuncieCompre.Domain.Aggregates.UserAggregate.Customer.Email#Email", b1 =>
                         {
                             b1.Property<string>("Value")
                                 .IsRequired()
                                 .HasColumnType("text");
                         });
 
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Name", "AnuncieCompre.Domain.Aggregates.UserAggregate.User.Name#Name", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Name", "AnuncieCompre.Domain.Aggregates.UserAggregate.Customer.Name#Name", b1 =>
                         {
                             b1.Property<string>("Value")
                                 .IsRequired()
                                 .HasColumnType("text");
                         });
 
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Phone", "AnuncieCompre.Domain.Aggregates.UserAggregate.User.Phone#Phone", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Phone", "AnuncieCompre.Domain.Aggregates.UserAggregate.Customer.Phone#Phone", b1 =>
                         {
                             b1.IsRequired();
 
@@ -336,16 +267,18 @@ namespace AnuncieCompre.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.MessageAggregate.Message", b =>
                 {
-                    b.HasOne("AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation", null)
+                    b.HasOne("AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation", "Conversation")
                         .WithMany("Messages")
                         .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Conversation");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode", b =>
@@ -356,18 +289,37 @@ namespace AnuncieCompre.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("System.Collections.Generic.Dictionary<string, AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode>", "Transitions", b1 =>
+                        {
+                            b1.Property<Guid>("ConversationNodeId");
+
+                            b1.HasKey("ConversationNodeId");
+
+                            b1.ToTable("ConversationNodes");
+
+                            b1
+                                .ToJson("Transitions")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ConversationNodeId");
+                        });
+
                     b.Navigation("ConversationFlow");
+
+                    b.Navigation("Transitions")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.OrderAggregate.Order", b =>
                 {
-                    b.HasOne("AnuncieCompre.Domain.Aggregates.UserAggregate.User", "User")
+                    b.HasOne("AnuncieCompre.Domain.Aggregates.UserAggregate.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation", b =>

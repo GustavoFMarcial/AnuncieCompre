@@ -13,7 +13,7 @@ public class ConversationNode : BaseEntity
     public string Message { get; private set; } = "Mensagem do bot";
     public ValidationKind ValidationKind { get; private set; } = ValidationKind.None;
     public ValueObjectValidator ValueObjectValidator { get; private set; } = ValueObjectValidator.None;
-    public Dictionary<string, ConversationNode> Transitions { get; private set; } = [];
+    public Dictionary<string, Guid> Transitions { get; private set; } = [];
     public bool IsInitial { get; private set; } = false;
     public bool IsFinal { get; private set; } = false;
     public bool IsMenu { get; private set; } = false;
@@ -27,7 +27,7 @@ public class ConversationNode : BaseEntity
         ConversationFlow = conversationFlow;
     }
 
-    private ConversationNode(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, Dictionary<string, ConversationNode> transitions, List<string> options)
+    private ConversationNode(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, Dictionary<string, Guid> transitions, List<string> options)
     {
         ConversationFlowId = conversationFlow.Id;
         ConversationFlow = conversationFlow;
@@ -43,7 +43,7 @@ public class ConversationNode : BaseEntity
         return Result<ConversationNode>.Success(new ConversationNode(conversationFlow), "ConversationNode criado com sucesso");
     }
 
-    public static Result<ConversationNode> Create(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, Dictionary<string, ConversationNode> transitions, List<string> options)
+    public static Result<ConversationNode> Create(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, Dictionary<string, Guid> transitions, List<string> options)
     {
         return Result<ConversationNode>.Success(new ConversationNode(conversationFlow, message, validationKind, isMenu, transitions, options), "ConversationNode criado com sucesso");
     }
@@ -69,7 +69,7 @@ public class ConversationNode : BaseEntity
 
     public Result EditTransition(List<Transiton> input, List<ConversationNode> nodes)
     {
-        Dictionary<string, ConversationNode> transitions = [];
+        Dictionary<string, Guid> transitions = [];
 
         foreach (Transiton i in input)
         {
@@ -77,7 +77,7 @@ public class ConversationNode : BaseEntity
 
             if (index == -1) return Result.Failure("ConversationNode não pertence ao mesmo ConversationFlow");
 
-            transitions.Add(i.Option, nodes[index]);
+            transitions.Add(i.Option, nodes[index].Id);
         }
 
         Transitions = transitions;
@@ -86,7 +86,7 @@ public class ConversationNode : BaseEntity
 
     public void RemoveTransition(Guid targetNodeId)
     {
-        KeyValuePair<string, ConversationNode> transition = Transitions.FirstOrDefault(t => t.Value.Id == targetNodeId);
+        KeyValuePair<string, Guid> transition = Transitions.FirstOrDefault(t => t.Value == targetNodeId);
         Transitions.Remove(transition.Key);
     }
 
@@ -102,7 +102,7 @@ public class ConversationNode : BaseEntity
         return Result.Success("Transações validadas com sucesso");
     }
 
-    public void SetTransitions(Dictionary<string, ConversationNode> transitions)
+    public void SetTransitions(Dictionary<string, Guid> transitions)
     {
         Transitions = transitions;
     }
