@@ -4,7 +4,6 @@ using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.DTO;
-using AnuncieCompre.Infra.Repositories;
 
 namespace AnuncieCompre.Application.UseCases.Flows;
 
