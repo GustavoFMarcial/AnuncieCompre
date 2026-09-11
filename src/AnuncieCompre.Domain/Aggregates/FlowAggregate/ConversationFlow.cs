@@ -23,24 +23,13 @@ public class ConversationFlow : BaseEntity
         Status = status;
     }
 
-    // private ConversationFlow(Name name, FlowStatus status, string? description)
-    // {
-    //     Name = name;
-    //     Description = description;
-    //     Status = status;
-    // }
-
     public static Result<ConversationFlow> Create(Name name, string? description, FlowStatus status)
     {
+        if (status is FlowStatus.Published) Result<ConversationFlow>.Failure("Flow só pode ser criado como rascunho");
+
         ConversationFlow flow = new(name, status, description);
         return Result<ConversationFlow>.Success(flow, "ConversationFlow criado com sucesso");
     }
-
-    // public static Result<ConversationFlow> Create(Name name, string? description, FlowStatus status, bool isInitial)
-    // {
-    //     ConversationFlow flow = new(name, status, isInitial, description);
-    //     return Result<ConversationFlow>.Success(flow, "ConversationFlow criado com sucesso");
-    // }
 
     public Result EditFlow(Name name, string? description)
     {
