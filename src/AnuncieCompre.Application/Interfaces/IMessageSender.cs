@@ -1,6 +1,8 @@
+using AnuncieCompre.Domain.Aggregates.MessageAggregate;
+
 namespace AnuncieCompre.Application.Interfaces;
 
 public interface IMessageSender
 {
-    public Task SendMessageAsync(string to, string message);
+    public Task SendMessageAsync(Message message);
 }
