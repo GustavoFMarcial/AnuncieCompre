@@ -17,11 +17,11 @@ public class SendMessage(IConversationRepository _conversationRepository, IMessa
         Conversation? conversation = await conversationRepository.GetConversationByIdWithCustomerAsync(id);
 
         if (conversation is null) return Result.Failure("Conversation não encontrada");
-
-        await messageSender.SendMessageAsync(conversation.Customer.Phone.Value, text);
-
         Message message = Message.Create(conversation, text, Domain.Enums.MessageSenderType.Operator, Domain.Enums.MessageDirection.Outgoing);
         messageRepository.Add(message);
+
+        await messageSender.SendMessageAsync(message);
+
         await unitOfWork.SaveChangesAsync();
         return Result.Success("Mensagem enviada com sucesso");
     }
