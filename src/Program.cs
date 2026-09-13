@@ -16,6 +16,7 @@ using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Application.UseCases;
 using AnuncieCompre.Application.UseCases.Conversations;
 using AnuncieCompre.Application.Services;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,10 +58,30 @@ builder.Services.AddScoped<GetConversations>();
 builder.Services.AddScoped<GetDetailedConversation>();
 builder.Services.AddScoped<SendMessage>();
 builder.Services.AddScoped<MenuService>();
-// builder.Services.AddScoped<IDomainEventHandler<OrderCreatedDomainEvent>, OrderCreatedDomainEventHandler>();
+builder.Services.AddScoped<MessageFailurePolicy>();
+builder.Services.AddScoped<MessageFailureHandler>();
 
 //Hosted
 builder.Services.AddHostedService<CloseInactiveConversations>();
+
+//Singleton 
+builder.Services.AddSingleton(sp => sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var config = builder.Configuration["Redis:Connection"] ?? throw new Exception("Redis connection missing");
+    var options = ConfigurationOptions.Parse(config);
+    options.AbortOnConnectFail = false;
+    options.ConnectRetry = 5;
+    options.ConnectTimeout = 5000;
+
+    if (builder.Environment.IsDevelopment())
+    {
+        options.AsyncTimeout = 300000;
+        options.SyncTimeout = 300000;
+    }
+
+    return ConnectionMultiplexer.Connect(options);
+});
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string not found.");
 
