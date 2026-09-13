@@ -63,6 +63,7 @@ builder.Services.AddScoped<MessageFailureHandler>();
 
 //Hosted
 builder.Services.AddHostedService<CloseInactiveConversations>();
+builder.Services.AddHostedService<MessageRetry>();
 
 //Singleton 
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
