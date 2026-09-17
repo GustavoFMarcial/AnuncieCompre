@@ -40,4 +40,9 @@ public class Message : BaseEntity
         if (RetryAttempts >= MaxRetryAttempts) return;
         RetryAttempts += 1;
     }
+
+    public void SetMessageStatus(MessageStatus status)
+    {
+        MessageStatus = status;
+    }
 }

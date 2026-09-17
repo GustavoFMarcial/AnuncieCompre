@@ -33,6 +33,7 @@ builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IConversationFlowRepository, ConversationFlowRepository>();
 builder.Services.AddScoped<IConversationNodeRepository, ConversationNodeRepository>();
+builder.Services.AddScoped<IMessageProviderReferenceRepository, MessageProviderReferenceRepository>();
 builder.Services.AddScoped<ConversationFlowProvider>();
 builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCase>();
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
@@ -60,6 +61,7 @@ builder.Services.AddScoped<SendMessage>();
 builder.Services.AddScoped<MenuService>();
 builder.Services.AddScoped<MessageFailurePolicy>();
 builder.Services.AddScoped<MessageFailureHandler>();
+builder.Services.AddScoped<ProcessMessageStatus>();
 
 //Hosted
 builder.Services.AddHostedService<CloseInactiveConversations>();

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using System.Text.Json;
+using AnuncieCompre.Domain.Aggregates.MessageProviderReferenceAggregate;
 
 namespace AnuncieCompre.Infra.Data;
 
@@ -17,6 +18,7 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
     public DbSet<Order> Orders { get; set; } = default!;
     public DbSet<ConversationFlow> ConversationFlows { get; set; } = default!;
     public DbSet<ConversationNode> ConversationNodes { get; set; } = default!;
+    public DbSet<MessageProviderReference> MessageProviderReferences { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -66,6 +68,16 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
                     json,
                     (JsonSerializerOptions?)null
                 )!);
+        });
+
+        modelBuilder.Entity<MessageProviderReference>(mpf =>
+        {
+            mpf.HasKey(x => x.Id);
+            mpf.HasOne(x => x.Message)
+                .WithOne()
+                .HasForeignKey<MessageProviderReference>(x => x.MessageId);
+            mpf.HasIndex(x => new { x.Provider, x.ProviderMessageId })
+                .IsUnique();
         });
     }
 }

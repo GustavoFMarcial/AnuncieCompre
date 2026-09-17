@@ -35,4 +35,16 @@ public class MessageFailurePolicy
 
         return failureType;
     }
+
+    public MessageFailureType Classify(string errorCode)
+    {
+        string[] retryableErrorCodes = ["30001", "30003"];
+
+        if (retryableErrorCodes.Contains(errorCode))
+        {
+            return MessageFailureType.Retryable;
+        }
+
+        return MessageFailureType.Permanent;
+    }
 }
