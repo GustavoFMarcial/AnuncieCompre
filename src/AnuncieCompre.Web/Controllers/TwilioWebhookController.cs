@@ -7,22 +7,22 @@ using Twilio.TwiML.Messaging;
 using AnuncieCompre.Application.UseCases.ProcessMessageUseCase;
 using AnuncieCompre.Domain.DTO;
 using System.Collections.ObjectModel;
+using AnuncieCompre.Web.Filters;
 
 namespace AnuncieCompre.Web.Controllers;
 
 [ApiController]
 [Route("webhooks/twilio")]
-public class TwilioWebhookController(IProcessIncomingMessage _processMessageUseCase) : TwilioController
+public class TwilioWebhookController() : TwilioController
 {
-    private readonly IProcessIncomingMessage processMessageUseCase = _processMessageUseCase;
-
     [HttpPost("whatsapp")]
-    public async Task<TwiMLResult> ReceiveMessage([FromForm] TwilioIncomingMessageRequest incomingMessage)
+    [ValidateTwilioRequest]
+    public async Task<TwiMLResult> ReceiveMessage([FromForm] TwilioIncomingMessageRequest incomingMessage, [FromServices] IProcessIncomingMessage service)
     {
         IncomingMessageRequest useCaseRequest = incomingMessage.ToUseCaseRequest();
         var response = new MessagingResponse();
 
-        ReadOnlyCollection<string> result = await processMessageUseCase.ExecuteAsync(useCaseRequest);
+        ReadOnlyCollection<string> result = await service.ExecuteAsync(useCaseRequest);
         foreach(string r in result)
         {
             var message = new Message(r);
@@ -30,5 +30,14 @@ public class TwilioWebhookController(IProcessIncomingMessage _processMessageUseC
         }
 
         return TwiML(response);
+    }
+
+    [HttpPost("whatsapp/message-status")]
+    [ValidateTwilioRequest]
+    public async Task<ActionResult> MessageStatus([FromForm] TwilioStatusCallbackRequest request, [FromServices] ProcessMessageStatus service)
+    {
+        TwilioStatusCallbackInput input = request.ToTwilioStatusCallbackInput();
+        await service.Handle(input);
+        return Ok();
     }
 }
