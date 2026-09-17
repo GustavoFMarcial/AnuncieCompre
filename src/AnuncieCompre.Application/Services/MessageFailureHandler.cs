@@ -30,4 +30,22 @@ public class MessageFailureHandler(MessageFailurePolicy _messageFailurePolicy, I
         await db.ListLeftPushAsync("messages:retry", [JsonSerializer.Serialize(message)]);
         await unitOfWork.SaveChangesAsync();
     }
+
+    public async Task Handle(string errorCode, Message message)
+    {
+        if (message.FailureType is MessageFailureType.Permanent) return;
+        if (message.RetryAttempts >= message.MaxRetryAttempts)
+        {
+            message.SetFailureType(MessageFailureType.Permanent);
+            return;
+        }
+
+        MessageFailureType failureType = messageFailurePolicy.Classify(errorCode);
+        message.SetFailureType(failureType);
+
+        if (failureType is MessageFailureType.Permanent) return;
+
+        await db.ListLeftPushAsync("messages:retry", [JsonSerializer.Serialize(message)]);
+        await unitOfWork.SaveChangesAsync();
+    }
 }
