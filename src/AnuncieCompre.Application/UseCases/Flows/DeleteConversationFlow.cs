@@ -18,8 +18,8 @@ public class DeleteConversationFlow(IConversationFlowRepository _flowRepository,
         if (flow is null) return Result.Failure("ConversationFlow não encontrado");
 
         flowRepository.Delete(flow);
-        await unitOfWork.SaveChangesAsync();
         await menuService.UpdateMenuConversationNode();
+        await unitOfWork.SaveChangesAsync();
 
         return Result.Success("ConversationFlow deletado com sucesso");
     }

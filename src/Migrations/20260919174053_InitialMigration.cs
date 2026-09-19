@@ -19,8 +19,10 @@ namespace AnuncieCompre.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
+                    IsMenu = table.Column<bool>(type: "boolean", nullable: false),
                     Name_Value = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,10 +42,12 @@ namespace AnuncieCompre.Migrations
                     EndedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Customer_CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Customer_Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Customer_UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Customer_Email_Value = table.Column<string>(type: "text", nullable: true),
                     Customer_Name_Value = table.Column<string>(type: "text", nullable: true),
                     Customer_Phone_Value = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,7 +62,8 @@ namespace AnuncieCompre.Migrations
                     Email_Value = table.Column<string>(type: "text", nullable: true),
                     Name_Value = table.Column<string>(type: "text", nullable: true),
                     Phone_Value = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -79,7 +84,8 @@ namespace AnuncieCompre.Migrations
                     IsFinal = table.Column<bool>(type: "boolean", nullable: false),
                     IsMenu = table.Column<bool>(type: "boolean", nullable: false),
                     Options = table.Column<List<string>>(type: "text[]", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -99,9 +105,14 @@ namespace AnuncieCompre.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ConversationId = table.Column<Guid>(type: "uuid", nullable: false),
                     Text = table.Column<string>(type: "text", nullable: false),
+                    FailureType = table.Column<int>(type: "integer", nullable: false),
+                    MessageStatus = table.Column<int>(type: "integer", nullable: false),
+                    RetryAttempts = table.Column<int>(type: "integer", nullable: false),
+                    MaxRetryAttempts = table.Column<int>(type: "integer", nullable: false),
                     SenderType = table.Column<int>(type: "integer", nullable: false),
                     Direction = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -124,7 +135,8 @@ namespace AnuncieCompre.Migrations
                     Category_Value = table.Column<int>(type: "integer", nullable: false),
                     Product_Value = table.Column<string>(type: "text", nullable: true),
                     Quantity_Value = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -137,10 +149,44 @@ namespace AnuncieCompre.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MessageProviderReferences",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    MessageId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Provider = table.Column<int>(type: "integer", nullable: false),
+                    ProviderMessageId = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MessageProviderReferences", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MessageProviderReferences_Messages_MessageId",
+                        column: x => x.MessageId,
+                        principalTable: "Messages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_ConversationNodes_ConversationFlowId",
                 table: "ConversationNodes",
                 column: "ConversationFlowId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MessageProviderReferences_MessageId",
+                table: "MessageProviderReferences",
+                column: "MessageId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MessageProviderReferences_Provider_ProviderMessageId",
+                table: "MessageProviderReferences",
+                columns: new[] { "Provider", "ProviderMessageId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_ConversationId",
@@ -160,7 +206,7 @@ namespace AnuncieCompre.Migrations
                 name: "ConversationNodes");
 
             migrationBuilder.DropTable(
-                name: "Messages");
+                name: "MessageProviderReferences");
 
             migrationBuilder.DropTable(
                 name: "Orders");
@@ -169,10 +215,13 @@ namespace AnuncieCompre.Migrations
                 name: "ConversationFlows");
 
             migrationBuilder.DropTable(
-                name: "Conversations");
+                name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "Customers");
+
+            migrationBuilder.DropTable(
+                name: "Conversations");
         }
     }
 }
