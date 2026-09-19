@@ -22,6 +22,6 @@ public abstract class BaseEntity
 
     public void UpdatedAt()
     {
-        UpdateAt = DateTime.Now;
+        UpdateAt = DateTime.UtcNow;
     }
 }
