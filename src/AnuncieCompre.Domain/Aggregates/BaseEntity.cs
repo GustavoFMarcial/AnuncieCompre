@@ -6,6 +6,7 @@ public abstract class BaseEntity
 {
     public Guid Id { get; private set; }
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+    public DateTime UpdateAt { get; private set; }
     private readonly List<IDomainEvent> domainEvents = [];
     public IReadOnlyList<IDomainEvent> DomainEvents => domainEvents.AsReadOnly();
     
@@ -17,5 +18,10 @@ public abstract class BaseEntity
     public void ClearDomainEvents()
     {
         domainEvents.Clear();
+    }
+
+    public void UpdatedAt()
+    {
+        UpdateAt = DateTime.Now;
     }
 }

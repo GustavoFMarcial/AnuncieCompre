@@ -11,6 +11,8 @@ public class MessageProviderReference : BaseEntity
     public MessageProvider Provider { get; private set; }
     public string ProviderMessageId { get; private set; } = default!;
 
+    private MessageProviderReference() {}
+
     private MessageProviderReference(Message message, MessageProvider provider, string providerMessageId)
     {
         MessageId = message.Id;

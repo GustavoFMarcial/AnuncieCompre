@@ -32,6 +32,8 @@ public static class ConversationFlowExtensions
             Name = cf.Name.Value,
             Description = cf.Description,
             Status = cf.Status.ToString(),
+            Steps = conversationFlows.Count,
+            UpdatedAt = cf.UpdateAt,
         }).ToList();
     }
 }
