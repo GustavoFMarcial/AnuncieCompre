@@ -20,9 +20,9 @@ async function withFallback<T>(real: () => Promise<T>, fallback: () => Promise<T
     try {
         return await real();
     } catch (err) {
-        if (import.meta.env.DEV) {
-            console.warn("[conversation-flow.service] usando mock fallback", err);
-        }
+        // if (import.meta.env.DEV) {
+        //     console.warn("[conversation-flow.service] usando mock fallback", err);
+        // }
         return await fallback();
     }
 }

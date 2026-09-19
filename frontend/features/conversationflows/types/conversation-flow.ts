@@ -38,7 +38,7 @@ export interface ConversationFlow {
     description: string;
     status: "Draft" | "Published";
     steps: number;
-    updatedAt: Date;
+    updatedAt: string | Date;
     nodes?: ConversationNode[];
 }
 
