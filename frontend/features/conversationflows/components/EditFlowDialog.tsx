@@ -11,6 +11,8 @@ interface EditFlowDialogProps {
 
 export function EditFlowDialog({ flow, open, onOpenChange }: EditFlowDialogProps) {
     const updateFlow = useUpdateFlow();
+    const date = new Date(flow.updatedAt);
+    const fullDate = `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`
 
     const close = () => onOpenChange(false);
 
@@ -22,7 +24,7 @@ export function EditFlowDialog({ flow, open, onOpenChange }: EditFlowDialogProps
                 pelo botão dedicado no editor.
             </DialogDescription>
             <FlowForm
-                key={`${flow.id}-${flow.updatedAt.getTime()}`}
+                key={`${flow.id}-${fullDate}`}
                 initial={{ name: flow.name, description: flow.description }}
                 submitting={updateFlow.isPending}
                 submitLabel="Salvar alterações"
