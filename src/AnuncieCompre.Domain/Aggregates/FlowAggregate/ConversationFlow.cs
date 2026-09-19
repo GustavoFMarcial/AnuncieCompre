@@ -13,26 +13,29 @@ public class ConversationFlow : BaseEntity
     public string? Description { get; private set; }
     public FlowStatus Status { get; private set; } = default;
     public List<ConversationNode> Nodes { get; private set; } = [];
+    public bool IsMenu { get; private set; }
 
     private ConversationFlow() { }
 
-    private ConversationFlow(Name name, FlowStatus status, string? description)
+    private ConversationFlow(Name name, FlowStatus status, string? description, bool isMenu)
     {
         Name = name;
         Description = description;
         Status = status;
+        IsMenu = isMenu;
     }
 
-    public static Result<ConversationFlow> Create(Name name, string? description, FlowStatus status)
+    public static Result<ConversationFlow> Create(Name name, string? description, FlowStatus status, bool isMenu = false)
     {
         if (status is FlowStatus.Published) Result<ConversationFlow>.Failure("Flow só pode ser criado como rascunho");
 
-        ConversationFlow flow = new(name, status, description);
+        ConversationFlow flow = new(name, status, description, isMenu);
         return Result<ConversationFlow>.Success(flow, "ConversationFlow criado com sucesso");
     }
 
     public Result EditFlow(Name name, string? description)
     {
+        if (IsMenu is true) return Result.Failure("MenuFlow não pode ser editado por fontes externas");
         Name = name;
         Description = description;
 
@@ -41,6 +44,7 @@ public class ConversationFlow : BaseEntity
 
     public Result EditStatus(FlowStatus status)
     {
+        if (IsMenu is true) return Result.Failure("MenuFlow não pode ser editado por fontes externas");
         if (status == FlowStatus.Draft)
         {
             Status = status;

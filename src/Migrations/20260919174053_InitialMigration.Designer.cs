@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20260910001020_InitialMigration")]
+    [Migration("20260919174053_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -53,6 +53,9 @@ namespace AnuncieCompre.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Customer", "AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation.Customer#Customer", b1 =>
                         {
                             b1.IsRequired();
@@ -62,6 +65,9 @@ namespace AnuncieCompre.Migrations
 
                             b1.Property<Guid>("Id")
                                 .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("UpdateAt")
+                                .HasColumnType("timestamp with time zone");
 
                             b1.ComplexProperty(typeof(Dictionary<string, object>), "Email", "AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation.Customer#Customer.Email#Email", b2 =>
                                 {
@@ -104,8 +110,14 @@ namespace AnuncieCompre.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsMenu")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Name", "AnuncieCompre.Domain.Aggregates.FlowAggregate.ConversationFlow.Name#Name", b1 =>
                         {
@@ -136,6 +148,18 @@ namespace AnuncieCompre.Migrations
                     b.Property<int>("Direction")
                         .HasColumnType("integer");
 
+                    b.Property<int>("FailureType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MaxRetryAttempts")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MessageStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RetryAttempts")
+                        .HasColumnType("integer");
+
                     b.Property<int>("SenderType")
                         .HasColumnType("integer");
 
@@ -143,11 +167,47 @@ namespace AnuncieCompre.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ConversationId");
 
                     b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.MessageProviderReferenceAggregate.MessageProviderReference", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Provider")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProviderMessageId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MessageId")
+                        .IsUnique();
+
+                    b.HasIndex("Provider", "ProviderMessageId")
+                        .IsUnique();
+
+                    b.ToTable("MessageProviderReferences");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode", b =>
@@ -183,6 +243,9 @@ namespace AnuncieCompre.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("ValidationKind")
                         .HasColumnType("integer");
 
@@ -207,6 +270,9 @@ namespace AnuncieCompre.Migrations
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -249,6 +315,9 @@ namespace AnuncieCompre.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Email", "AnuncieCompre.Domain.Aggregates.UserAggregate.Customer.Email#Email", b1 =>
                         {
                             b1.Property<string>("Value")
@@ -286,6 +355,17 @@ namespace AnuncieCompre.Migrations
                         .IsRequired();
 
                     b.Navigation("Conversation");
+                });
+
+            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.MessageProviderReferenceAggregate.MessageProviderReference", b =>
+                {
+                    b.HasOne("AnuncieCompre.Domain.Aggregates.MessageAggregate.Message", "Message")
+                        .WithOne()
+                        .HasForeignKey("AnuncieCompre.Domain.Aggregates.MessageProviderReferenceAggregate.MessageProviderReference", "MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Message");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode", b =>

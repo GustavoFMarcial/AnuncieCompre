@@ -27,8 +27,8 @@ public class EditConversationFlow(IConversationFlowRepository _flowRepository, I
 
         if (!result.IsSuccess) return Result.Failure(result.Message);
 
-        await unitOfWork.SaveChangesAsync();
         await menuService.UpdateMenuConversationNode();
+        await unitOfWork.SaveChangesAsync();
 
         return Result.Success(result.Message);
     }
