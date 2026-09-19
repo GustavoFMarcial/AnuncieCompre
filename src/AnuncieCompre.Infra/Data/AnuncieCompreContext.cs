@@ -7,6 +7,7 @@ using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.MessageProviderReferenceAggregate;
+using AnuncieCompre.Domain.Aggregates;
 
 namespace AnuncieCompre.Infra.Data;
 
@@ -79,5 +80,17 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
             mpf.HasIndex(x => new { x.Provider, x.ProviderMessageId })
                 .IsUnique();
         });
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
+    {
+        var entities = ChangeTracker.Entries<BaseEntity>().Where(e => e.State != EntityState.Added);
+
+        foreach (var e in entities)
+        {
+            e.Entity.UpdatedAt();
+        }
+
+        return await base.SaveChangesAsync(ct);
     }
 }
