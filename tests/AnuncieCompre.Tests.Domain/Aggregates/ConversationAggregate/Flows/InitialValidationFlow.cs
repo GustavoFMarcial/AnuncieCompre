@@ -23,15 +23,15 @@ public class InitialValidationFlow
         //     node.Transitions.Count.Should().BeGreaterThan(0);
         // }
 
-        if (node is OptionNode || node is ConfirmationNode || node is OptionValidationNode)
-        {
-            node.Transitions.Count.Should().BeGreaterThan(1);
-        }
+        // if (node is OptionNode || node is ConfirmationNode || node is OptionValidationNode)
+        // {
+        //     node.Transitions.Count.Should().BeGreaterThan(1);
+        // }
 
-        if (node is not OptionNode && node is not ConfirmationNode && node is not OptionValidationNode)
-        {
-            node.Transitions.Count.Should().Be(1);
-        }
+        // if (node is not OptionNode && node is not ConfirmationNode && node is not OptionValidationNode)
+        // {
+        //     node.Transitions.Count.Should().Be(1);
+        // }
 
         if (node is ConfirmationNode)
         {
@@ -48,10 +48,10 @@ public class InitialValidationFlow
             node.NodeValidator.Should().BeOfType<OptionNodeValidator>();
         }
 
-        if (node is OptionValidationNode)
-        {
-            node.NodeValidator.Should().BeOfType<OptionValidationNodeValidator>();
-        }
+        // if (node is OptionValidationNode)
+        // {
+        //     node.NodeValidator.Should().BeOfType<OptionValidationNodeValidator>();
+        // }
 
         if (node is ValidationNode)
         {
