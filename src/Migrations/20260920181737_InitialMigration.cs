@@ -30,31 +30,6 @@ namespace AnuncieCompre.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Conversations",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AwaitingResponseNodeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DateTimeLastMessage = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Attendant = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    EndedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Customer_CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Customer_Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Customer_UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Customer_Email_Value = table.Column<string>(type: "text", nullable: true),
-                    Customer_Name_Value = table.Column<string>(type: "text", nullable: true),
-                    Customer_Phone_Value = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Conversations", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
@@ -99,28 +74,26 @@ namespace AnuncieCompre.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Messages",
+                name: "Conversations",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ConversationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Text = table.Column<string>(type: "text", nullable: false),
-                    FailureType = table.Column<int>(type: "integer", nullable: false),
-                    MessageStatus = table.Column<int>(type: "integer", nullable: false),
-                    RetryAttempts = table.Column<int>(type: "integer", nullable: false),
-                    MaxRetryAttempts = table.Column<int>(type: "integer", nullable: false),
-                    SenderType = table.Column<int>(type: "integer", nullable: false),
-                    Direction = table.Column<int>(type: "integer", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AwaitingResponseNodeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DateTimeLastMessage = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Attendant = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    EndedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.PrimaryKey("PK_Conversations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Messages_Conversations_ConversationId",
-                        column: x => x.ConversationId,
-                        principalTable: "Conversations",
+                        name: "FK_Conversations_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -145,6 +118,33 @@ namespace AnuncieCompre.Migrations
                         name: "FK_Orders_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ConversationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Text = table.Column<string>(type: "text", nullable: false),
+                    FailureType = table.Column<int>(type: "integer", nullable: false),
+                    MessageStatus = table.Column<int>(type: "integer", nullable: false),
+                    RetryAttempts = table.Column<int>(type: "integer", nullable: false),
+                    MaxRetryAttempts = table.Column<int>(type: "integer", nullable: false),
+                    SenderType = table.Column<int>(type: "integer", nullable: false),
+                    Direction = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -175,6 +175,11 @@ namespace AnuncieCompre.Migrations
                 name: "IX_ConversationNodes_ConversationFlowId",
                 table: "ConversationNodes",
                 column: "ConversationFlowId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Conversations_CustomerId",
+                table: "Conversations",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MessageProviderReferences_MessageId",
@@ -218,10 +223,10 @@ namespace AnuncieCompre.Migrations
                 name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "Customers");
+                name: "Conversations");
 
             migrationBuilder.DropTable(
-                name: "Conversations");
+                name: "Customers");
         }
     }
 }
