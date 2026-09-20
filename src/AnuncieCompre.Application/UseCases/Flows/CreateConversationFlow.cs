@@ -24,8 +24,8 @@ public class CreateConversationFlow(IConversationFlowRepository _flowRepository,
         if (!result.IsSuccess) return result;
 
         flowRepository.Add(result.Value);
-        await unitOfWork.SaveChangesAsync();
         await menuService.UpdateMenuConversationNode();
+        await unitOfWork.SaveChangesAsync();
 
         return result;
     }

@@ -33,7 +33,7 @@ public class MenuService(IConversationFlowRepository _conversationFlowRepository
 
         if (menuNode is null)
         {
-            ConversationFlow initialFlow = ConversationFlow.Create(Name.Create("InitialFlow").Value, "Menu de opções iniciais", FlowStatus.Published).Value;
+            ConversationFlow initialFlow = ConversationFlow.Create(Name.Create("InitialFlow").Value, "Menu de opções iniciais", FlowStatus.Published, true).Value;
             menuNode = ConversationNode.Create(initialFlow, message, ValidationKind.Option, true, nodeTransitions, options!).Value;
             conversationFlowRepository.Add(initialFlow);
             conversationNodeRepository.Add(menuNode);

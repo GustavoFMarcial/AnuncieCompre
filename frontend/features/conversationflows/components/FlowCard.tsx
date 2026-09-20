@@ -12,6 +12,7 @@ import {
 import type { ConversationFlow } from "../types/conversation-flow";
 import { EditFlowDialog } from "./EditFlowDialog";
 import { DeleteFlowDialog } from "./DeleteFlowDialog";
+import { createDate } from "../../../shared/utils/date-creator";
 
 interface FlowCardProps {
     flow: ConversationFlow;
@@ -21,8 +22,8 @@ export function FlowCard({ flow }: FlowCardProps) {
     const navigate = useNavigate();
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
-    const date = new Date(flow.updatedAt);
-    const fullDate = `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`
+    const date = createDate(flow.updatedAt);
+    console.log(flow.steps);
 
     return (
         <>
@@ -65,7 +66,7 @@ export function FlowCard({ flow }: FlowCardProps) {
 
                 <div className="flex items-center justify-between border-t border-neutral-100 pt-3 text-xs text-neutral-500">
                     <span>{flow.steps} nodes</span>
-                    <span>Atualizado em {fullDate}</span>
+                    <span>{date == null ? "" : `Atualizado em ${date}`}</span>
                 </div>
 
                 <Button

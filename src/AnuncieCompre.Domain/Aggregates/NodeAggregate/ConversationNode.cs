@@ -40,6 +40,8 @@ public class ConversationNode : BaseEntity
 
     public static Result<ConversationNode> Create(ConversationFlow conversationFlow)
     {
+        if (conversationFlow.IsMenu is true) return Result<ConversationNode>.Failure("Não é permitido criar ConversationNode com um ConversationFlowMenu");
+
         return Result<ConversationNode>.Success(new ConversationNode(conversationFlow), "ConversationNode criado com sucesso");
     }
 
@@ -50,6 +52,7 @@ public class ConversationNode : BaseEntity
 
     public Result Edit(EditConversationNodeInput input)
     {
+        if (IsMenu is true) return Result.Failure("Esse método só pode ser usado por ConversationNodes que não são menu");
         if (string.IsNullOrWhiteSpace(input.Message)) return Result<ConversationNode>.Failure("Mensagem não pode ser em branco");
         if (input.ValidationKind is not ValidationKind.Final && input.IsFinal is true) return Result<ConversationNode>.Failure("Apenas node com validação final pode ser marcado como final");
         if (input.ValidationKind is ValidationKind.Validation && input.ValueObjectValidator is ValueObjectValidator.None) return Result<ConversationNode>.Failure("Node de validação deve possuir um validador");
@@ -69,6 +72,7 @@ public class ConversationNode : BaseEntity
 
     public Result EditTransition(List<Transiton> input, List<ConversationNode> nodes)
     {
+        if (IsMenu is true) return Result.Failure("Esse método só pode ser usado por ConversationNodes que não são mennu");
         Dictionary<string, Guid> transitions = [];
 
         foreach (Transiton i in input)
@@ -86,12 +90,14 @@ public class ConversationNode : BaseEntity
 
     public void RemoveTransition(Guid targetNodeId)
     {
+        if (IsMenu is true) return;
         KeyValuePair<string, Guid> transition = Transitions.FirstOrDefault(t => t.Value == targetNodeId);
         Transitions.Remove(transition.Key);
     }
 
     public Result ValidateTransitions(FlowStatus status)
     {
+        if (IsMenu is true) return Result.Failure("Esse método só pode ser usado por ConversationNodes que não são mennu");
         if (status == FlowStatus.Draft) return Result.Success("Transações validadas com sucesso");
         if (ValidationKind is ValidationKind.Final && Transitions.Count != 1) return Result.Failure("Node final só pode ter uma transição");
         if (ValidationKind is ValidationKind.Validation && Transitions.Count != 1) return Result.Failure("Node de validação só pode ter uma transição");
@@ -104,16 +110,19 @@ public class ConversationNode : BaseEntity
 
     public void SetTransitions(Dictionary<string, Guid> transitions)
     {
+        if (IsMenu is false) return;
         Transitions = transitions;
     }
 
     public void SetMessage(string message)
     {
+        if (IsMenu is false) return;
         Message = message;
     }
 
     public void SetOptions(List<string> options)
     {
+        if (IsMenu is false) return;
         Options = options!;
     }
 }

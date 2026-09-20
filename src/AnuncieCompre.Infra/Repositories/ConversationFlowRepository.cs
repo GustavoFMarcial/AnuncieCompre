@@ -11,7 +11,12 @@ public class ConversationFlowRepository(AnuncieCompreContext _context) : BaseRep
 {
     public async Task<List<ConversationFlow>> GetFlowsToListAsync()
     {
-        return await context.Set<ConversationFlow>().OrderBy(cf => cf.CreatedAt).ToListAsync();
+        return await context.Set<ConversationFlow>().Where(cf => cf.IsMenu == false).OrderBy(cf => cf.CreatedAt).ToListAsync();
+    }
+
+    public async Task<List<ConversationFlow>> GetFlowsWithNodesToListAsync()
+    {
+        return await context.Set<ConversationFlow>().Include(cf => cf.Nodes).Where(cf => cf.IsMenu == false).OrderBy(cf => cf.CreatedAt).ToListAsync();
     }
 
     public async Task<ConversationFlow?> GetFlowByIdWithNodesAsync(Guid id)
@@ -22,5 +27,10 @@ public class ConversationFlowRepository(AnuncieCompreContext _context) : BaseRep
     public async Task<List<ConversationFlow>> GetPublishedFlowsToListAsync()
     {
         return await context.Set<ConversationFlow>().Where(cf => cf.Status == FlowStatus.Published).OrderBy(cf => cf.CreatedAt).ToListAsync();
+    }
+
+    public async Task<ConversationFlow?> GetFlowWithNodesByIdAsync(Guid id)
+    {
+        return await context.Set<ConversationFlow>().Include(cf => cf.Nodes).FirstOrDefaultAsync(cf => cf.Id == id);
     }
 }

@@ -32,7 +32,9 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<Conversation>(c =>
         {
-            c.ComplexProperty(cp => cp.Customer);
+            // c.ComplexProperty(cp => cp.Customer);
+            c.HasOne(c => c.Customer)
+            .WithMany(c => c.Conversations);
             c.HasMany(cp => cp.Messages)
             .WithOne(m => m.Conversation)
             .HasForeignKey(m => m.ConversationId);

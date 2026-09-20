@@ -9,6 +9,6 @@ public class GetConversationFlows(IConversationFlowRepository _flowRepository)
 
     public async Task<List<ConversationFlow>> Handle()
     {
-        return await flowRepository.GetFlowsToListAsync();
+        return await flowRepository.GetFlowsWithNodesToListAsync();
     }
 }
