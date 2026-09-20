@@ -32,7 +32,9 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<Conversation>(c =>
         {
-            c.ComplexProperty(cp => cp.Customer);
+            // c.ComplexProperty(cp => cp.Customer);
+            c.HasOne(c => c.Customer)
+            .WithMany(c => c.Conversations);
             c.HasMany(cp => cp.Messages)
             .WithOne(m => m.Conversation)
             .HasForeignKey(m => m.ConversationId);
@@ -62,13 +64,9 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<ConversationNode>(cn =>
         {
-            cn.Property(x => x.Transitions)
-            .HasConversion(
-                options => JsonSerializer.Serialize(options, (JsonSerializerOptions?)null),
-                json => JsonSerializer.Deserialize<Dictionary<string, Guid>>(
-                    json,
-                    (JsonSerializerOptions?)null
-                )!);
+            cn.HasMany(cn => cn.Transitions)
+            .WithOne(t => t.ConversationNode)
+            .HasForeignKey(t => t.ConversationNodeId);
         });
 
         modelBuilder.Entity<MessageProviderReference>(mpf =>

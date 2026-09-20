@@ -1,4 +1,5 @@
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
+using AnuncieCompre.Domain.Aggregates.TransitionAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.DTO;
@@ -13,7 +14,7 @@ public class ConversationNode : BaseEntity
     public string Message { get; private set; } = "Mensagem do bot";
     public ValidationKind ValidationKind { get; private set; } = ValidationKind.None;
     public ValueObjectValidator ValueObjectValidator { get; private set; } = ValueObjectValidator.None;
-    public Dictionary<string, Guid> Transitions { get; private set; } = [];
+    public List<ConversationNodeTransition> Transitions { get; private set; } = [];
     public bool IsInitial { get; private set; } = false;
     public bool IsFinal { get; private set; } = false;
     public bool IsMenu { get; private set; } = false;
@@ -27,7 +28,7 @@ public class ConversationNode : BaseEntity
         ConversationFlow = conversationFlow;
     }
 
-    private ConversationNode(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, Dictionary<string, Guid> transitions, List<string> options)
+    private ConversationNode(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<ConversationNodeTransition> transitions, List<string> options)
     {
         ConversationFlowId = conversationFlow.Id;
         ConversationFlow = conversationFlow;
@@ -45,7 +46,7 @@ public class ConversationNode : BaseEntity
         return Result<ConversationNode>.Success(new ConversationNode(conversationFlow), "ConversationNode criado com sucesso");
     }
 
-    public static Result<ConversationNode> Create(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, Dictionary<string, Guid> transitions, List<string> options)
+    public static Result<ConversationNode> Create(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<ConversationNodeTransition> transitions, List<string> options)
     {
         return Result<ConversationNode>.Success(new ConversationNode(conversationFlow, message, validationKind, isMenu, transitions, options), "ConversationNode criado com sucesso");
     }
@@ -70,18 +71,15 @@ public class ConversationNode : BaseEntity
         return Result.Success("ConversationNode editado com sucesso");
     }
 
-    public Result EditTransition(List<Transiton> input, List<ConversationNode> nodes)
+    public Result EditTransition(List<ConversationNodeTransition> transitions, List<ConversationNode> nodes)
     {
         if (IsMenu is true) return Result.Failure("Esse método só pode ser usado por ConversationNodes que não são mennu");
-        Dictionary<string, Guid> transitions = [];
 
-        foreach (Transiton i in input)
+        foreach (ConversationNodeTransition t in transitions)
         {
-            int index = nodes.FindIndex(cn => cn.Id == i.TargetNodeId);
+            int index = nodes.FindIndex(cn => cn.Id == t.TargetNodeId);
 
             if (index == -1) return Result.Failure("ConversationNode não pertence ao mesmo ConversationFlow");
-
-            transitions.Add(i.Option, nodes[index].Id);
         }
 
         Transitions = transitions;
@@ -91,8 +89,9 @@ public class ConversationNode : BaseEntity
     public void RemoveTransition(Guid targetNodeId)
     {
         if (IsMenu is true) return;
-        KeyValuePair<string, Guid> transition = Transitions.FirstOrDefault(t => t.Value == targetNodeId);
-        Transitions.Remove(transition.Key);
+        ConversationNodeTransition? transition = Transitions.FirstOrDefault(t => t.TargetNodeId == targetNodeId);
+        if (transition is null) return;
+        Transitions.Remove(transition);
     }
 
     public Result ValidateTransitions(FlowStatus status)
@@ -108,7 +107,7 @@ public class ConversationNode : BaseEntity
         return Result.Success("Transações validadas com sucesso");
     }
 
-    public void SetTransitions(Dictionary<string, Guid> transitions)
+    public void SetTransitions(List<ConversationNodeTransition> transitions)
     {
         if (IsMenu is false) return;
         Transitions = transitions;

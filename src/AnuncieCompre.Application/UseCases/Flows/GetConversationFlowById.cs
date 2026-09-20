@@ -10,7 +10,7 @@ public class GetConversationFlowById(IConversationFlowRepository _flowRepository
 
     public async Task<Result<ConversationFlow>> Handle(Guid id)
     {
-        ConversationFlow? flow = await flowRepository.GetByIdAsync(id);
+        ConversationFlow? flow = await flowRepository.GetFlowWithNodesByIdAsync(id);
 
         if (flow is null) return Result<ConversationFlow>.Failure("ConversationFlow não encontrado");
 

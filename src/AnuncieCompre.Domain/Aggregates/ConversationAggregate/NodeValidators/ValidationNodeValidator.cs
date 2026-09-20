@@ -1,4 +1,5 @@
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
+using AnuncieCompre.Domain.Aggregates.TransitionAggregate;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Interfaces;
@@ -13,11 +14,12 @@ public class ValidationNodeValidator(IValueObjectValidator valueObjectValidator)
     {
         Result<ValueObject> result = ValueObjectValidator.Validate(message);
 
-        if (!result.IsSuccess)
-        {
-            return NodeResult.Failure(result.Message, conversationNode.Id);
-        }
+        if (!result.IsSuccess) return NodeResult.Failure(result.Message, conversationNode.Id);
 
-        return NodeResult.Success(conversationNode.Transitions["1"]);
+        ConversationNodeTransition? transition = conversationNode.Transitions.FirstOrDefault();
+
+        if (transition is null) return NodeResult.Failure("Opção inválida", conversationNode.Id);
+
+        return NodeResult.Success(transition.TargetNodeId);
     }
 }

@@ -15,11 +15,9 @@ public class NodeValidatorFactory()
 
         return node.ValidationKind switch
         {
-            // ValidationKind.Confirmation => new ConfirmationNodeValidator(node.Options),
             ValidationKind.Final => new FinalNodeValidator(),
             ValidationKind.None => new NoneNodeValidator(),
             ValidationKind.Option => new OptionNodeValidator(node.Options),
-            ValidationKind.OptionValidation => new OptionValidationNodeValidator(node.Options, valueObjectValidator),
             ValidationKind.Validation => new ValidationNodeValidator(valueObjectValidator),
             _ => throw new NotImplementedException(),
         };
