@@ -1,7 +1,7 @@
 import { Dialog, DialogDescription, DialogTitle } from "../../../shared/components/ui";
 import { useUpdateFlow } from "../hooks/useConversationFlows";
 import type { ConversationFlow } from "../types/conversation-flow";
-import { createDate } from "../../../shared/utils/date-creator";
+import { createDate } from "../utils/date-creator";
 import { FlowForm } from "./FlowForm";
 
 interface EditFlowDialogProps {
