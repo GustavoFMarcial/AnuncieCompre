@@ -20,6 +20,8 @@ public static class ConversationFlowExtensions
                 FlowStatus.Draft => "Rascunho",
                 _ => "Rascunho",
             },
+            Steps = conversationFlow.Nodes.Count,
+            UpdatedAt = conversationFlow.UpdateAt,
             Nodes = conversationFlow.Nodes.ToNodeDTO(),
         };
     }
