@@ -12,7 +12,7 @@ import {
 import type { ConversationFlow } from "../types/conversation-flow";
 import { EditFlowDialog } from "./EditFlowDialog";
 import { DeleteFlowDialog } from "./DeleteFlowDialog";
-import { createDate } from "../../../shared/utils/date-creator";
+import { createDate } from "../utils/date-creator";
 
 interface FlowCardProps {
     flow: ConversationFlow;
@@ -23,7 +23,6 @@ export function FlowCard({ flow }: FlowCardProps) {
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const date = createDate(flow.updatedAt);
-    console.log(flow.steps);
 
     return (
         <>

@@ -34,7 +34,7 @@ public static class ConversationFlowExtensions
             Name = cf.Name.Value,
             Description = cf.Description,
             Status = cf.Status.ToString(),
-            Steps = cf.Nodes.Count > 0 ? cf.Nodes.Count : 0,
+            Steps = cf.Nodes.Count > 0 ? conversationFlows.Count : 0,
             UpdatedAt = cf.UpdateAt,
         }).ToList();
     }
