@@ -64,13 +64,9 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<ConversationNode>(cn =>
         {
-            cn.Property(x => x.Transitions)
-            .HasConversion(
-                options => JsonSerializer.Serialize(options, (JsonSerializerOptions?)null),
-                json => JsonSerializer.Deserialize<Dictionary<string, Guid>>(
-                    json,
-                    (JsonSerializerOptions?)null
-                )!);
+            cn.HasMany(cn => cn.Transitions)
+            .WithOne(t => t.ConversationNode)
+            .HasForeignKey(t => t.ConversationNodeId);
         });
 
         modelBuilder.Entity<MessageProviderReference>(mpf =>

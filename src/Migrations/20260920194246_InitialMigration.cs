@@ -54,7 +54,6 @@ namespace AnuncieCompre.Migrations
                     Message = table.Column<string>(type: "text", nullable: false),
                     ValidationKind = table.Column<int>(type: "integer", nullable: false),
                     ValueObjectValidator = table.Column<int>(type: "integer", nullable: false),
-                    Transitions = table.Column<string>(type: "text", nullable: false),
                     IsInitial = table.Column<bool>(type: "boolean", nullable: false),
                     IsFinal = table.Column<bool>(type: "boolean", nullable: false),
                     IsMenu = table.Column<bool>(type: "boolean", nullable: false),
@@ -123,6 +122,28 @@ namespace AnuncieCompre.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ConversationNodeTransition",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ConversationNodeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Key = table.Column<string>(type: "text", nullable: false),
+                    TargetNodeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConversationNodeTransition", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ConversationNodeTransition_ConversationNodes_ConversationNo~",
+                        column: x => x.ConversationNodeId,
+                        principalTable: "ConversationNodes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
@@ -177,6 +198,11 @@ namespace AnuncieCompre.Migrations
                 column: "ConversationFlowId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ConversationNodeTransition_ConversationNodeId",
+                table: "ConversationNodeTransition",
+                column: "ConversationNodeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Conversations_CustomerId",
                 table: "Conversations",
                 column: "CustomerId");
@@ -208,7 +234,7 @@ namespace AnuncieCompre.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ConversationNodes");
+                name: "ConversationNodeTransition");
 
             migrationBuilder.DropTable(
                 name: "MessageProviderReferences");
@@ -217,10 +243,13 @@ namespace AnuncieCompre.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "ConversationFlows");
+                name: "ConversationNodes");
 
             migrationBuilder.DropTable(
                 name: "Messages");
+
+            migrationBuilder.DropTable(
+                name: "ConversationFlows");
 
             migrationBuilder.DropTable(
                 name: "Conversations");
