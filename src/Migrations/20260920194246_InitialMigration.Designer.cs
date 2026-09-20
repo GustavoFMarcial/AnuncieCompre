@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20260920181737_InitialMigration")]
+    [Migration("20260920194246_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -204,10 +204,6 @@ namespace AnuncieCompre.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
-                    b.Property<string>("Transitions")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -269,6 +265,35 @@ namespace AnuncieCompre.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.TransitionAggregate.ConversationNodeTransition", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ConversationNodeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TargetNodeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationNodeId");
+
+                    b.ToTable("ConversationNodeTransition");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.Customer", b =>
@@ -366,6 +391,17 @@ namespace AnuncieCompre.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.TransitionAggregate.ConversationNodeTransition", b =>
+                {
+                    b.HasOne("AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode", "ConversationNode")
+                        .WithMany("Transitions")
+                        .HasForeignKey("ConversationNodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ConversationNode");
+                });
+
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation", b =>
                 {
                     b.Navigation("Messages");
@@ -374,6 +410,11 @@ namespace AnuncieCompre.Migrations
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.FlowAggregate.ConversationFlow", b =>
                 {
                     b.Navigation("Nodes");
+                });
+
+            modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode", b =>
+                {
+                    b.Navigation("Transitions");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.UserAggregate.Customer", b =>

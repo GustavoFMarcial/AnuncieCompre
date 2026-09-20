@@ -70,9 +70,4 @@ public class NodeResult : Result<ValueObject>
 
         return result;
     }
-
-    internal static NodeResult Success(object id)
-    {
-        throw new NotImplementedException();
-    }
 }

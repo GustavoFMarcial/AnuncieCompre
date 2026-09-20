@@ -1,4 +1,5 @@
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
+using AnuncieCompre.Domain.Aggregates.TransitionAggregate;
 using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Interfaces;
 
@@ -10,10 +11,10 @@ public class OptionNodeValidator(List<string> options) : INodeValidator
 
     public NodeResult Validate(ConversationNode conversationNode, string message)
     {
-        bool isValidOption = conversationNode.Transitions.TryGetValue(message, out Guid targetConversationNodeId);
+        ConversationNodeTransition? transition = conversationNode.Transitions.FirstOrDefault(t => t.Key == message);
 
-        if (isValidOption is false) return NodeResult.Failure("Opção inválida, escolha novamente", conversationNode.Id);
+        if (transition is null) return NodeResult.Failure("Opção inválida", conversationNode.Id);
 
-        return NodeResult.Success(targetConversationNodeId);
+        return NodeResult.Success(transition.TargetNodeId);
     }
 }
