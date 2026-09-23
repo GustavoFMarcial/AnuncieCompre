@@ -34,7 +34,7 @@ public class ConversationFlowRepository(AnuncieCompreContext _context) : BaseRep
         return await context.Set<ConversationFlow>().Include(cf => cf.Nodes).Where(cf => cf.IsMenu == false).OrderBy(cf => cf.CreatedAt).ToListAsync();
     }
 
-    public async Task<List<ConversationFlow>> GetPublishedFlowsWithNodesToListAsync()
+    public async Task<List<ConversationFlow>> GetPublishedFlowsWithNodesAndMenuNodeToListAsync()
     {
         return await context.Set<ConversationFlow>().Include(cf => cf.Nodes).Where(cf => cf.Status == FlowStatus.Published).OrderBy(cf => cf.CreatedAt).ToListAsync();
     }

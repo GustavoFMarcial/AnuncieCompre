@@ -10,5 +10,5 @@ public interface IConversationFlowRepository : IBaseRepository<ConversationFlow>
     public Task<ConversationFlow?> GetFlowByIdWithNodesAsync(Guid id);
     public Task<List<ConversationFlow>> GetFlowsWithNodesToListAsync();
     public Task<ConversationFlow?> GetFlowWithNodesByIdAsync(Guid id);
-    public Task<List<ConversationFlow>> GetPublishedFlowsWithNodesToListAsync();
+    public Task<List<ConversationFlow>> GetPublishedFlowsWithNodesAndMenuNodeToListAsync();
 }
