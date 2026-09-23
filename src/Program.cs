@@ -99,7 +99,10 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string not found.");
 
-builder.Services.AddDbContext<AnuncieCompreContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<AnuncieCompreContext>((sp, options) =>
+{
+    options.UseNpgsql(connectionString);
+});
 
 TwilioClient.Init(
     builder.Configuration["Twilio:AccountSid"],

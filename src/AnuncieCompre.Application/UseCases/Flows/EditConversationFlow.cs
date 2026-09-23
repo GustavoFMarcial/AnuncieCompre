@@ -4,6 +4,7 @@ using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.DTO;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AnuncieCompre.Application.UseCases;
 
@@ -23,13 +24,34 @@ public class EditConversationFlow(IConversationFlowRepository _flowRepository, I
 
         if (!nameResult.IsSuccess) return Result.Failure(nameResult.Message);
 
-        Result result = flow.EditFlow(nameResult.Value, input.Description);
+        await using IDbContextTransaction transaction = await unitOfWork.BeginTransactionAsync();
+        try
+        {
+            Result flowResult = flow.EditFlow(nameResult.Value, input.Description);
 
-        if (!result.IsSuccess) return Result.Failure(result.Message);
+            if (!flowResult.IsSuccess)
+            {
+                await transaction.RollbackAsync();
+                return Result.Failure(flowResult.Message);
+            }
 
-        await menuService.UpdateMenuConversationNode();
-        await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync();
+            Result menuResult = await menuService.UpdateMenuConversationNode();
 
-        return Result.Success(result.Message);
+            if (!menuResult.IsSuccess)
+            {
+                await transaction.RollbackAsync();
+                return Result.Failure(flowResult.Message);
+            }
+
+            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.CommitTransactionAsync();
+            return Result.Success(flowResult.Message);
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return Result.Failure(ex.Message);
+        }
     }
 }
