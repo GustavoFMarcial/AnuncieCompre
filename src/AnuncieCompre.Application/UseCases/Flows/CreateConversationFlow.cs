@@ -4,6 +4,7 @@ using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.DTO;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AnuncieCompre.Application.UseCases.Flows;
 
@@ -19,14 +20,32 @@ public class CreateConversationFlow(IConversationFlowRepository _flowRepository,
 
         if (!nameResult.IsSuccess) return Result<ConversationFlow>.Failure(nameResult.Message);
 
-        Result<ConversationFlow> result = ConversationFlow.Create(nameResult.Value, input.Description, input.Status);
+        Result<ConversationFlow> flowResult = ConversationFlow.Create(nameResult.Value, input.Description, input.Status);
 
-        if (!result.IsSuccess) return result;
+        if (!flowResult.IsSuccess) return flowResult;
 
-        flowRepository.Add(result.Value);
-        await menuService.UpdateMenuConversationNode();
-        await unitOfWork.SaveChangesAsync();
+        await using IDbContextTransaction transaction = await unitOfWork.BeginTransactionAsync();
+        try
+        {
+            flowRepository.Add(flowResult.Value);
+            await unitOfWork.SaveChangesAsync();
 
-        return result;
+            Result resultMenu = await menuService.UpdateMenuConversationNode();
+
+            if (!resultMenu.IsSuccess)
+            {
+                await transaction.RollbackAsync();
+                return Result<ConversationFlow>.Failure(resultMenu.Message);
+            }
+
+            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.CommitTransactionAsync();
+            return flowResult;
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return Result<ConversationFlow>.Failure(ex.Message); 
+        }
     }
 }

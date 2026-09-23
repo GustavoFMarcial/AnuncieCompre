@@ -13,9 +13,10 @@ public class MenuService(IConversationFlowRepository _conversationFlowRepository
     private readonly IConversationFlowRepository conversationFlowRepository = _conversationFlowRepository;
     private readonly IConversationNodeRepository conversationNodeRepository = _conversationNodeRepository;
 
-    public async Task UpdateMenuConversationNode()
+    public async Task<Result> UpdateMenuConversationNode()
     {
-        List<ConversationFlow> conversationFlows = await conversationFlowRepository.GetPublishedFlowsWithNodesToListAsync();
+        List<ConversationFlow> conversationFlows = await conversationFlowRepository.GetPublishedFlowsWithNodesAndMenuNodeToListAsync();
+        List<ConversationFlow>  conversationFlowsNotMenu = conversationFlows.Where(cf => cf.IsMenu == false).ToList();
         List<ConversationNode> initialNodes = conversationFlows.SelectMany(cf => cf.Nodes.Where(n => n.IsInitial)).ToList();
         ConversationNode? menuNode = conversationFlows.SelectMany(cf => cf.Nodes).FirstOrDefault(n => n.IsMenu);
         List<ConversationNodeTransition> nodeTransitions = [];
@@ -30,15 +31,15 @@ public class MenuService(IConversationFlowRepository _conversationFlowRepository
             conversationNodeRepository.Add(menuNode);
         }
 
-        for (int i = 0; i <= conversationFlows.Count - 1; i++)
+        for (int i = 0; i <= conversationFlowsNotMenu.Count - 1; i++)
         {
-            message += $"{i + 1} - {conversationFlows[i].Name.Value}\n";
+            message += $"{i + 1} - {conversationFlowsNotMenu[i].Name.Value}\n";
         }
 
         for (int i = 0; i <= initialNodes.Count - 1; i++)
         {
             Result<ConversationNodeTransition> result = ConversationNodeTransition.Create(menuNode, (i + 1).ToString(), initialNodes[i].Id);
-            if (!result.IsSuccess) return;
+            if (!result.IsSuccess) return Result.Failure(result.Message);
             nodeTransitions.Add(result.Value);
             options.Add((i + 1).ToString());
         }
@@ -46,5 +47,6 @@ public class MenuService(IConversationFlowRepository _conversationFlowRepository
         menuNode.SetTransitions(nodeTransitions);
         menuNode.SetMessage(message);
         menuNode.SetOptions(options);
+        return Result.Success("Menu atualizado com sucesso");
     }
 }
