@@ -48,7 +48,7 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
         node?.validationKind ?? null
     );
     const [valueObjectValidator, setValueObjectValidator] = useState<ValueObjectValidator>(
-        node?.valueObjectValidator ?? "None"
+        node?.valueObjectValidator ?? "none"
     );
     const [options, setOptions] = useState<string[]>(node?.options ?? []);
     const [isFinal, setIsFinal] = useState(node?.isFinal ?? false);
@@ -72,8 +72,8 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
             nodeId: node.id,
             input: {
                 message,
-                validationKind: isFinal ? "Final" : validationKind,
-                valueObjectValidator: showValueValidator ? valueObjectValidator : "None",
+                validationKind: isFinal ? "final" : validationKind,
+                valueObjectValidator: showValueValidator ? valueObjectValidator : "none",
                 options: showOptions ? options.filter((o) => o.trim() !== "") : [],
                 isFinal,
             },
@@ -141,11 +141,11 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                 <div className="space-y-1.5">
                     <Label>Tipo de validação</Label>
                     <ValidationKindSelect
-                        value={isFinal ? "Final" : validationKind}
+                        value={isFinal ? "final" : validationKind}
                         onChange={(kind) => {
-                            if (kind === "Final") {
+                            if (kind === "final") {
                                 setIsFinal(true);
-                                setValidationKind("Final");
+                                setValidationKind("final");
                             } else {
                                 setIsFinal(false);
                                 setValidationKind(kind);
@@ -234,7 +234,7 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                         className="flex-1"
                         onClick={() => {
                             setIsFinal((v) => !v);
-                            setValidationKind((k) => (!isFinal ? "Final" : k));
+                            setValidationKind((k) => (!isFinal ? "final" : k));
                         }}
                     >
                         <Flag className="h-4 w-4" />
