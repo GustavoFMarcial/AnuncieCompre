@@ -25,10 +25,10 @@ export function FlowEditorPage() {
     const [errors, setErrors] = useState<string[]>([]);
 
     const selectedNode = flow?.nodes?.find((n) => n.id === selectedNodeId) ?? null;
-    const isPublished = flow?.status === "Published";
+    const isPublished = flow?.status === "published";
 
     const handleTogglePublish = () => {
-        const nextStatus = isPublished ? "Draft" : "Published";
+        const nextStatus = isPublished ? "draft" : "published";
         updateFlowStatus.mutate(
             { id: flowId, input: { status: nextStatus } },
             {

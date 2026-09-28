@@ -16,9 +16,9 @@ public static class CreateConversationFlowResponseExtensions
             Description = resultFlow.Value.Description,
             Status = resultFlow.Value.Status switch
             {
-                FlowStatus.Published => "Publicado",
-                FlowStatus.Draft => "Rascunho",
-                _ => "Rascunho",
+                FlowStatus.Published => "published",
+                FlowStatus.Draft => "draft",
+                _ => "draft",
             },
             Steps = resultFlow.Value.Nodes?.Count > 0 ? resultFlow.Value.Nodes.Count : 0,
             CreatedAt = resultFlow.Value.CreatedAt,

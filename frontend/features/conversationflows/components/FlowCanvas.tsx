@@ -98,7 +98,7 @@ export function FlowCanvas({ flowId, selectedNodeId, onSelectNode }: FlowCanvasP
         createNode.mutate({
             message: "Nova mensagem do bot",
             validationKind: null,
-            valueObjectValidator: "None",
+            valueObjectValidator: "none",
             options: [],
             isFinal: false,
         });

@@ -38,8 +38,8 @@ export function FlowCard({ flow }: FlowCardProps) {
                         </div>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <Badge variant={flow.status === "Published" ? "success" : "warning"}>
-                            {flow.status === "Published" ? "Publicado" : "Rascunho"}
+                        <Badge variant={flow.status === "published" ? "success" : "warning"}>
+                            {flow.status === "published" ? "Publicado" : "Rascunho"}
                         </Badge>
                         <DropdownMenu
                             trigger={<MoreVertical className="h-4 w-4" />}

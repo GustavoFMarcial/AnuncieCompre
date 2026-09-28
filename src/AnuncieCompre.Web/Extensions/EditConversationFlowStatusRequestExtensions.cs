@@ -12,8 +12,8 @@ public static class EditConversationFlowStatusRequestExtensions
         {
             Status = request.Status.ToLower() switch
             {
-                "publicado" => FlowStatus.Published,
-                "rascunho" => FlowStatus.Draft,
+                "published" => FlowStatus.Published,
+                "draft" => FlowStatus.Draft,
                 _ => FlowStatus.Draft,
             }
         };

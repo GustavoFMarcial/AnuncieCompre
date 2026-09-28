@@ -16,9 +16,9 @@ public static class ConversationFlowExtensions
             Description = conversationFlow.Description ?? "",
             Status = conversationFlow.Status switch
             {
-                FlowStatus.Published => "Publicado",
-                FlowStatus.Draft => "Rascunho",
-                _ => "Rascunho",
+                FlowStatus.Published => "published",
+                FlowStatus.Draft => "draft",
+                _ => "draft",
             },
             Steps = conversationFlow.Nodes.Count,
             UpdatedAt = conversationFlow.UpdateAt,

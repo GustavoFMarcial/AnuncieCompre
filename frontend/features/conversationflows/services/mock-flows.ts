@@ -3,8 +3,8 @@ import type { ConversationFlow, ConversationNode } from "../types/conversation-f
 const startNode: ConversationNode = {
     id: "start",
     message: "Olá! Deseja fazer um pedido? Digite 1 para Sim ou 2 para Não.",
-    validationKind: "Confirmation",
-    valueObjectValidator: "None",
+    validationKind: "confirmation",
+    valueObjectValidator: "none",
     options: ["1", "2"],
     transitions: [
         { option: "1", targetNodeId: "ask_company_category" },
@@ -16,8 +16,8 @@ const startNode: ConversationNode = {
 const askCategoryNode: ConversationNode = {
     id: "ask_company_category",
     message: "Qual a categoria da sua empresa? (Restaurante, Mercado, Padaria...)",
-    validationKind: "Validation",
-    valueObjectValidator: "CompanyCategory",
+    validationKind: "validation",
+    valueObjectValidator: "companyCategory",
     options: [],
     transitions: [{ option: "next", targetNodeId: "ask_product" }],
     isFinal: false,
@@ -26,8 +26,8 @@ const askCategoryNode: ConversationNode = {
 const askProductNode: ConversationNode = {
     id: "ask_product",
     message: "Qual produto você deseja anunciar?",
-    validationKind: "Validation",
-    valueObjectValidator: "Product",
+    validationKind: "validation",
+    valueObjectValidator: "product",
     options: [],
     transitions: [{ option: "next", targetNodeId: "ask_quantity" }],
     isFinal: false,
@@ -36,8 +36,8 @@ const askProductNode: ConversationNode = {
 const askQuantityNode: ConversationNode = {
     id: "ask_quantity",
     message: "Quantas unidades?",
-    validationKind: "Validation",
-    valueObjectValidator: "Quantity",
+    validationKind: "validation",
+    valueObjectValidator: "quantity",
     options: [],
     transitions: [{ option: "next", targetNodeId: "order_ask_confirmation" }],
     isFinal: false,
@@ -46,8 +46,8 @@ const askQuantityNode: ConversationNode = {
 const orderConfirmNode: ConversationNode = {
     id: "order_ask_confirmation",
     message: "Confirma o pedido? 1 para Sim, 2 para Não.",
-    validationKind: "Confirmation",
-    valueObjectValidator: "None",
+    validationKind: "confirmation",
+    valueObjectValidator: "none",
     options: ["1", "2"],
     transitions: [
         { option: "1", targetNodeId: "ask_registration" },
@@ -59,8 +59,8 @@ const orderConfirmNode: ConversationNode = {
 const askRegistrationNode: ConversationNode = {
     id: "ask_registration",
     message: "Deseja se cadastrar? 1 para Sim, 2 para Não.",
-    validationKind: "Confirmation",
-    valueObjectValidator: "None",
+    validationKind: "confirmation",
+    valueObjectValidator: "none",
     options: ["1", "2"],
     transitions: [
         { option: "1", targetNodeId: "ask_name" },
@@ -72,8 +72,8 @@ const askRegistrationNode: ConversationNode = {
 const askNameNode: ConversationNode = {
     id: "ask_name",
     message: "Qual o seu nome?",
-    validationKind: "Validation",
-    valueObjectValidator: "Name",
+    validationKind: "validation",
+    valueObjectValidator: "name",
     options: [],
     transitions: [{ option: "next", targetNodeId: "ask_email" }],
     isFinal: false,
@@ -82,8 +82,8 @@ const askNameNode: ConversationNode = {
 const askEmailNode: ConversationNode = {
     id: "ask_email",
     message: "Qual o seu e-mail?",
-    validationKind: "Validation",
-    valueObjectValidator: "Email",
+    validationKind: "validation",
+    valueObjectValidator: "email",
     options: [],
     transitions: [{ option: "next", targetNodeId: "registration_ask_confirmation" }],
     isFinal: false,
@@ -92,8 +92,8 @@ const askEmailNode: ConversationNode = {
 const registrationConfirmNode: ConversationNode = {
     id: "registration_ask_confirmation",
     message: "Confirma os dados? 1 para Sim, 2 para Não.",
-    validationKind: "Confirmation",
-    valueObjectValidator: "None",
+    validationKind: "confirmation",
+    valueObjectValidator: "none",
     options: ["1", "2"],
     transitions: [
         { option: "1", targetNodeId: "ask_another_order" },
@@ -105,8 +105,8 @@ const registrationConfirmNode: ConversationNode = {
 const anotherOrderNode: ConversationNode = {
     id: "ask_another_order",
     message: "Deseja fazer outro pedido? 1 para Sim, 2 para Não.",
-    validationKind: "Confirmation",
-    valueObjectValidator: "None",
+    validationKind: "confirmation",
+    valueObjectValidator: "none",
     options: ["1", "2"],
     transitions: [
         { option: "1", targetNodeId: "ask_product" },
@@ -118,8 +118,8 @@ const anotherOrderNode: ConversationNode = {
 const finishNode: ConversationNode = {
     id: "finish",
     message: "Obrigado! Atendimento finalizado.",
-    validationKind: "Final",
-    valueObjectValidator: "None",
+    validationKind: "final",
+    valueObjectValidator: "none",
     options: [],
     transitions: [],
     isFinal: true,
@@ -144,7 +144,7 @@ export const mockFlows: ConversationFlow[] = [
         id: "1",
         name: "Atendimento Principal",
         description: "Fluxo principal do WhatsApp",
-        status: "Published",
+        status: "published",
         steps: mainFlowNodes.length,
         updatedAt: new Date("2026-07-28"),
         nodes: mainFlowNodes,
@@ -153,15 +153,15 @@ export const mockFlows: ConversationFlow[] = [
         id: "2",
         name: "Suporte",
         description: "Fluxo de pós-venda",
-        status: "Draft",
+        status: "draft",
         steps: 4,
         updatedAt: new Date("2026-07-25"),
         nodes: [
             {
                 id: "support_start",
                 message: "Olá! Você precisa de suporte? 1 Sim, 2 Não.",
-                validationKind: "Confirmation",
-                valueObjectValidator: "None",
+                validationKind: "confirmation",
+                valueObjectValidator: "none",
                 options: ["1", "2"],
                 transitions: [
                     { option: "1", targetNodeId: "support_problem" },
@@ -173,7 +173,7 @@ export const mockFlows: ConversationFlow[] = [
                 id: "support_problem",
                 message: "Descreva o seu problema.",
                 validationKind: null,
-                valueObjectValidator: "None",
+                valueObjectValidator: "none",
                 options: [],
                 transitions: [{ option: "next", targetNodeId: "support_end" }],
                 isFinal: false,
@@ -181,8 +181,8 @@ export const mockFlows: ConversationFlow[] = [
             {
                 id: "support_end",
                 message: "Suporte finalizado. Obrigado!",
-                validationKind: "Final",
-                valueObjectValidator: "None",
+                validationKind: "final",
+                valueObjectValidator: "none",
                 options: [],
                 transitions: [],
                 isFinal: true,
@@ -202,7 +202,7 @@ function genFlowId(): string {
 export const mockStore = {
     flows: cloneMock(),
 
-    createFlow(input: { name: string; description: string; status: "Draft" | "Published" }): ConversationFlow {
+    createFlow(input: { name: string; description: string; status: "draft" | "published" }): ConversationFlow {
         const flow: ConversationFlow = {
             id: genFlowId(),
             name: input.name,
@@ -224,7 +224,7 @@ export const mockStore = {
         flow.updatedAt = new Date();
     },
 
-    updateFlowStatus(id: string, status: "Draft" | "Published"): void {
+    updateFlowStatus(id: string, status: "draft" | "published"): void {
         const flow = this.flows.find((f) => f.id === id);
         if (!flow) throw new Error("Fluxo não encontrado");
         flow.status = status;
