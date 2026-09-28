@@ -7,15 +7,15 @@ import type { FlowRFNode } from "../utils/dagre-layout";
 
 function validationLabel(kind: string | null): string {
     switch (kind) {
-        case "Option":
+        case "option":
             return "Opção";
-        case "Confirmation":
+        case "confirmation":
             return "Confirmação";
-        case "Validation":
+        case "validation":
             return "Validação";
-        case "OptionValidation":
+        case "optionValidation":
             return "Opção + Validação";
-        case "Final":
+        case "final":
             return "Final";
         default:
             return "Sem validação";

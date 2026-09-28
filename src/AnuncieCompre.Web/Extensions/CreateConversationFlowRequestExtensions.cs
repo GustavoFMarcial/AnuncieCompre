@@ -13,7 +13,7 @@ public static class CreateConversationFlowRequestExtensions
             Description = request.Description,
             Status = request.Status.Trim().ToLower() switch
             {
-                "rascunho" => FlowStatus.Draft,
+                "draft" => FlowStatus.Draft,
                 _ => FlowStatus.Draft,
             }
         };

@@ -25,7 +25,7 @@ export function CreateFlowDialog({ open, onOpenChange, onCreated }: CreateFlowDi
                 onCancel={close}
                 onSubmit={({ name, description }) => {
                     createFlow.mutate(
-                        { name, description, status: "Draft" },
+                        { name, description, status: "draft" },
                         {
                             onSuccess: (flow) => {
                                 close();

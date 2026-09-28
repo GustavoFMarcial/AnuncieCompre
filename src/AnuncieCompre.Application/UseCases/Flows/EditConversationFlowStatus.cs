@@ -46,6 +46,7 @@ public class EditConversationFlowStatus(IConversationFlowRepository _conversatio
             {
                 errors += flowResult.Message;
                 await transaction.RollbackAsync();
+                return Result.Failure(flowResult.Message);
             }
 
             await unitOfWork.SaveChangesAsync();

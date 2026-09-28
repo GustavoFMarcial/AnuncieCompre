@@ -1,21 +1,21 @@
 export type NodeValidationKind =
-    | "Final"
-    | "Option"
-    | "Confirmation"
-    | "Validation"
-    | "OptionValidation";
+    | "final"
+    | "option"
+    | "confirmation"
+    | "validation"
+    | "optionValidation";
 
 export type ValueObjectValidator =
-    | "None"
-    | "Email"
-    | "Name"
-    | "Quantity"
-    | "Product"
-    | "CompanyCategory"
-    | "CPF"
-    | "CNPJ"
-    | "Phone"
-    | "UserType";
+    | "none"
+    | "email"
+    | "name"
+    | "quantity"
+    | "product"
+    | "companyCategory"
+    | "cpf"
+    | "cnpj"
+    | "phone"
+    | "userType";
 
 export interface NodeTransition {
     option: string;
@@ -36,7 +36,7 @@ export interface ConversationFlow {
     id: string;
     name: string;
     description: string;
-    status: "Draft" | "Published";
+    status: "draft" | "published";
     steps: number;
     updatedAt: string | Date;
     nodes?: ConversationNode[];
@@ -49,7 +49,7 @@ export type FlowDraft = Omit<ConversationFlow, "id" | "steps" | "updatedAt"> & {
 export interface CreateFlowInput {
     name: string;
     description: string;
-    status: "Draft" | "Published";
+    status: "draft" | "published";
 }
 
 export interface UpdateFlowMetaInput {
@@ -58,7 +58,7 @@ export interface UpdateFlowMetaInput {
 }
 
 export interface UpdateFlowStatusInput {
-    status: "Draft" | "Published";
+    status: "draft" | "published";
 }
 
 export interface FlowValidationErrors {
