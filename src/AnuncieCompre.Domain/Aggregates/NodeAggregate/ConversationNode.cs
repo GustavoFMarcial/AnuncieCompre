@@ -96,6 +96,7 @@ public class ConversationNode : BaseEntity
 
     public Result ValidateTransitions(FlowStatus status)
     {
+        if (Transitions.Count <= 0) return Result.Failure("Todo node deve ter ao menos uma transição");
         if (IsMenu is true) return Result.Failure("Esse método só pode ser usado por ConversationNodes que não são mennu");
         if (status == FlowStatus.Draft) return Result.Success("Transações validadas com sucesso");
         if (ValidationKind is ValidationKind.Final && Transitions.Count != 1) return Result.Failure("Node final só pode ter uma transição");

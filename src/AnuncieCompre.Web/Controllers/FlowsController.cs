@@ -63,7 +63,7 @@ public class FlowsController : ControllerBase
         EditConversationFlowStatusInput input = request.ToEditConversationFlowStatusInput();
         Result result = await service.Handle(flowId, input);
 
-        if (!result.IsSuccess) return BadRequest(result.Message.Split(",").ToList());
+        if (!result.IsSuccess) return BadRequest(new { success = false, errors = result.Message.Split(",").ToList() });
 
         return Ok(result.Message);
     }
