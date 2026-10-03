@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AnuncieCompre.Application.UseCases;
 
-public class EditConversationFlowStatus(IConversationFlowRepository _conversationFlowRepository, IUnitOfWork _unitOfWork,  MenuService _menuService)
+public class EditConversationFlowStatus(IConversationFlowRepository _conversationFlowRepository, IUnitOfWork _unitOfWork, MenuService _menuService)
 {
     private readonly IConversationFlowRepository conversationFlowRepository = _conversationFlowRepository;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
@@ -16,7 +16,7 @@ public class EditConversationFlowStatus(IConversationFlowRepository _conversatio
 
     public async Task<Result> Handle(Guid flowId, EditConversationFlowStatusInput input)
     {
-        ConversationFlow? flow = await conversationFlowRepository.GetFlowByIdWithNodesAsync(flowId);
+        ConversationFlow? flow = await conversationFlowRepository.GetFlowByIdWithNodesWithTransitionsAsync(flowId);
 
         if (flow is null) return Result.Failure("ConversationFlow não encontrado");
 
@@ -32,23 +32,18 @@ public class EditConversationFlowStatus(IConversationFlowRepository _conversatio
             }
         }
 
-        if (errors.Length > 0)
+        Result flowResult = flow.EditStatus(input.Status);
+
+        if (!flowResult.IsSuccess)
         {
-            return Result.Failure(errors);
+            errors += flowResult.Message;
         }
+
+        if (errors.Length > 0) return Result.Failure(errors);
 
         await using IDbContextTransaction transaction = await unitOfWork.BeginTransactionAsync();
         try
         {
-            Result flowResult = flow.EditStatus(input.Status);
-
-            if (!flowResult.IsSuccess)
-            {
-                errors += flowResult.Message;
-                await transaction.RollbackAsync();
-                return Result.Failure(flowResult.Message);
-            }
-
             await unitOfWork.SaveChangesAsync();
             Result menuResult = await menuService.UpdateMenuConversationNode();
 
