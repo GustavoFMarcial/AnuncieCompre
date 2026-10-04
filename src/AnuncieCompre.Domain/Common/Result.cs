@@ -4,6 +4,7 @@ public class Result
 {
     public bool IsSuccess { get; protected set; }
     public string Message  { get; protected set; } = default!;
+    public List<string> Messages { get; protected set; } = [];
 
     protected Result(){}
 
@@ -24,6 +25,17 @@ public class Result
         {
             IsSuccess = false,
             Message = message,
+        };
+
+        return result;
+    }
+
+    public static Result Failure(List<string> messages)
+    {
+        Result result = new()
+        {
+            IsSuccess = false,
+            Messages = messages,
         };
 
         return result;

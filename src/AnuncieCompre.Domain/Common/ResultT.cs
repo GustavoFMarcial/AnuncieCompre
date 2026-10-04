@@ -31,4 +31,16 @@ public class Result<T> : Result
 
         return result;
     }
+
+    public static new Result<T> Failure(List<string> messages)
+    {
+        Result<T> result = new()
+        {
+            IsSuccess = false,
+            Messages = messages,
+            Value = default!,
+        };
+
+        return result;
+    }
 }
