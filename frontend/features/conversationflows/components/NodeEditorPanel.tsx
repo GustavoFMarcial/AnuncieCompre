@@ -55,6 +55,7 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
     );
     const [options, setOptions] = useState<string[]>(node?.options ?? []);
     const [isFinal, setIsFinal] = useState(node?.isFinal ?? false);
+    const [isInitial, setIsInitial] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
 
     const [errorsOpen, setErrorsOpen] = useState(false);
@@ -82,18 +83,19 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                 valueObjectValidator: showValueValidator ? valueObjectValidator : "none",
                 options: showOptions ? options.filter((o) => o.trim() !== "") : [],
                 isFinal,
+                isInitial,
             },
         },
-        {
-            onError: (err) => {
-                const axiosErr = err as AxiosError<NodeValidationErrors>;
-                const msgs = axiosErr.response?.data?.errors;
-                if (msgs && msgs.length > 0) {
-                    setErrors(msgs);
-                    setErrorsOpen(true);
+            {
+                onError: (err) => {
+                    const axiosErr = err as AxiosError<NodeValidationErrors>;
+                    const msgs = axiosErr.response?.data?.errors;
+                    if (msgs && msgs.length > 0) {
+                        setErrors(msgs);
+                        setErrorsOpen(true);
+                    }
                 }
-            }
-        });
+            });
     };
 
     const handleDelete = () => {
@@ -133,6 +135,7 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
             <div className="flex items-center justify-between border-b border-neutral-100 p-4">
                 <div className="flex items-center gap-2">
                     <h3 className="font-semibold text-neutral-900">Editar node</h3>
+                    {isInitial && <Badge variant="success">Inicial</Badge>}
                     {isFinal && <Badge variant="success">Final</Badge>}
                 </div>
                 <Button size="icon" variant="ghost" onClick={onClose}>
@@ -249,12 +252,22 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                         variant="outline"
                         className="flex-1"
                         onClick={() => {
+                            setIsInitial((v) => !v);
+                        }}
+                    >
+                        <Flag className="h-4 w-4" />
+                        {isInitial ? "Inicial✅" : "inicial"}
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="flex-1"
+                        onClick={() => {
                             setIsFinal((v) => !v);
                             setValidationKind((k) => (!isFinal ? "final" : k));
                         }}
                     >
                         <Flag className="h-4 w-4" />
-                        {isFinal ? "Desmarcar final" : "Marcar final"}
+                        {isFinal ? "Final ✅" : "Final"}
                     </Button>
                     <Button
                         variant="destructive"

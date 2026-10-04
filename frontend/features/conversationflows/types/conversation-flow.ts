@@ -77,6 +77,7 @@ export interface CreateNodeInput {
     valueObjectValidator: ValueObjectValidator;
     options: string[];
     isFinal: boolean;
+    isInitial: boolean;
 }
 
 export type UpdateNodeInput = CreateNodeInput;
