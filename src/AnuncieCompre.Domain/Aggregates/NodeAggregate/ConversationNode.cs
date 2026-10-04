@@ -53,13 +53,16 @@ public class ConversationNode : BaseEntity
 
     public Result Edit(EditConversationNodeInput input)
     {
+        string errors = "";
         if (IsMenu is true) return Result.Failure("Esse método só pode ser usado por ConversationNodes que não são menu");
-        if (string.IsNullOrWhiteSpace(input.Message)) return Result<ConversationNode>.Failure("Mensagem não pode ser em branco");
-        if (input.ValidationKind is not ValidationKind.Final && input.IsFinal is true) return Result<ConversationNode>.Failure("Apenas node com validação final pode ser marcado como final");
-        if (input.ValidationKind is ValidationKind.Validation && input.ValueObjectValidator is ValueObjectValidator.None) return Result<ConversationNode>.Failure("Node de validação deve possuir um validador");
-        if (input.ValueObjectValidator is not ValueObjectValidator.None && input.ValidationKind is not ValidationKind.Validation) return Result<ConversationNode>.Failure("Apenas node de validação deve possuir um validador");
-        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Final) return Result<ConversationNode>.Failure("Apenas nodes de confirmação ou opção podem ter opções");
-        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Validation) return Result<ConversationNode>.Failure("Apenas nodes de confirmação ou validação podem ter opções");
+        if (string.IsNullOrWhiteSpace(input.Message)) errors += ",Mensagem não pode ser em branco";
+        if (input.ValidationKind is not ValidationKind.Final && input.IsFinal is true) errors += ",Apenas node com validação final pode ser marcado como final";
+        if (input.ValidationKind is ValidationKind.Validation && input.ValueObjectValidator is ValueObjectValidator.None) errors += ",Node de validação deve possuir um validador";
+        if (input.ValueObjectValidator is not ValueObjectValidator.None && input.ValidationKind is not ValidationKind.Validation) errors +=  ",Apenas node de validação deve possuir um validador";
+        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Final) errors += "Apenas nodes de confirmação ou opção podem ter opções";
+        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Validation) errors += "Apenas nodes de confirmação ou validação podem ter opções";
+
+        if (errors.Length > 0) return Result.Failure(errors);
 
         Message = input.Message;
         ValidationKind = input.ValidationKind;

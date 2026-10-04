@@ -15,8 +15,8 @@ public record EditConversationNodeRequest
 
     public List<string> Options { get; set; } = [];
 
-    [Required(ErrorMessage = "É obrigatório informar se node é final")]
+    [Required(ErrorMessage = "Informar se node é final é obrigatório")]
     public bool IsFinal { get; set; }
-    [Required(ErrorMessage = "É obrigatório informar se node é inicial")]
+    [Required(ErrorMessage = "Informar se node é inicial é obrigatório")]
     public bool IsInitial { get; set; }
 }

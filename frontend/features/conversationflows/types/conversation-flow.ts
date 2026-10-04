@@ -66,6 +66,11 @@ export interface FlowValidationErrors {
     errors: string[];
 }
 
+export interface NodeValidationErrors {
+    success: false;
+    errors: string[];
+}
+
 export interface CreateNodeInput {
     message: string;
     validationKind: NodeValidationKind | null;
