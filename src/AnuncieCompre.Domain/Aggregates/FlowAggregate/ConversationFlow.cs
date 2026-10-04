@@ -51,20 +51,20 @@ public class ConversationFlow : BaseEntity
         }
         else
         {
-            string errors = "";
+            List<string> errors = [];
             List<ConversationNode> finalValidationNodes = Nodes.Where(n => n.ValidationKind == ValidationKind.Final).ToList();
             List<ConversationNode> finalNodes = Nodes.Where(n => n.IsFinal).ToList();
             List<ConversationNode> initialNodes = Nodes.Where(n => n.IsInitial).ToList();
 
-            if (Nodes.Count < 2) errors += ",ConversationFlow deve ter pelo menos 2 nodes";
-            if (finalValidationNodes.Count > 1) errors += ",ConversationFlow deve ter apenas um node com validação final";
-            if (finalValidationNodes.Count < 1) errors += ",ConversationFlow deve ter um node com validação final";
-            if (finalNodes.Count > 1) errors +=  ",ConversationFlow deve ter apenas um node final";
-            if (finalNodes.Count < 1) errors += ",ConversationFlow deve ter um node final";
-            if (initialNodes.Count > 1) errors += ",ConversationFlow deve ter apenas um node inicial";
-            if (initialNodes.Count < 1) errors += ",ConversationFlow deve ter um node inicial";
+            if (Nodes.Count < 2) errors.Add("ConversationFlow deve ter pelo menos 2 nodes");
+            if (finalValidationNodes.Count > 1) errors.Add("ConversationFlow deve ter apenas um node com validação final");
+            if (finalValidationNodes.Count < 1) errors.Add("ConversationFlow deve ter um node com validação final");
+            if (finalNodes.Count > 1) errors.Add("ConversationFlow deve ter apenas um node final");
+            if (finalNodes.Count < 1) errors.Add("ConversationFlow deve ter um node final");
+            if (initialNodes.Count > 1) errors.Add("ConversationFlow deve ter apenas um node inicial");
+            if (initialNodes.Count < 1) errors.Add("ConversationFlow deve ter um node inicial");
 
-            if (errors.Length > 0) return Result.Failure(errors);
+            if (errors.Count > 0) return Result.Failure(errors);
 
             Status = status;
         }
