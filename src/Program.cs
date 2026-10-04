@@ -17,6 +17,8 @@ using AnuncieCompre.Application.UseCases;
 using AnuncieCompre.Application.UseCases.Conversations;
 using AnuncieCompre.Application.Services;
 using StackExchange.Redis;
+using Microsoft.AspNetCore.Mvc;
+using AnuncieCompre.Web.DTO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -95,6 +97,24 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
     }
 
     return ConnectionMultiplexer.Connect(options);
+});
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        List<string> errors = context.ModelState
+            .Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage)
+            .Where(message => !string.IsNullOrWhiteSpace(message))
+            .ToList();
+
+        return new BadRequestObjectResult(new NodeValidationErrors(
+            false,
+            errors
+        ));
+    };
 });
 
 var connectionString = builder.Configuration.GetConnectionString("AnuncieCompreContext") ?? throw new InvalidOperationException("Connection string not found.");
