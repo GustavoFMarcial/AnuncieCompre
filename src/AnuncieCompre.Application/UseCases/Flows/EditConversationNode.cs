@@ -18,7 +18,7 @@ public class EditConversationNode(IConversationNodeRepository _conversationNodeR
 
         Result result = node.Edit(input);
 
-        if (!result.IsSuccess) return Result<ConversationNode>.Failure(result.Message);
+        if (!result.IsSuccess) return Result<ConversationNode>.Failure(result.Messages);
         
         await unitOfWork.SaveChangesAsync();
         return Result<ConversationNode>.Success(node, result.Message);

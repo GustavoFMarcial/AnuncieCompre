@@ -20,7 +20,7 @@ public class EditConversationFlowStatus(IConversationFlowRepository _conversatio
 
         if (flow is null) return Result.Failure("ConversationFlow não encontrado");
 
-        string errors = "";
+        List<string> errors = [];
 
         foreach (ConversationNode n in flow.Nodes)
         {
@@ -28,7 +28,7 @@ public class EditConversationFlowStatus(IConversationFlowRepository _conversatio
 
             if (!nodeResult.IsSuccess)
             {
-                errors += $",{nodeResult.Message}";
+                errors.AddRange(nodeResult.Messages);
             }
         }
 
@@ -36,10 +36,10 @@ public class EditConversationFlowStatus(IConversationFlowRepository _conversatio
 
         if (!flowResult.IsSuccess)
         {
-            errors += flowResult.Message;
+            errors.AddRange(flowResult.Messages);
         }
 
-        if (errors.Length > 0) return Result.Failure(errors);
+        if (errors.Count > 0) return Result.Failure(errors);
 
         await using IDbContextTransaction transaction = await unitOfWork.BeginTransactionAsync();
         try
