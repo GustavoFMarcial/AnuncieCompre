@@ -8,7 +8,7 @@ import { FlowCanvas } from "../components/FlowCanvas";
 import { NodeEditorPanel } from "../components/NodeEditorPanel";
 import { EditFlowDialog } from "../components/EditFlowDialog";
 import { DeleteFlowDialog } from "../components/DeleteFlowDialog";
-import { PublishErrorsDialog } from "../components/PublishErrorsDialog";
+import { ErrorsDialog } from "../components/ErrorsDialog";
 import { useConversationFlow, useUpdateFlowStatus } from "../hooks/useConversationFlows";
 import type { FlowValidationErrors } from "../types/conversation-flow";
 
@@ -156,7 +156,7 @@ export function FlowEditorPage() {
                         onOpenChange={setDeleteOpen}
                         onDeleted={() => navigate("/flows")}
                     />
-                    <PublishErrorsDialog
+                    <ErrorsDialog
                         open={errorsOpen}
                         onOpenChange={setErrorsOpen}
                         errors={errors}

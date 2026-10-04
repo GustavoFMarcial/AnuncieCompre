@@ -15,6 +15,7 @@ import {
 } from "../../../shared/components/ui";
 import type {
     ConversationNode,
+    NodeValidationErrors,
     NodeValidationKind,
     ValueObjectValidator,
 } from "../types/conversation-flow";
@@ -30,6 +31,8 @@ import {
     kindsRequiringOptions,
     valueObjectValidatorOptions,
 } from "../utils/validation-options";
+import { AxiosError } from "axios";
+import { ErrorsDialog } from "./ErrorsDialog";
 
 interface NodeEditorPanelProps {
     flowId: string;
@@ -54,6 +57,9 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
     const [isFinal, setIsFinal] = useState(node?.isFinal ?? false);
     const [confirmDelete, setConfirmDelete] = useState(false);
 
+    const [errorsOpen, setErrorsOpen] = useState(false);
+    const [errors, setErrors] = useState<string[]>([]);
+
     if (!node) {
         return (
             <div className="flex h-full w-80 items-center justify-center border-l border-neutral-200 bg-white p-6 text-sm text-neutral-400">
@@ -77,6 +83,16 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                 options: showOptions ? options.filter((o) => o.trim() !== "") : [],
                 isFinal,
             },
+        },
+        {
+            onError: (err) => {
+                const axiosErr = err as AxiosError<NodeValidationErrors>;
+                const msgs = axiosErr.response?.data?.errors;
+                if (msgs && msgs.length > 0) {
+                    setErrors(msgs);
+                    setErrorsOpen(true);
+                }
+            }
         });
     };
 
@@ -248,6 +264,11 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                         <Trash2 className="h-4 w-4" />
                     </Button>
                 </div>
+                <ErrorsDialog
+                    open={errorsOpen}
+                    onOpenChange={setErrorsOpen}
+                    errors={errors}
+                />
             </div>
 
             <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}>

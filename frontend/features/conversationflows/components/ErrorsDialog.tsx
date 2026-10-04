@@ -2,13 +2,13 @@ import { AlertTriangle } from "lucide-react";
 
 import { Button, Dialog, DialogDescription, DialogTitle } from "../../../shared/components/ui";
 
-interface PublishErrorsDialogProps {
+interface ErrorsDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     errors: string[];
 }
 
-export function PublishErrorsDialog({ open, onOpenChange, errors }: PublishErrorsDialogProps) {
+export function ErrorsDialog({ open, onOpenChange, errors }: ErrorsDialogProps) {
     return (
         <Dialog open={open} onClose={() => onOpenChange(false)}>
             <div className="flex items-start gap-3">
@@ -16,9 +16,9 @@ export function PublishErrorsDialog({ open, onOpenChange, errors }: PublishError
                     <AlertTriangle className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
-                    <DialogTitle>Não foi possível publicar</DialogTitle>
+                    <DialogTitle>Não foi possível realizar essa ação</DialogTitle>
                     <DialogDescription>
-                        Corrija os problemas abaixo no fluxo e tente publicar novamente.
+                        Corrija os problemas abaixo e tente novamente.
                     </DialogDescription>
                 </div>
             </div>
