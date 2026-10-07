@@ -48,7 +48,7 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
 
     const [message, setMessage] = useState(node?.message ?? "");
     const [validationKind, setValidationKind] = useState<NodeValidationKind | null>(
-        node?.validationKind ?? null
+        node?.validationKind ?? "none"
     );
     const [valueObjectValidator, setValueObjectValidator] = useState<ValueObjectValidator>(
         node?.valueObjectValidator ?? "none"
@@ -253,6 +253,9 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                         className="flex-1"
                         onClick={() => {
                             setIsInitial((v) => !v);
+                            if (isFinal){
+                                setIsFinal(false);
+                            }
                         }}
                     >
                         <Flag className="h-4 w-4" />
@@ -264,10 +267,14 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                         onClick={() => {
                             setIsFinal((v) => !v);
                             setValidationKind((k) => (!isFinal ? "final" : k));
+                            if (isInitial){
+                                setIsInitial(false);
+                                setValidationKind("none");
+                            }
                         }}
                     >
                         <Flag className="h-4 w-4" />
-                        {isFinal ? "Final ✅" : "Final"}
+                        {isFinal ? "Final✅" : "Final"}
                     </Button>
                     <Button
                         variant="destructive"
