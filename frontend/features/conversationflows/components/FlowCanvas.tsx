@@ -101,6 +101,7 @@ export function FlowCanvas({ flowId, selectedNodeId, onSelectNode }: FlowCanvasP
             valueObjectValidator: "none",
             options: [],
             isFinal: false,
+            isInitial: false,
         });
     };
 
