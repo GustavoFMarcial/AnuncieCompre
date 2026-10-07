@@ -4,33 +4,33 @@ import type {
 } from "../types/conversation-flow";
 
 export function validationKindOptions(): {
-    value: "" | "Final" | "Option" | "Confirmation" | "Validation" | "OptionValidation";
+    value: "none" | "final" | "option" | "confirmation" | "validation" | "optionValidation";
     label: string;
 }[] {
     return [
-        { value: "", label: "Sem validação (só fluxo)" },
-        { value: "Final", label: "Final" },
-        { value: "Option", label: "Opção" },
-        { value: "Confirmation", label: "Confirmação (Sim/Não)" },
-        { value: "Validation", label: "Validar entrada" },
-        { value: "OptionValidation", label: "Opção + Validação" },
+        { value: "none", label: "Sem validação (só fluxo)" },
+        { value: "final", label: "Final" },
+        { value: "option", label: "Opção" },
+        { value: "confirmation", label: "Confirmação (Sim/Não)" },
+        { value: "validation", label: "Validar entrada" },
+        { value: "optionValidation", label: "Opção + Validação" },
     ];
 }
 
 export function valueObjectValidatorOptions(): { value: ValueObjectValidator; label: string }[] {
     return [
-        { value: "None", label: "Nenhum" },
-        { value: "Email", label: "E-mail" },
-        { value: "Name", label: "Nome" },
-        { value: "Quantity", label: "Quantidade" },
-        { value: "Product", label: "Produto" },
-        { value: "CompanyCategory", label: "Categoria de empresa" },
-        { value: "CPF", label: "CPF" },
-        { value: "CNPJ", label: "CNPJ" },
-        { value: "Phone", label: "Telefone" },
-        { value: "UserType", label: "Tipo de usuário" },
+        { value: "none", label: "Nenhum" },
+        { value: "email", label: "E-mail" },
+        { value: "name", label: "Nome" },
+        { value: "quantity", label: "Quantidade" },
+        { value: "product", label: "Produto" },
+        { value: "companyCategory", label: "Categoria de empresa" },
+        { value: "cpf", label: "CPF" },
+        { value: "cnpj", label: "CNPJ" },
+        { value: "phone", label: "Telefone" },
+        { value: "userType", label: "Tipo de usuário" },
     ];
 }
 
-export const finalKindsRequiringValueValidator: NodeValidationKind[] = ["Validation", "OptionValidation"];
-export const kindsRequiringOptions: NodeValidationKind[] = ["Option", "Confirmation", "OptionValidation"];
+export const finalKindsRequiringValueValidator: NodeValidationKind[] = ["validation", "optionValidation"];
+export const kindsRequiringOptions: NodeValidationKind[] = ["option", "confirmation", "optionValidation"];

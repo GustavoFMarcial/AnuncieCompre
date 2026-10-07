@@ -51,6 +51,7 @@ namespace AnuncieCompre.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ConversationFlowId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Number = table.Column<int>(type: "integer", nullable: false),
                     Message = table.Column<string>(type: "text", nullable: false),
                     ValidationKind = table.Column<int>(type: "integer", nullable: false),
                     ValueObjectValidator = table.Column<int>(type: "integer", nullable: false),
