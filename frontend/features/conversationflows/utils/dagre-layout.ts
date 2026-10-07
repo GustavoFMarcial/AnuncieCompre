@@ -8,6 +8,7 @@ const NODE_HEIGHT = 110;
 
 export type FlowRFNode = Node<{
     nodeId: string;
+    nodeNumber: number;
     message: string;
     validationKind: string | null;
     isFinal: boolean;
@@ -26,6 +27,7 @@ export function buildGraphData(nodes: ConversationNode[]) {
         position: { x: 0, y: 0 },
         data: {
             nodeId: n.id,
+            nodeNumber: n.number,
             message: n.message,
             validationKind: n.validationKind,
             isFinal: n.isFinal,
