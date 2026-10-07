@@ -3,7 +3,8 @@ export type NodeValidationKind =
     | "option"
     | "confirmation"
     | "validation"
-    | "optionValidation";
+    | "optionValidation"
+    | "none";
 
 export type ValueObjectValidator =
     | "none"
