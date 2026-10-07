@@ -99,8 +99,13 @@ export function useDeleteNode(flowId: string) {
     const qc = useQueryClient();
     return useMutation({
         mutationFn: (nodeId: string) => conversationFlowService.deleteNode(flowId, nodeId),
-        onSuccess: () => {
-            qc.invalidateQueries({ queryKey: ["conversation-flow", flowId] });
+        onSuccess: async () => {
+            try {
+                const fresh = await conversationFlowService.getById(flowId);
+                qc.setQueryData(["conversation-flow", flowId], fresh);
+            } catch {
+                await qc.invalidateQueries({ queryKey: ["conversation-flow", flowId] });
+            }
             qc.invalidateQueries({ queryKey: FLOWS_KEY });
         },
     });
