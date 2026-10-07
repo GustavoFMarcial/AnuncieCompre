@@ -24,11 +24,16 @@ public class EditConversationFlowStatus(IConversationFlowRepository _conversatio
 
         foreach (ConversationNode n in flow.Nodes)
         {
-            Result nodeResult = n.ValidateTransitions();
+            Result transitionResult = n.ValidateTransitions();
+            Result validateResult = n.ValidateNode();
 
-            if (!nodeResult.IsSuccess)
+            if (!transitionResult.IsSuccess)
             {
-                errors.AddRange(nodeResult.Messages);
+                errors.AddRange(transitionResult.Messages);
+            }
+            if (!validateResult.IsSuccess)
+            {
+                errors.AddRange(validateResult.Messages);
             }
         }
 
