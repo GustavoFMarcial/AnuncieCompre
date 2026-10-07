@@ -31,6 +31,8 @@ export interface ConversationNode {
     options: string[];
     transitions: NodeTransition[];
     isFinal: boolean;
+    isInitial: boolean;
+    number: number;
 }
 
 export interface ConversationFlow {

@@ -43,6 +43,8 @@ public static class ConversationNodeExtensions
                 TargetNodeId = t.TargetNodeId,
             }).ToList(),
             IsFinal = c.IsFinal,
+            IsInitial = c.IsInitial,
+            Number = c.Number,
 
         }).ToList();
 
