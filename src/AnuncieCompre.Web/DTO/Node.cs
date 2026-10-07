@@ -12,4 +12,6 @@ public record Node
     public List<string> Options { get; set; } = [];
     public List<Transiton> Transitions { get; set; } = [];
     public bool IsFinal { get; set; }
+    public bool IsInitial { get; set; }
+    public int Number { get; set; }
  }

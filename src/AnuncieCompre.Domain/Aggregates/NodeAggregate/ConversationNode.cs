@@ -11,6 +11,7 @@ public class ConversationNode : BaseEntity
 {
     public Guid ConversationFlowId { get; private set; }
     public ConversationFlow ConversationFlow { get; private set; } = default!;
+    public int Number { get; private set; }
     public string Message { get; private set; } = "Mensagem do bot";
     public ValidationKind ValidationKind { get; private set; } = ValidationKind.None;
     public ValueObjectValidator ValueObjectValidator { get; private set; } = ValueObjectValidator.None;
@@ -22,10 +23,11 @@ public class ConversationNode : BaseEntity
 
     private ConversationNode() { }
 
-    private ConversationNode(ConversationFlow conversationFlow)
+    private ConversationNode(ConversationFlow conversationFlow, int number)
     {
         ConversationFlowId = conversationFlow.Id;
         ConversationFlow = conversationFlow;
+        Number = number;
     }
 
     private ConversationNode(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<ConversationNodeTransition> transitions, List<string> options)
@@ -43,7 +45,8 @@ public class ConversationNode : BaseEntity
     {
         if (conversationFlow.IsMenu is true) return Result<ConversationNode>.Failure("Não é permitido criar ConversationNode com um ConversationFlowMenu");
 
-        return Result<ConversationNode>.Success(new ConversationNode(conversationFlow), "ConversationNode criado com sucesso");
+        int number = conversationFlow.Nodes.Count + 1;
+        return Result<ConversationNode>.Success(new ConversationNode(conversationFlow, number), "ConversationNode criado com sucesso");
     }
 
     public static Result<ConversationNode> Create(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<ConversationNodeTransition> transitions, List<string> options)
@@ -129,5 +132,13 @@ public class ConversationNode : BaseEntity
     {
         if (IsMenu is false) return;
         Options = options!;
+    }
+
+    public static void RearrangeNumber(List<ConversationNode> nodes)
+    {
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            nodes[i].Number = i + 1;
+        }
     }
 }
