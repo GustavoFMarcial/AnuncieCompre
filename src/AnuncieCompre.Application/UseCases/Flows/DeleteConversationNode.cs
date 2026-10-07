@@ -1,23 +1,31 @@
 using AnuncieCompre.Application.Interfaces;
+using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
+using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Common;
-using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Application.UseCases;
 
-public class DeleteConversationNode(IConversationNodeRepository _conversationNodeRepository, IUnitOfWork _unitOfWork)
+public class DeleteConversationNode(IConversationFlowRepository _conversationFlowRepository, IConversationNodeRepository _conversationNodeRepository, IUnitOfWork _unitOfWork)
 {
+    private readonly IConversationFlowRepository conversationFlowRepository = _conversationFlowRepository;
     private readonly IConversationNodeRepository conversationNodeRepository = _conversationNodeRepository;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
-    public async Task<Result> Handle(Guid nodeId)
+    public async Task<Result> Handle(Guid flowId, Guid nodeId)
     {
-        ConversationNode? node = await conversationNodeRepository.GetByIdAsync(nodeId);
+        ConversationFlow? flow = await conversationFlowRepository.GetFlowWithNodesByIdAsync(flowId);
+
+        if (flow is null) return Result.Failure("ConversationFlow não encontrado");
+
+        ConversationNode? node = flow.Nodes.FirstOrDefault(n => n.Id == nodeId);
 
         if (node is null) return Result.Failure("ConversationNode não encontrado");
 
         conversationNodeRepository.Delete(node);
         List<ConversationNode> nodes = await conversationNodeRepository.GetConversationNodeByTransitionTargetNodeIdAsync(nodeId);
+        List<ConversationNode> nodesToRearrangeNumber = flow.Nodes.Where(n => n.Id != nodeId).OrderBy(n => n.Number).ToList();
+        ConversationNode.RearrangeNumber(nodesToRearrangeNumber);
 
         foreach (ConversationNode n in nodes)
         {

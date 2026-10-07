@@ -116,7 +116,7 @@ public class FlowsController : ControllerBase
     [HttpDelete("{flowId:guid}/nodes/{nodeId:guid}")]
     public async Task<ActionResult> DeleteConversationNode([FromRoute] Guid flowId, [FromRoute] Guid nodeId, [FromServices] DeleteConversationNode service)
     {
-        Result result = await service.Handle(nodeId);
+        Result result = await service.Handle(flowId, nodeId);
 
         if (!result.IsSuccess) return BadRequest(result.Message);
 

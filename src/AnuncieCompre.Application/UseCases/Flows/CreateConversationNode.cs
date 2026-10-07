@@ -13,7 +13,7 @@ public class CreateConversationNode(IConversationFlowRepository _conversationFlo
 
     public async Task<Result<ConversationNode>> Handle(Guid id)
     {
-        ConversationFlow? flow = await conversationFlowRepository.GetByIdAsync(id);
+        ConversationFlow? flow = await conversationFlowRepository.GetFlowWithNodesByIdAsync(id);
 
         if (flow is null) return Result<ConversationNode>.Failure("ConversationFlow não encontrado");
 
