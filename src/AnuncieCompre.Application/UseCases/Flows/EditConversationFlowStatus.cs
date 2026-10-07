@@ -24,7 +24,7 @@ public class EditConversationFlowStatus(IConversationFlowRepository _conversatio
 
         foreach (ConversationNode n in flow.Nodes)
         {
-            Result nodeResult = n.ValidateTransitions(input.Status);
+            Result nodeResult = n.ValidateTransitions();
 
             if (!nodeResult.IsSuccess)
             {

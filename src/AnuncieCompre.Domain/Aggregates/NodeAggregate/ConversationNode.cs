@@ -58,12 +58,12 @@ public class ConversationNode : BaseEntity
     {
         List<string> errors = [];
         if (IsMenu is true) return Result.Failure("Esse método só pode ser usado por ConversationNodes que não são menu");
-        if (string.IsNullOrWhiteSpace(input.Message)) errors.Add("Mensagem não pode ser em branco");
-        if (input.ValidationKind is not ValidationKind.Final && input.IsFinal is true) errors.Add("Apenas node com validação final pode ser marcado como final");
-        if (input.ValidationKind is ValidationKind.Validation && input.ValueObjectValidator is ValueObjectValidator.None) errors.Add("Node de validação deve possuir um validador");
-        if (input.ValueObjectValidator is not ValueObjectValidator.None && input.ValidationKind is not ValidationKind.Validation) errors.Add("Apenas node de validação deve possuir um validador");
-        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Final) errors.Add("Apenas nodes de confirmação ou opção podem ter opções");
-        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Validation) errors.Add("Apenas nodes de confirmação ou validação podem ter opções");
+        if (string.IsNullOrWhiteSpace(input.Message)) errors.Add($"Node: {Number} - Mensagem não pode ser em branco");
+        if (input.ValidationKind is not ValidationKind.Final && input.IsFinal is true) errors.Add($"Node: {Number} - Apenas node com validação final pode ser marcado como final");
+        if (input.ValidationKind is ValidationKind.Validation && input.ValueObjectValidator is ValueObjectValidator.None) errors.Add($"Node: {Number} - Node de validação deve possuir um validador");
+        if (input.ValueObjectValidator is not ValueObjectValidator.None && input.ValidationKind is not ValidationKind.Validation) errors.Add($"Node: {Number} - Apenas node de validação deve possuir um validador");
+        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Final) errors.Add($"Node: {Number} - Apenas nodes de confirmação ou opção podem ter opções");
+        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Validation) errors.Add($"Node: {Number} - Apenas nodes de confirmação ou validação podem ter opções");
 
         if (errors.Count > 0) return Result.Failure(errors);
 
@@ -100,16 +100,16 @@ public class ConversationNode : BaseEntity
         Transitions.Remove(transition);
     }
 
-    public Result ValidateTransitions(FlowStatus status)
+    public Result ValidateTransitions()
     {
         List<string> errors = [];
-        if (Transitions.Count <= 0) errors.Add("Todo node deve ter ao menos uma transição");
-        if (IsMenu is true) errors.Add("Esse método só pode ser usado por ConversationNodes que não são mennu");
-        if (ValidationKind is ValidationKind.Final && Transitions.Count != 1) errors.Add("Node final só pode ter uma transição");
-        if (ValidationKind is ValidationKind.Validation && Transitions.Count != 1) errors.Add("Node de validação só pode ter uma transição");
-        if (ValidationKind is ValidationKind.Option && Transitions.Count <= 1) errors.Add("Node de opção não pode ter menos de uma transição");
-        if (ValidationKind is ValidationKind.Confirmation && Transitions.Count <= 1) errors.Add("Node de confirmação não pode ter só uma transição");
-        if (Options?.Count != Transitions.Count) errors.Add("A quantia de opções deve ser igual a quantia de transições");
+        if (Transitions.Count <= 0) errors.Add($"Node: {Number} - Todo node deve ter ao menos uma transição");
+        if (IsMenu is true) errors.Add($"Node: {Number} - Esse método só pode ser usado por ConversationNodes que não são mennu");
+        if (ValidationKind is ValidationKind.Final && Transitions.Count != 1) errors.Add($"Node: {Number} - Node final só pode ter uma transição");
+        if (ValidationKind is ValidationKind.Validation && Transitions.Count != 1) errors.Add($"Node: {Number} - Node de validação só pode ter uma transição");
+        if (ValidationKind is ValidationKind.Option && Transitions.Count <= 1) errors.Add($"Node: {Number} - Node de opção não pode ter menos de uma transição");
+        if (ValidationKind is ValidationKind.Confirmation && Transitions.Count <= 1) errors.Add($"Node: {Number} - Node de confirmação não pode ter só uma transição");
+        if (Options?.Count != Transitions.Count) errors.Add($"Node: {Number} - A quantia de opções deve ser igual a quantia de transições");
 
         if (errors.Count > 0) return Result.Failure(errors);
 
