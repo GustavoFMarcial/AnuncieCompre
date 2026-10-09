@@ -46,6 +46,9 @@ export function buildGraphData(nodes: ConversationNode[]) {
                     labelStyle: { fontSize: 11, fontWeight: 600 },
                     labelBgStyle: { fill: "#f5f5f5" },
                     markerEnd: { type: "arrowclosed" as const },
+                    selectable: false,
+                    deletable: false,
+                    focusable: false,
                 });
             }
         });
