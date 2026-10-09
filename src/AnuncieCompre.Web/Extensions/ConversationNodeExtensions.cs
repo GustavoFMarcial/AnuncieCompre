@@ -39,8 +39,9 @@ public static class ConversationNodeExtensions
             Options = c.Options,
             Transitions = c.Transitions.Select(t => new Transiton
             {
-                Option = t.Key,
+                Option = t.Option,
                 TargetNodeId = t.TargetNodeId,
+                TargetNodeNumber = t.TargetNodeNumber,
             }).ToList(),
             IsFinal = c.IsFinal,
             IsInitial = c.IsInitial,

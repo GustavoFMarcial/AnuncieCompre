@@ -106,7 +106,7 @@ public class FlowsController : ControllerBase
     {
         EditConversationNodeTransitionInput input = request.ToEditConversationNodeTransitionInput();
 
-        Result result = await service.Handle(nodeId, input);
+        Result result = await service.Handle(flowId, nodeId, input);
 
         if (!result.IsSuccess) return BadRequest(result.Message);
 
