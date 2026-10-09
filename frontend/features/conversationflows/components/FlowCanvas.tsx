@@ -3,11 +3,8 @@ import {
     Controls,
     MiniMap,
     ReactFlow,
-    type Edge,
     type Node,
     type NodeChange,
-    type OnConnect,
-    type OnEdgesDelete,
     applyNodeChanges,
 } from "@xyflow/react";
 import { useMemo, useState } from "react";
@@ -19,7 +16,6 @@ import {
     useConversationFlow,
     useCreateNode,
     useDeleteNode,
-    useUpdateTransitions,
 } from "../hooks/useConversationFlows";
 import { FlowNodeCard } from "./FlowNodeCard";
 import { buildGraphData, type FlowRFEdge, type FlowRFNode } from "../utils/dagre-layout";
@@ -38,7 +34,6 @@ export function FlowCanvas({ flowId, selectedNodeId, onSelectNode }: FlowCanvasP
     const { data: flow } = useConversationFlow(flowId);
     const createNode = useCreateNode(flowId);
     const deleteNode = useDeleteNode(flowId);
-    const updateTransitions = useUpdateTransitions(flowId);
 
     const { nodes: layoutNodes, edges: layoutEdges } = useMemo(
         () => buildGraphData(flow?.nodes ?? []),
@@ -67,30 +62,6 @@ export function FlowCanvas({ flowId, selectedNodeId, onSelectNode }: FlowCanvasP
         }
         if (Object.keys(override).length > 0) {
             setPositions((prev) => ({ ...prev, ...override }));
-        }
-    };
-
-    const onConnect: OnConnect = (connection) => {
-        const entry = flow?.nodes?.find((n) => n.id === connection.source);
-        if (!entry) return;
-        const used = new Set(entry.transitions.map((t) => t.option));
-        let opt = "next";
-        let i = 1;
-        while (used.has(opt)) {
-            opt = String(i);
-            i++;
-        }
-        const transitions = [...entry.transitions, { option: opt, targetNodeId: connection.target }];
-        updateTransitions.mutate({ nodeId: connection.source, input: { transitions } });
-    };
-
-    const onEdgesDelete: OnEdgesDelete = (edges: Edge[]) => {
-        if (!flow?.nodes) return;
-        for (const e of edges) {
-            const entry = flow.nodes.find((n) => n.id === e.source);
-            if (!entry) continue;
-            const transitions = entry.transitions.filter((t) => t.targetNodeId !== e.target);
-            updateTransitions.mutate({ nodeId: entry.id, input: { transitions } });
         }
     };
 
@@ -125,9 +96,8 @@ export function FlowCanvas({ flowId, selectedNodeId, onSelectNode }: FlowCanvasP
                 nodes={nodes}
                 edges={layoutEdges as FlowRFEdge[]}
                 nodeTypes={nodeTypes}
+                nodesConnectable={false}
                 onNodesChange={onNodesChange}
-                onConnect={onConnect}
-                onEdgesDelete={onEdgesDelete}
                 onNodesDelete={handleNodesDelete}
                 onNodeClick={(_, node) => onSelectNode(node.id)}
                 onPaneClick={() => onSelectNode(null)}

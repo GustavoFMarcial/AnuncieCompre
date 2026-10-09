@@ -21,6 +21,7 @@ export type ValueObjectValidator =
 export interface NodeTransition {
     option: string;
     targetNodeId: string;
+    targetNodeNumber: number;
 }
 
 export interface ConversationNode {

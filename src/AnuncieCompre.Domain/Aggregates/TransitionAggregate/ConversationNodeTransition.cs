@@ -7,22 +7,24 @@ public class ConversationNodeTransition : BaseEntity
 {
     public Guid ConversationNodeId { get; private set; }
     public ConversationNode ConversationNode { get; private set; } = default!;
-    public string Key { get; private set; } = default!;
+    public string Option { get; private set; } = default!;
     public Guid TargetNodeId { get; private set; }
+    public int TargetNodeNumber { get; private set; }
 
     private ConversationNodeTransition() {}
 
-    private ConversationNodeTransition(ConversationNode conversationNode, string key, Guid targetNodeId)
+    private ConversationNodeTransition(ConversationNode conversationNode, string option, Guid targetNodeId, int targetNodeNumber)
     {
         ConversationNodeId = conversationNode.Id;
         ConversationNode = conversationNode;
-        Key = key;
+        Option = option;
         TargetNodeId = targetNodeId;
+        TargetNodeNumber = targetNodeNumber;
     }
 
-    public static Result<ConversationNodeTransition> Create(ConversationNode conversationNode, string key, Guid targetNodeId)
+    public static Result<ConversationNodeTransition> Create(ConversationNode conversationNode, string option, Guid targetNodeId, int TargetNodeNumber)
     {
-        ConversationNodeTransition transition = new(conversationNode, key, targetNodeId);
+        ConversationNodeTransition transition = new(conversationNode, option, targetNodeId, TargetNodeNumber);
         return Result<ConversationNodeTransition>.Success(transition, "Transition criado com sucesso");
     }
 }

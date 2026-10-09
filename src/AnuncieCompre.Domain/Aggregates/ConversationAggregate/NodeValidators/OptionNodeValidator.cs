@@ -11,7 +11,7 @@ public class OptionNodeValidator(List<string> options) : INodeValidator
 
     public NodeResult Validate(ConversationNode conversationNode, string message)
     {
-        ConversationNodeTransition? transition = conversationNode.Transitions.FirstOrDefault(t => t.Key == message);
+        ConversationNodeTransition? transition = conversationNode.Transitions.FirstOrDefault(t => t.Option == message);
 
         if (transition is null) return NodeResult.Failure("Opção inválida", conversationNode.Id);
 

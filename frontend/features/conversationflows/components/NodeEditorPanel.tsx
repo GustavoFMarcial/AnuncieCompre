@@ -41,6 +41,10 @@ interface NodeEditorPanelProps {
     onClose: () => void;
 }
 
+function transitionTargetLabel(n: ConversationNode): string {
+    return `${n.number} - ${n.message.slice(0, 24) || n.id}`;
+}
+
 export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPanelProps) {
     const updateNode = useUpdateNode(flowId);
     const deleteNode = useDeleteNode(flowId);
@@ -57,6 +61,8 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
     const [isFinal, setIsFinal] = useState(node?.isFinal ?? false);
     const [isInitial, setIsInitial] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
+    const [newTransitionOption, setNewTransitionOption] = useState("");
+    const [newTransitionTarget, setNewTransitionTarget] = useState("");
 
     const [errorsOpen, setErrorsOpen] = useState(false);
     const [errors, setErrors] = useState<string[]>([]);
@@ -122,13 +128,16 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
     };
 
     const addTransition = () => {
-        const targets = nodes.filter((n) => n.id !== node.id);
-        const firstTarget = targets[0]?.id ?? "";
-        const transitions = [...node.transitions, { option: "next", targetNodeId: firstTarget }];
+        const option = newTransitionOption.trim();
+        if (!option || !newTransitionTarget) return;
+        const transitions = [...node.transitions, { option, targetNodeId: newTransitionTarget }];
         updateTransitions.mutate({ nodeId: node.id, input: { transitions } });
+        setNewTransitionOption("");
     };
 
-    const otherNodes = nodes.filter((n) => n.id !== node.id);
+    const otherNodes = nodes
+        .filter((n) => n.id !== node.id)
+        .sort((a, b) => a.number - b.number);
 
     return (
         <div className="flex h-full w-80 flex-col border-l border-neutral-200 bg-white">
@@ -202,15 +211,10 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                 <Separator />
 
                 <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                        <Label>Transições</Label>
-                        <Button size="sm" variant="outline" onClick={addTransition} disabled={otherNodes.length === 0}>
-                            Adicionar
-                        </Button>
-                    </div>
+                    <Label>Transições</Label>
                     {node.transitions.length === 0 && (
                         <p className="text-xs text-neutral-400">
-                            Nenhuma transição. Arraste do node no canvas ou adicione aqui.
+                            Nenhuma transição. Adicione abaixo selecionando a opção e o node alvo.
                         </p>
                     )}
                     <div className="space-y-2">
@@ -229,7 +233,7 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                                 >
                                     {otherNodes.map((n) => (
                                         <option key={n.id} value={n.id}>
-                                            {n.message.slice(0, 24) || n.id}
+                                            {transitionTargetLabel(n)}
                                         </option>
                                     ))}
                                 </Select>
@@ -238,6 +242,47 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                                 </Button>
                             </div>
                         ))}
+                    </div>
+                    <div className="space-y-1.5 rounded-md border border-neutral-200 p-2">
+                        <div className="flex items-center gap-1.5">
+                            <Input
+                                className="h-8 w-16 text-xs"
+                                value={newTransitionOption}
+                                placeholder="1"
+                                onChange={(e) => setNewTransitionOption(e.target.value)}
+                            />
+                            <Select
+                                className="h-8 flex-1 text-xs"
+                                value={newTransitionTarget}
+                                onChange={(e) => setNewTransitionTarget(e.target.value)}
+                            >
+                                <option value="" disabled>
+                                    Node alvo
+                                </option>
+                                {otherNodes.map((n) => (
+                                    <option key={n.id} value={n.id}>
+                                        {transitionTargetLabel(n)}
+                                    </option>
+                                ))}
+                            </Select>
+                        </div>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="w-full"
+                            onClick={addTransition}
+                            disabled={
+                                otherNodes.length === 0 ||
+                                !newTransitionOption.trim() ||
+                                !newTransitionTarget ||
+                                updateTransitions.isPending
+                            }
+                        >
+                            Adicionar
+                        </Button>
+                        <p className="text-xs text-neutral-400">
+                            A opção é o que o cliente deve enviar para ir ao node alvo.
+                        </p>
                     </div>
                 </div>
             </div>
