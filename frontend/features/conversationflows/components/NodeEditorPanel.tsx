@@ -129,8 +129,12 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
 
     const addTransition = () => {
         const option = newTransitionOption.trim();
-        if (!option || !newTransitionTarget) return;
-        const transitions = [...node.transitions, { option, targetNodeId: newTransitionTarget }];
+        const targetNumber = nodes.find((n) => n.id === newTransitionTarget)?.number;
+        if (!option || !newTransitionTarget || targetNumber === undefined) return;
+        const transitions = [
+            ...node.transitions,
+            { option, targetNodeId: newTransitionTarget, targetNodeNumber: targetNumber },
+        ];
         updateTransitions.mutate({ nodeId: node.id, input: { transitions } });
         setNewTransitionOption("");
     };
