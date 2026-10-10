@@ -16,6 +16,7 @@ public class MenuService(IConversationFlowRepository _conversationFlowRepository
     public async Task<Result> UpdateMenuConversationNode()
     {
         List<ConversationFlow> conversationFlows = await conversationFlowRepository.GetPublishedFlowsWithNodesAndMenuNodeToListAsync();
+        ConversationFlow? menuFlow = conversationFlows.FirstOrDefault(cf => cf.IsMenu);
         List<ConversationFlow>  conversationFlowsNotMenu = conversationFlows.Where(cf => cf.IsMenu == false).ToList();
         List<ConversationNode> initialNodes = conversationFlows.SelectMany(cf => cf.Nodes.Where(n => n.IsInitial)).ToList();
         ConversationNode? menuNode = conversationFlows.SelectMany(cf => cf.Nodes).FirstOrDefault(n => n.IsMenu);
@@ -23,11 +24,15 @@ public class MenuService(IConversationFlowRepository _conversationFlowRepository
         string message = "Bem vindo, escolha uma opção para melhor te atender\n\n";
         List<string> options = [];
 
+        if (menuFlow is null)
+        {
+            menuFlow = ConversationFlow.Create(Name.Create("menuFlow").Value, "Menu de opções iniciais", FlowStatus.Published, true).Value;
+            conversationFlowRepository.Add(menuFlow);
+        }
+
         if (menuNode is null)
         {
-            ConversationFlow initialFlow = ConversationFlow.Create(Name.Create("InitialFlow").Value, "Menu de opções iniciais", FlowStatus.Published, true).Value;
-            menuNode = ConversationNode.Create(initialFlow, message, ValidationKind.Option, true, nodeTransitions, options!).Value;
-            conversationFlowRepository.Add(initialFlow);
+            menuNode = ConversationNode.Create(menuFlow, message, ValidationKind.Option, true, nodeTransitions, options!).Value;
             conversationNodeRepository.Add(menuNode);
         }
 
