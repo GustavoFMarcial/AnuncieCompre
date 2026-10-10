@@ -14,7 +14,7 @@ public class DeleteConversationNode(IConversationFlowRepository _conversationFlo
 
     public async Task<Result> Handle(Guid flowId, Guid nodeId)
     {
-        ConversationFlow? flow = await conversationFlowRepository.GetFlowWithNodesByIdAsync(flowId);
+        ConversationFlow? flow = await conversationFlowRepository.GetFlowByIdWithNodesWithTransitionsAsync(flowId);
 
         if (flow is null) return Result.Failure("ConversationFlow não encontrado");
 
@@ -23,11 +23,11 @@ public class DeleteConversationNode(IConversationFlowRepository _conversationFlo
         if (node is null) return Result.Failure("ConversationNode não encontrado");
 
         conversationNodeRepository.Delete(node);
-        List<ConversationNode> nodes = await conversationNodeRepository.GetConversationNodeByTransitionTargetNodeIdAsync(nodeId);
+        List<ConversationNode> nodesOriginTransition = flow.Nodes.Where(t => t.Transitions.Any(t => t.TargetNodeId == node.Id)).ToList();
         List<ConversationNode> nodesToRearrangeNumber = flow.Nodes.Where(n => n.Id != nodeId).OrderBy(n => n.Number).ToList();
         ConversationNode.RearrangeNumber(nodesToRearrangeNumber);
 
-        foreach (ConversationNode n in nodes)
+        foreach (ConversationNode n in nodesOriginTransition)
         {
             n.RemoveTransition(nodeId);
         }
