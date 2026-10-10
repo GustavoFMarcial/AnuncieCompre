@@ -24,7 +24,6 @@ public class DeleteConversationNode(IConversationFlowRepository _conversationFlo
 
         conversationNodeRepository.Delete(node);
         List<ConversationNode> nodesOriginTransition = flow.Nodes.Where(t => t.Transitions.Any(t => t.TargetNodeId == node.Id)).ToList();
-        // List<ConversationNode> nodes = await conversationNodeRepository.GetConversationNodeByTransitionTargetNodeIdAsync(nodeId);
         List<ConversationNode> nodesToRearrangeNumber = flow.Nodes.Where(n => n.Id != nodeId).OrderBy(n => n.Number).ToList();
         ConversationNode.RearrangeNumber(nodesToRearrangeNumber);
 
