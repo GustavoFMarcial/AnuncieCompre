@@ -3,11 +3,9 @@ import {
     Controls,
     MiniMap,
     ReactFlow,
-    type Node,
-    type NodeChange,
-    applyNodeChanges,
+    useNodesState,
 } from "@xyflow/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import "@xyflow/react/dist/style.css";
 
 import { Button } from "../../../shared/components/ui";
@@ -28,8 +26,6 @@ interface FlowCanvasProps {
 
 const nodeTypes = { flowNode: FlowNodeCard };
 
-type Position = { x: number; y: number };
-
 export function FlowCanvas({ flowId, selectedNodeId, onSelectNode }: FlowCanvasProps) {
     const { data: flow } = useConversationFlow(flowId);
     const createNode = useCreateNode(flowId);
@@ -40,30 +36,20 @@ export function FlowCanvas({ flowId, selectedNodeId, onSelectNode }: FlowCanvasP
         [flow?.nodes]
     );
 
-    const [positions, setPositions] = useState<Record<string, Position>>({});
+    const [nodes, setNodes, onNodesChange] = useNodesState<FlowRFNode>(layoutNodes);
 
-    const nodes = useMemo<FlowRFNode[]>(
-        () =>
-            layoutNodes.map((n) => ({
-                ...n,
-                position: positions[n.id] ?? n.position,
-                selected: n.id === selectedNodeId,
-            })),
-        [layoutNodes, positions, selectedNodeId]
-    );
-
-    const onNodesChange = (changes: NodeChange<Node>[]) => {
-        const next = applyNodeChanges(changes, nodes) as FlowRFNode[];
-        const override: Record<string, Position> = {};
-        for (const n of next) {
-            if (positions[n.id]?.x !== n.position.x || positions[n.id]?.y !== n.position.y) {
-                override[n.id] = n.position;
-            }
-        }
-        if (Object.keys(override).length > 0) {
-            setPositions((prev) => ({ ...prev, ...override }));
-        }
-    };
+    const lastSyncedNodesRef = useRef(flow?.nodes);
+    useEffect(() => {
+        if (lastSyncedNodesRef.current === flow?.nodes) return;
+        lastSyncedNodesRef.current = flow?.nodes;
+        setNodes((prev) => {
+            const prevById = new Map(prev.map((p) => [p.id, p]));
+            return layoutNodes.map((n) => {
+                const existing = prevById.get(n.id);
+                return existing ? { ...existing, ...n, position: existing.position } : n;
+            });
+        });
+    }, [flow?.nodes, layoutNodes, setNodes]);
 
     const handleAddNode = () => {
         createNode.mutate({
