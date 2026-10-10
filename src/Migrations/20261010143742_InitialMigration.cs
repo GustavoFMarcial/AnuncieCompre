@@ -128,8 +128,9 @@ namespace AnuncieCompre.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ConversationNodeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Key = table.Column<string>(type: "text", nullable: false),
+                    Option = table.Column<string>(type: "text", nullable: false),
                     TargetNodeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TargetNodeNumber = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
