@@ -279,12 +279,15 @@ namespace AnuncieCompre.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Key")
+                    b.Property<string>("Option")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Guid>("TargetNodeId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("TargetNodeNumber")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("timestamp with time zone");
