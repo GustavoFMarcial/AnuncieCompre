@@ -4,11 +4,13 @@ using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Web.DTO;
 using AnuncieCompre.Web.Extensions;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnuncieCompre.Web.Controllers;
 
 [ApiController]
+[EnableCors("Frontend")]
 [Route("api/[controller]")]
 public class ConversationsController : ControllerBase
 {
