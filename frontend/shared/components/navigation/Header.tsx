@@ -5,7 +5,6 @@ const titles: Record<string, string> = {
     "/": "Dashboard",
     "/flows": "Fluxos de conversa",
     "/conversations": "Conversas",
-    "/products": "Produtos",
     "/customers": "Clientes",
 };
 
