@@ -2,7 +2,6 @@ import {
     LayoutDashboard,
     Workflow,
     MessagesSquare,
-    Package,
     Users,
 } from "lucide-react";
 
@@ -18,7 +17,6 @@ export function Sidebar() {
                 <SidebarItem title="Dashboard" to="/" icon={<LayoutDashboard className="h-4 w-4" />} />
                 <SidebarItem title="Fluxos" to="/flows" icon={<Workflow className="h-4 w-4" />} />
                 <SidebarItem title="Conversas" to="/conversations" icon={<MessagesSquare className="h-4 w-4" />} />
-                <SidebarItem title="Produtos" to="/products" icon={<Package className="h-4 w-4" />} />
                 <SidebarItem title="Clientes" to="/customers" icon={<Users className="h-4 w-4" />} />
             </nav>
         </aside>

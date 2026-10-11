@@ -25,3 +25,24 @@ export interface Conversation {
     lastMessageAt: Date;
     messages: Message[];
 }
+
+export interface MessageDTO {
+    text: string;
+    senderType: string;
+    direction: string;
+    createdAt: string;
+}
+
+export interface ConversationDTO {
+    conversationId: string;
+    userId: string;
+    userPhone: string;
+    userName: string;
+    status: string;
+    attendant: string;
+    messages: MessageDTO[];
+}
+
+export interface GetConversationsResponse {
+    conversations: ConversationDTO[];
+}

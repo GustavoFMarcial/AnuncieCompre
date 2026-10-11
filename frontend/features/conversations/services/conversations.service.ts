@@ -1,72 +1,67 @@
 import { api } from "../../../shared/lib/api";
-import type { Conversation, ConversationStatusFilter } from "../types/conversation";
-import { mockStore } from "./mock-conversations";
+import type { Conversation, ConversationDTO, ConversationStatusFilter, GetConversationsResponse, Message } from "../types/conversation";
 
-const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const STATUS_MAP: Record<string, Conversation["status"]> = {
+    Nova: "JustCreated",
+    Aberta: "Open",
+    Encerrada: "Closed",
+};
 
-async function withFallback<T>(real: () => Promise<T>, fallback: () => Promise<T> | T): Promise<T> {
-    try {
-        return await real();
-    } catch (err) {
-        if (import.meta.env.DEV) {
-            console.warn("[conversations.service] usando mock fallback", err);
-        }
-        return await fallback();
-    }
-}
+const ATTENDANT_MAP: Record<string, Conversation["attendant"]> = {
+    Bot: "Bot",
+    Operador: "Operator",
+};
 
-function genId(): string {
-    return `m_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+const SENDER_TYPE_MAP: Record<string, Message["senderType"]> = {
+    Bot: "Bot",
+    Operador: "Operator",
+    Client: "Customer",
+};
+
+const DIRECTION_MAP: Record<string, Message["direction"]> = {
+    Entrada: "Incoming",
+    "Saída": "Outgoing",
+};
+
+function mapConversation(dto: ConversationDTO): Conversation {
+    const messages: Message[] = dto.messages.map((m, index) => ({
+        id: `${dto.conversationId}_${index}`,
+        conversationId: dto.conversationId,
+        text: m.text,
+        senderType: SENDER_TYPE_MAP[m.senderType] ?? "Customer",
+        direction: DIRECTION_MAP[m.direction] ?? "Outgoing",
+        createdAt: new Date(m.createdAt),
+    }));
+
+    const lastMessage = dto.messages[dto.messages.length - 1];
+
+    return {
+        id: dto.conversationId,
+        userId: dto.userId,
+        userName: dto.userName,
+        userPhone: dto.userPhone,
+        status: STATUS_MAP[dto.status] ?? "Open",
+        attendant: ATTENDANT_MAP[dto.attendant] ?? "Bot",
+        awaitingResponseNodeId: "",
+        lastMessageAt: lastMessage ? new Date(lastMessage.createdAt) : new Date(),
+        messages,
+    };
 }
 
 export const conversationsService = {
     async list(status: ConversationStatusFilter): Promise<Conversation[]> {
-        return withFallback(
-            async () =>
-                (await api.get<Conversation[]>("/api/conversations", {
-                    params: status === "all" ? undefined : { status },
-                })).data,
-            () => {
-                const list = structuredClone(mockStore.conversations) as Conversation[];
-                return status === "all"
-                    ? list
-                    : list.filter((c) => c.status === status);
-            }
-        );
+        const res = await api.get<GetConversationsResponse>("/api/conversations", {
+            params: status === "all" ? undefined : { status },
+        });
+        return res.data.conversations.map(mapConversation);
     },
 
     async getById(id: string): Promise<Conversation> {
-        return withFallback(
-            async () => (await api.get<Conversation>(`/api/conversations/${id}`)).data,
-            () => {
-                const found = mockStore.conversations.find((c) => c.id === id);
-                if (!found) throw new Error("Conversa não encontrada");
-                return structuredClone(found) as Conversation;
-            }
-        );
+        const res = await api.get<ConversationDTO>(`/api/conversations/${id}`);
+                return mapConversation(res.data);
     },
 
     async sendMessage(id: string, text: string): Promise<void> {
-        return withFallback(
-            async () => {
-                await api.post(`/api/conversations/${id}/messages`, { text });
-            },
-            async () => {
-                await wait(150);
-                const conv = mockStore.conversations.find((c) => c.id === id);
-                if (!conv) throw new Error("Conversa não encontrada");
-                conv.messages.push({
-                    id: genId(),
-                    conversationId: id,
-                    text,
-                    senderType: "Operator",
-                    direction: "Outgoing",
-                    createdAt: new Date(),
-                });
-                conv.lastMessageAt = new Date();
-                conv.attendant = "Operator";
-                conv.status = "Open";
-            }
-        );
+        await api.post(`/api/conversations/${id}/messages`, JSON.stringify(text));
     },
-};
+}
