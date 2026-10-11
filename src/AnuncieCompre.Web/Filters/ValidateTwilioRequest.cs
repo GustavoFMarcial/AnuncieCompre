@@ -20,18 +20,27 @@ namespace AnuncieCompre.Web.Filters
 
     internal class ValidateTwilioRequestFilter : IAsyncActionFilter
     {
+        private readonly bool _isTestEnvironment;
+        private readonly string _authToken;
         private readonly RequestValidator _requestValidator;
 
         public ValidateTwilioRequestFilter(IConfiguration configuration)
         {
-            var authToken = configuration["Twilio:AuthToken"] ?? throw new Exception("'Twilio:AuthToken' not configured.");
-            _requestValidator = new RequestValidator(authToken);
+            _isTestEnvironment = configuration.GetValue<bool>("IsTestEnvironment");
+            _authToken = configuration["Twilio:AuthToken"] ?? throw new Exception("'Twilio:AuthToken' not configured.");
+            _requestValidator = new RequestValidator(_authToken);
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var httpContext = context.HttpContext;
             var request = httpContext.Request;
+
+            if (_isTestEnvironment)
+            {
+                await next();
+                return;
+            }
 
             var requestUrl = $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}";
             Dictionary<string, string> parameters = null!;

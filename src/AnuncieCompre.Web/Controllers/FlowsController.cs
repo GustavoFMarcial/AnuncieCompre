@@ -6,11 +6,13 @@ using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.Web.DTO;
 using AnuncieCompre.Web.Extensions;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnuncieCompre.Web.Controllers;
 
 [ApiController]
+[EnableCors("Frontend")]
 [Route("api/[controller]")]
 public class FlowsController : ControllerBase
 {
