@@ -13,8 +13,6 @@ public record EditConversationNodeRequest
     [Required(ErrorMessage = "Validador é obrigatório")]
     public string ValueObjectValidator { get; set; } = default!;
 
-    public List<string> Options { get; set; } = [];
-
     [Required(ErrorMessage = "Informar se node é final é obrigatório")]
     public bool IsFinal { get; set; }
     [Required(ErrorMessage = "Informar se node é inicial é obrigatório")]

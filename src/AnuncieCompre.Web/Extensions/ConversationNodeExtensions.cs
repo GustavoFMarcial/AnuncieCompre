@@ -36,7 +36,6 @@ public static class ConversationNodeExtensions
                 ValueObjectValidator.None => "none",
                 _ => "none",
             },
-            Options = c.Options,
             Transitions = c.Transitions.Select(t => new Transiton
             {
                 Option = t.Option,
@@ -96,7 +95,6 @@ public static class ConversationNodeExtensions
                 ValueObjectValidator.None => "none",
                 _ => "none",
             },
-            Options = conversationNode.Value.Options,
             IsFinal = conversationNode.Value.IsFinal,
         };
     }

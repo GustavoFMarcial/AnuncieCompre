@@ -24,11 +24,9 @@ import {
     useUpdateNode,
     useUpdateTransitions,
 } from "../hooks/useConversationFlows";
-import { OptionsEditor } from "./OptionsEditor";
 import { ValidationKindSelect } from "./ValidationKindSelect";
 import {
     finalKindsRequiringValueValidator,
-    kindsRequiringOptions,
     valueObjectValidatorOptions,
 } from "../utils/validation-options";
 import { AxiosError } from "axios";
@@ -57,7 +55,6 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
     const [valueObjectValidator, setValueObjectValidator] = useState<ValueObjectValidator>(
         node?.valueObjectValidator ?? "none"
     );
-    const [options, setOptions] = useState<string[]>(node?.options ?? []);
     const [isFinal, setIsFinal] = useState(node?.isFinal ?? false);
     const [isInitial, setIsInitial] = useState(node?.isInitial ?? false);
     const [confirmDelete, setConfirmDelete] = useState(false);
@@ -77,8 +74,6 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
 
     const showValueValidator =
         validationKind && finalKindsRequiringValueValidator.includes(validationKind);
-    const showOptions =
-        validationKind && kindsRequiringOptions.includes(validationKind);
 
     const handleSave = () => {
         updateNode.mutate({
@@ -87,7 +82,6 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                 message,
                 validationKind: isFinal ? "final" : validationKind,
                 valueObjectValidator: showValueValidator ? valueObjectValidator : "none",
-                options: showOptions ? options.filter((o) => o.trim() !== "") : [],
                 isFinal,
                 isInitial,
             },
@@ -181,7 +175,6 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                             } else {
                                 setIsFinal(false);
                                 setValidationKind(kind);
-                                if (kind === null) setOptions([]);
                             }
                         }}
                     />
@@ -202,13 +195,6 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                                 </option>
                             ))}
                         </Select>
-                    </div>
-                )}
-
-                {showOptions && (
-                    <div className="space-y-1.5">
-                        <Label>Opções</Label>
-                        <OptionsEditor options={options} onChange={setOptions} />
                     </div>
                 )}
 
