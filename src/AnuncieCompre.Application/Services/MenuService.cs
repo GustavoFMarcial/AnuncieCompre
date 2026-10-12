@@ -22,7 +22,6 @@ public class MenuService(IConversationFlowRepository _conversationFlowRepository
         ConversationNode? menuNode = conversationFlows.SelectMany(cf => cf.Nodes).FirstOrDefault(n => n.IsMenu);
         List<ConversationNodeTransition> nodeTransitions = [];
         string message = "Bem vindo, escolha uma opção para melhor te atender\n\n";
-        List<string> options = [];
 
         if (menuFlow is null)
         {
@@ -32,7 +31,7 @@ public class MenuService(IConversationFlowRepository _conversationFlowRepository
 
         if (menuNode is null)
         {
-            menuNode = ConversationNode.Create(menuFlow, message, ValidationKind.Option, true, nodeTransitions, options!).Value;
+            menuNode = ConversationNode.Create(menuFlow, message, ValidationKind.Option, true, nodeTransitions).Value;
             conversationNodeRepository.Add(menuNode);
         }
 
@@ -46,12 +45,10 @@ public class MenuService(IConversationFlowRepository _conversationFlowRepository
             Result<ConversationNodeTransition> result = ConversationNodeTransition.Create(menuNode, (i + 1).ToString(), initialNodes[i].Id, i + 1);
             if (!result.IsSuccess) return Result.Failure(result.Message);
             nodeTransitions.Add(result.Value);
-            options.Add((i + 1).ToString());
         }
 
         menuNode.SetTransitions(nodeTransitions);
         menuNode.SetMessage(message);
-        menuNode.SetOptions(options);
         return Result.Success("Menu atualizado com sucesso");
     }
 }

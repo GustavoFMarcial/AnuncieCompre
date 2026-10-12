@@ -29,8 +29,8 @@ Um node pode definir, por exemplo:
 * Mensagem enviada ao usuário
 * Tipo de validação da resposta
 * Value Object Validator
-* Opções disponíveis
 * Transições para outros nodes
+* Se o node representa o inicio do fluxo
 * Se o node representa o final do fluxo
 
 Os nodes podem ser conectados entre si, permitindo construir diferentes fluxos de atendimento sem precisar implementar cada conversa diretamente no código.

@@ -19,7 +19,6 @@ public class ConversationNode : BaseEntity
     public bool IsInitial { get; private set; } = false;
     public bool IsFinal { get; private set; } = false;
     public bool IsMenu { get; private set; } = false;
-    public List<string> Options { get; private set; } = [];
 
     private ConversationNode() { }
 
@@ -30,7 +29,7 @@ public class ConversationNode : BaseEntity
         Number = number;
     }
 
-    private ConversationNode(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<ConversationNodeTransition> transitions, List<string> options)
+    private ConversationNode(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<ConversationNodeTransition> transitions)
     {
         ConversationFlowId = conversationFlow.Id;
         ConversationFlow = conversationFlow;
@@ -38,7 +37,6 @@ public class ConversationNode : BaseEntity
         ValidationKind = validationKind;
         IsMenu = isMenu;
         Transitions = transitions;
-        Options = options;
     }
 
     public static Result<ConversationNode> Create(ConversationFlow conversationFlow)
@@ -49,9 +47,9 @@ public class ConversationNode : BaseEntity
         return Result<ConversationNode>.Success(new ConversationNode(conversationFlow, number), "ConversationNode criado com sucesso");
     }
 
-    public static Result<ConversationNode> Create(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<ConversationNodeTransition> transitions, List<string> options)
+    public static Result<ConversationNode> Create(ConversationFlow conversationFlow, string message, ValidationKind validationKind, bool isMenu, List<ConversationNodeTransition> transitions)
     {
-        return Result<ConversationNode>.Success(new ConversationNode(conversationFlow, message, validationKind, isMenu, transitions, options), "ConversationNode criado com sucesso");
+        return Result<ConversationNode>.Success(new ConversationNode(conversationFlow, message, validationKind, isMenu, transitions), "ConversationNode criado com sucesso");
     }
 
     public Result Edit(EditConversationNodeInput input)
@@ -72,7 +70,6 @@ public class ConversationNode : BaseEntity
         ValueObjectValidator = input.ValueObjectValidator;
         IsInitial = input.IsInitial;
         IsFinal = input.IsFinal;
-        Options = input.Options;
 
         return Result.Success("ConversationNode editado com sucesso");
     }
@@ -109,7 +106,6 @@ public class ConversationNode : BaseEntity
         if (ValidationKind is ValidationKind.Validation && Transitions.Count != 1) errors.Add($"Node: {Number} - Node de validação só pode ter uma transição");
         if (ValidationKind is ValidationKind.Option && Transitions.Count <= 1) errors.Add($"Node: {Number} - Node de opção não pode ter menos de uma transição");
         if (ValidationKind is ValidationKind.Confirmation && Transitions.Count <= 1) errors.Add($"Node: {Number} - Node de confirmação não pode ter só uma transição");
-        if (Options?.Count != Transitions.Count) errors.Add($"Node: {Number} - A quantia de opções deve ser igual a quantia de transições");
 
         if (errors.Count > 0) return Result.Failure(errors);
 
@@ -124,8 +120,6 @@ public class ConversationNode : BaseEntity
         if (ValidationKind is not ValidationKind.Final && IsFinal is true) errors.Add($"Node: {Number} - Apenas node com validação final pode ser marcado como final");
         if (ValidationKind is ValidationKind.Validation && ValueObjectValidator is ValueObjectValidator.None) errors.Add($"Node: {Number} - Node de validação deve possuir um validador");
         if (ValueObjectValidator is not ValueObjectValidator.None && ValidationKind is not ValidationKind.Validation) errors.Add($"Node: {Number} - Apenas node de validação deve possuir um validador");
-        if (Options.Count > 0 && ValidationKind is ValidationKind.Final) errors.Add($"Node: {Number} - Apenas nodes de confirmação ou opção podem ter opções");
-        if (Options.Count > 0 && ValidationKind is ValidationKind.Validation) errors.Add($"Node: {Number} - Apenas nodes de confirmação ou validação podem ter opções");
 
         if (errors.Count > 0) return Result.Failure(errors);
 
@@ -142,12 +136,6 @@ public class ConversationNode : BaseEntity
     {
         if (IsMenu is false) return;
         Message = message;
-    }
-
-    public void SetOptions(List<string> options)
-    {
-        if (IsMenu is false) return;
-        Options = options!;
     }
 
     public static void RearrangeNumber(List<ConversationNode> nodes)

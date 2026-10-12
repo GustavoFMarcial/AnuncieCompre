@@ -17,7 +17,7 @@ public class NodeValidatorFactory()
         {
             ValidationKind.Final => new FinalNodeValidator(),
             ValidationKind.None => new NoneNodeValidator(),
-            ValidationKind.Option => new OptionNodeValidator(node.Options),
+            ValidationKind.Option => new OptionNodeValidator(),
             ValidationKind.Validation => new ValidationNodeValidator(valueObjectValidator),
             _ => throw new NotImplementedException(),
         };

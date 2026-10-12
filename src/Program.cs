@@ -1,8 +1,6 @@
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
-using AnuncieCompre.Domain.Conversation.Flows;
 using AnuncieCompre.Infra.Data;
 using AnuncieCompre.Infra.MessageSender;
-using AnuncieCompre.Infra.Providers;
 using AnuncieCompre.Infra.Repositories;
 using AnuncieCompre.Application.BackgroundServices;
 using AnuncieCompre.Application.Dispatchers;
@@ -47,7 +45,6 @@ builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IConversationFlowRepository, ConversationFlowRepository>();
 builder.Services.AddScoped<IConversationNodeRepository, ConversationNodeRepository>();
 builder.Services.AddScoped<IMessageProviderReferenceRepository, MessageProviderReferenceRepository>();
-builder.Services.AddScoped<ConversationFlowProvider>();
 builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCase>();
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
 builder.Services.AddScoped<IDomainEventHandler<CustomerDoesNotConfirmedRegistrationDomainEvent>, CustomerDoesNotConfirmedRegistrationDomainEventHandler>();
