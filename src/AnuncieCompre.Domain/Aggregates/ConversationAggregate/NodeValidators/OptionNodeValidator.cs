@@ -5,10 +5,8 @@ using AnuncieCompre.Domain.Interfaces;
 
 namespace AnuncieCompre.Domain.Conversation.NodeValidators;
 
-public class OptionNodeValidator(List<string> options) : INodeValidator
+public class OptionNodeValidator() : INodeValidator
 {
-    private readonly List<string> Options = options;
-
     public NodeResult Validate(ConversationNode conversationNode, string message)
     {
         ConversationNodeTransition? transition = conversationNode.Transitions.FirstOrDefault(t => t.Option == message);

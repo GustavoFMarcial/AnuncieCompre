@@ -29,7 +29,6 @@ export interface ConversationNode {
     message: string;
     validationKind: NodeValidationKind | null;
     valueObjectValidator: ValueObjectValidator;
-    options: string[];
     transitions: NodeTransition[];
     isFinal: boolean;
     isInitial: boolean;
@@ -79,7 +78,6 @@ export interface CreateNodeInput {
     message: string;
     validationKind: NodeValidationKind | null;
     valueObjectValidator: ValueObjectValidator;
-    options: string[];
     isFinal: boolean;
     isInitial: boolean;
 }

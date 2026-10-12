@@ -33,4 +33,3 @@ export function valueObjectValidatorOptions(): { value: ValueObjectValidator; la
 }
 
 export const finalKindsRequiringValueValidator: NodeValidationKind[] = ["validation", "optionValidation"];
-export const kindsRequiringOptions: NodeValidationKind[] = ["option", "confirmation", "optionValidation"];

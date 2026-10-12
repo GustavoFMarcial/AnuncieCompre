@@ -56,7 +56,6 @@ export function FlowCanvas({ flowId, selectedNodeId, onSelectNode }: FlowCanvasP
             message: "Nova mensagem do bot",
             validationKind: null,
             valueObjectValidator: "none",
-            options: [],
             isFinal: false,
             isInitial: false,
         });

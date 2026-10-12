@@ -31,7 +31,6 @@ public static class EditConversationNodeRequestExtensions
                 "none" => ValueObjectValidator.None,
                 _ => ValueObjectValidator.None,
             },
-            Options = request.Options,
             IsFinal = request.IsFinal,
             IsInitial = request.IsInitial,
         };
