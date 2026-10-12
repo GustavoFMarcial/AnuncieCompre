@@ -6,7 +6,7 @@ interface MessageBubbleProps {
 }
 
 function isOwn(message: Message): boolean {
-    return message.senderType === "Operator";
+    return message.direction === "Outgoing";
 }
 
 function senderLabel(message: Message): string {
@@ -22,20 +22,22 @@ function senderLabel(message: Message): string {
 
 export function MessageBubble({ message }: MessageBubbleProps) {
     const own = isOwn(message);
+    const isOperator = message.senderType === "Operator";
 
     return (
         <div className={cn("flex", own ? "justify-end" : "justify-start")}>
             <div
                 className={cn(
                     "max-w-[75%] rounded-2xl px-3 py-2 shadow-sm",
-                    own
-                        ? "rounded-br-sm bg-neutral-900 text-white"
+                    own ? "rounded-br-sm" : "rounded-bl-sm",
+                    isOperator
+                        ? "bg-neutral-900 text-white"
                         : message.senderType === "Customer"
-                            ? "rounded-bl-sm bg-white text-neutral-900"
-                            : "rounded-bl-sm bg-neutral-100 text-neutral-900"
+                            ? "bg-white text-neutral-900"
+                            : "bg-neutral-100 text-neutral-900"
                 )}
             >
-                {!own && (
+                {!isOperator && (
                     <div className="mb-0.5 text-xs font-semibold text-neutral-500">
                         {senderLabel(message)}
                     </div>
@@ -44,7 +46,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                 <div
                     className={cn(
                         "mt-1 text-right text-[10px]",
-                        own ? "text-neutral-300" : "text-neutral-400"
+                        isOperator ? "text-neutral-300" : "text-neutral-400"
                     )}
                 >
                     {message.createdAt.toLocaleTimeString("pt-BR", {
