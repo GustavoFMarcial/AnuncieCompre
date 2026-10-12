@@ -15,7 +15,7 @@ public class EditConversationNodeTransitions(IConversationFlowRepository _conver
 
     public async Task<Result> Handle(Guid flowId, Guid nodeId, EditConversationNodeTransitionInput input)
     {
-        ConversationFlow? flow = await conversationFlowRepository.GetFlowWithNodesByIdAsync(flowId);
+        ConversationFlow? flow = await conversationFlowRepository.GetFlowByIdWithNodesWithTransitionsAsync(flowId);
 
         if (flow is null) return Result.Failure("ConversationFlow não encontrado");
 

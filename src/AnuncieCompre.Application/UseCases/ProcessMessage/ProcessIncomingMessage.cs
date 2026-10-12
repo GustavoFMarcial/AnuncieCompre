@@ -48,7 +48,7 @@ public class ProcessIncomingMessageUseCase(
         }
 
         ConversationNode awaitingResponseNode = await conversationNodeRepository.GetNodeOrMenuByIdAsync(conversation.AwaitingResponseNodeId);
-        INodeValidator nodeValidator = NodeValidatorFactory.Handle(awaitingResponseNode);
+        INodeValidator nodeValidator = NodeValidatorFactory.Generate(awaitingResponseNode);
         NodeResult result = nodeValidator.Validate(awaitingResponseNode, incomingMessage.Content);
 
         if (result.IsSuccess is true)

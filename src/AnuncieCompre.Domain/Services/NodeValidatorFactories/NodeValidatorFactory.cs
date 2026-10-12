@@ -9,7 +9,7 @@ namespace AnuncieCompre.Domain.Services.NodeValidatorFactories;
 
 public class NodeValidatorFactory()
 {
-    public static INodeValidator Handle(ConversationNode node)
+    public static INodeValidator Generate(ConversationNode node)
     {
         IValueObjectValidator valueObjectValidator = ValueObjectFactory.Handle(node.ValueObjectValidator);
 
