@@ -30,10 +30,11 @@ function FlowNodeCardBase({ data, selected }: NodeProps<FlowRFNode>) {
             className={cn(
                 "relative w-60 rounded-lg border bg-white px-3 py-2 shadow-sm transition-shadow",
                 selected ? "border-neutral-900 shadow-md ring-2 ring-neutral-900" : "border-neutral-200",
-                data.isFinal && "border-green-300 bg-green-50"
+                data.isInitial && "border-green-300 bg-green-50",
+                data.isFinal && "border-blue-300 bg-blue-50",
             )}
         >
-            {!data.isFinal && (
+            {!data.isFinal && !data.isInitial && (
                 <Handle type="target" position={Position.Top} className="!h-3 !w-3 !bg-neutral-400" />
             )}
 
@@ -55,7 +56,7 @@ function FlowNodeCardBase({ data, selected }: NodeProps<FlowRFNode>) {
                 <span className="line-clamp-3">{preview || "Node vazio"}</span>
             </p>
 
-            {!data.isFinal && (
+            {!data.isFinal && !data.isInitial && (
                 <Handle
                     type="source"
                     position={Position.Bottom}

@@ -12,6 +12,7 @@ export type FlowRFNode = Node<{
     message: string;
     validationKind: string | null;
     isFinal: boolean;
+    isInitial: boolean;
 }>;
 
 export type FlowRFEdge = Edge;
@@ -31,6 +32,7 @@ export function buildGraphData(nodes: ConversationNode[]) {
             message: n.message,
             validationKind: n.validationKind,
             isFinal: n.isFinal,
+            isInitial: n.isInitial,
         },
     }));
 
