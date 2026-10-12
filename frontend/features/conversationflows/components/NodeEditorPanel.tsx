@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Trash2, X, Save, Flag } from "lucide-react";
+import { Trash2, X, Save } from "lucide-react";
 
 import {
     Badge,
@@ -59,7 +59,7 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
     );
     const [options, setOptions] = useState<string[]>(node?.options ?? []);
     const [isFinal, setIsFinal] = useState(node?.isFinal ?? false);
-    const [isInitial, setIsInitial] = useState(false);
+    const [isInitial, setIsInitial] = useState(node?.isInitial ?? false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [newTransitionOption, setNewTransitionOption] = useState("");
     const [newTransitionTarget, setNewTransitionTarget] = useState("");
@@ -307,8 +307,7 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                             }
                         }}
                     >
-                        <Flag className="h-4 w-4" />
-                        {isInitial ? "Inicial✅" : "inicial"}
+                        {isInitial ? "Inicial✅" : "Inicial"}
                     </Button>
                     <Button
                         variant="outline"
@@ -322,7 +321,6 @@ export function NodeEditorPanel({ flowId, node, nodes, onClose }: NodeEditorPane
                             }
                         }}
                     >
-                        <Flag className="h-4 w-4" />
                         {isFinal ? "Final✅" : "Final"}
                     </Button>
                     <Button
