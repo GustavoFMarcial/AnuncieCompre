@@ -8,9 +8,9 @@ interface StatusFilterProps {
 
 const options: { value: ConversationStatusFilter; label: string }[] = [
     { value: "all", label: "Todas" },
-    { value: "Open", label: "Em aberto" },
-    { value: "JustCreated", label: "Novas" },
-    { value: "Closed", label: "Encerradas" },
+    { value: "open", label: "Em aberto" },
+    { value: "justcreated", label: "Novas" },
+    { value: "closed", label: "Encerradas" },
 ];
 
 export function StatusFilter({ value, onChange }: StatusFilterProps) {

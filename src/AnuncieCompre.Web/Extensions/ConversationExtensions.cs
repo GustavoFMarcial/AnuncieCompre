@@ -14,35 +14,13 @@ public static class ConversationExtensions
             UserId = c.CustomerId,
             UserPhone = c.Customer.Phone.Value,
             UserName = c.Customer.Name?.Value ?? "",
-            Status = c.Status switch
-            {
-                ConversationStatus.Closed => "Encerrada",
-                ConversationStatus.Open => "Aberta",
-                ConversationStatus.JustCreated => "Nova",
-                _ => "",
-            },
-            Attendant = c.Attendant switch
-            {
-                ConversationAttendant.Operator => "Operador",
-                ConversationAttendant.Bot => "Bot",
-                _ => "",
-            },
+            Status = c.Status.ToString().ToLower(),
+            Attendant = c.Attendant.ToString().ToLower(),
             Messages = c.Messages.Select(m => new MessageDTO
             {
                 Text = m.Text,
-                SenderType = m.SenderType switch
-                {
-                    MessageSenderType.Bot => "Bot",
-                    MessageSenderType.Operator => "Operador",
-                    MessageSenderType.Customer => "Client",
-                    _ => "",
-                },
-                Direction = m.Direction switch
-                {
-                    MessageDirection.Incoming => "Entrada",
-                    MessageDirection.Outgoing => "Saída",
-                    _ => "",
-                },
+                SenderType = m.SenderType.ToString().ToLower(),
+                Direction = m.Direction.ToString().ToLower(),
                 CreatedAt = m.CreatedAt,
             }).ToList(),
         }).ToList();
@@ -61,35 +39,13 @@ public static class ConversationExtensions
             UserId = conversation.CustomerId,
             UserPhone = conversation.Customer.Phone.Value,
             UserName = conversation.Customer.Name?.Value ?? "",
-            Status = conversation.Status switch
-            {
-                ConversationStatus.Closed => "Encerrada",
-                ConversationStatus.Open => "Aberta",
-                ConversationStatus.JustCreated => "Nova",
-                _ => "",
-            },
-            Attendant = conversation.Attendant switch
-            {
-                ConversationAttendant.Operator => "Operador",
-                ConversationAttendant.Bot => "Bot",
-                _ => "",
-            },
+            Status = conversation.Status.ToString().ToLower(),
+            Attendant = conversation.Attendant.ToString().ToLower(),
             Messages = conversation.Messages.Select(m => new MessageDTO
             {
                 Text = m.Text,
-                SenderType = m.SenderType switch
-                {
-                    MessageSenderType.Bot => "Bot",
-                    MessageSenderType.Operator => "Operador",
-                    MessageSenderType.Customer => "Client",
-                    _ => "",
-                },
-                Direction = m.Direction switch
-                {
-                    MessageDirection.Incoming => "Entrada",
-                    MessageDirection.Outgoing => "Saída",
-                    _ => "",
-                },
+                SenderType = m.SenderType.ToString().ToLower(),
+                Direction = m.Direction.ToString().ToLower(),
                 CreatedAt = m.CreatedAt,
             }).ToList(), 
         };

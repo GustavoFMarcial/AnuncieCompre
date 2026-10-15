@@ -1,7 +1,7 @@
-export type ConversationStatus = "JustCreated" | "Open" | "Closed";
-export type ConversationAttendant = "Bot" | "Operator";
-export type MessageSenderType = "Operator" | "Bot" | "Customer";
-export type MessageDirection = "Incoming" | "Outgoing";
+export type ConversationStatus = "justcreated" | "open" | "closed";
+export type ConversationAttendant = "bot" | "operator";
+export type MessageSenderType = "operator" | "bot" | "customer";
+export type MessageDirection = "incoming" | "outgoing";
 
 export type ConversationStatusFilter = "all" | ConversationStatus;
 

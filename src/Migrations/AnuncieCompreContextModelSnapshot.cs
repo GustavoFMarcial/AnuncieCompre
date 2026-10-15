@@ -200,10 +200,6 @@ namespace AnuncieCompre.Migrations
                     b.Property<int>("Number")
                         .HasColumnType("integer");
 
-                    b.PrimitiveCollection<List<string>>("Options")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
                     b.Property<DateTime>("UpdateAt")
                         .HasColumnType("timestamp with time zone");
 
