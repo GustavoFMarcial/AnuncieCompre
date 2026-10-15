@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -58,7 +57,6 @@ namespace AnuncieCompre.Migrations
                     IsInitial = table.Column<bool>(type: "boolean", nullable: false),
                     IsFinal = table.Column<bool>(type: "boolean", nullable: false),
                     IsMenu = table.Column<bool>(type: "boolean", nullable: false),
-                    Options = table.Column<List<string>>(type: "text[]", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },

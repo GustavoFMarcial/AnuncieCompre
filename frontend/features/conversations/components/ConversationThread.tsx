@@ -19,7 +19,7 @@ export function ConversationThread({ conversation }: ConversationThreadProps) {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [conversation.messages.length]);
 
-    const disabled = conversation.status === "Closed";
+    const disabled = conversation.status === "closed";
 
     return (
         <div className="flex h-full flex-col">
@@ -37,7 +37,7 @@ export function ConversationThread({ conversation }: ConversationThreadProps) {
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    {conversation.attendant === "Operator" ? (
+                    {conversation.attendant === "operator" ? (
                         <Badge variant="secondary" className="gap-1">
                             <Headset className="h-3 w-3" /> Operador
                         </Badge>
@@ -46,11 +46,11 @@ export function ConversationThread({ conversation }: ConversationThreadProps) {
                             <Bot className="h-3 w-3" /> Bot
                         </Badge>
                     )}
-                    {conversation.status === "Closed" && (
+                    {conversation.status === "closed" && (
                         <Badge variant="destructive">Encerrada</Badge>
                     )}
-                    {conversation.status === "Open" && <Badge variant="success">Aberta</Badge>}
-                    {conversation.status === "JustCreated" && (
+                    {conversation.status === "open" && <Badge variant="success">Aberta</Badge>}
+                    {conversation.status === "justcreated" && (
                         <Badge variant="warning">Nova</Badge>
                     )}
                 </div>
