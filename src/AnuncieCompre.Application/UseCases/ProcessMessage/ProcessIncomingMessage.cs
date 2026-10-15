@@ -25,13 +25,11 @@ public class ProcessIncomingMessageUseCase(
     private readonly IConversationRepository conversationRepository = _conversationRepository;
     private readonly IConversationNodeRepository conversationNodeRepository = _conversationNodeRepository;
     private readonly IMessageRepository messageRepository = _messageRepository;
-    // private readonly EventDispatcher dispatcher = _dispatcher;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
         Conversation? conversation = await conversationRepository.GetNotClosedConversationBySenderPhoneWithCustomerAsync(incomingMessage.SenderPhone);
-        Collection<string> response = [];
 
         if (conversation is null)
         {
@@ -49,35 +47,14 @@ public class ProcessIncomingMessageUseCase(
 
         ConversationNode awaitingResponseNode = await conversationNodeRepository.GetNodeOrMenuWithTransitionsByIdAsync(conversation.AwaitingResponseNodeId);
         INodeValidator nodeValidator = NodeValidatorFactory.Generate(awaitingResponseNode);
-        NodeResult result = nodeValidator.Validate(awaitingResponseNode, incomingMessage.Content);
+        ReadOnlyCollection<string> response = conversation.HandleMessage(nodeValidator, awaitingResponseNode, incomingMessage.Content);
 
-        if (result.IsSuccess is true)
-        {
-            ConversationNode? nextNode = await conversationNodeRepository.GetByIdAsync(result.NextStepId);
-
-            if (nextNode is null)
-            {
-                response.Add("Próximo node não encontrado");
-                return response.AsReadOnly();
-            }
-            
-            response.Add(nextNode.Message);
-        }
-        else
-        {
-            response.Add(result.Message);
-        }
-
-        conversation.UpdateAwaitingResponseNodeId(result.NextStepId);
-
-        // await dispatcher.DispatchAsync(conversation);
-
-        Message userMessage = Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming);
+        Message customerMessage = Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming);
         Message botMessage = Message.Create(conversation, response[0], MessageSenderType.Bot, MessageDirection.Outgoing);
-        messageRepository.Add(userMessage);
+        messageRepository.Add(customerMessage);
         messageRepository.Add(botMessage);
 
         await unitOfWork.SaveChangesAsync();
-        return response.AsReadOnly();
+        return response;
     }
 }

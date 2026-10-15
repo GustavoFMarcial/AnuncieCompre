@@ -5,6 +5,7 @@ using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Aggregates.MessageAggregate;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
+using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
@@ -32,34 +33,21 @@ public class Conversation : BaseEntity
         return new Conversation(user);
     }
 
-    // public ReadOnlyCollection<string> HandleMessage(Guid nextStepId, string message, Customer customer)
-    // {
-    //     DateTimeLastMessage = DateTime.UtcNow;
-
-    //     if (Status == ConversationStatus.JustCreated)
-    //     {
-    //         Status = ConversationStatus.Menu;
-    //         AwaitingResponseNodeId = awaitingResponseNode.Id;
-    //         return [awaitingResponseNode.Message];
-    //     }
-
-    //     NodeResult result = awaitingResponseNode.NodeValidator.Validate(awaitingResponseNode, message);
-
-    //     if (result.IsSuccess && result.ProcDomainEvent && awaitingResponseNode.DomainEventFactory.Count > 0)
-    //     {
-    //         foreach (var domainEventFactory in awaitingResponseNode.DomainEventFactory)
-    //         {
-    //             AddDomainEvent(domainEventFactory.Handle(customer, result.Value));
-    //         }
-    //     }
-
-    //     AwaitingResponseNodeId = result.NextStepId;
-    //     return [result.Message];
-    // }
-
-    public void UpdateAwaitingResponseNodeId(Guid id)
+    public ReadOnlyCollection<string> HandleMessage(INodeValidator nodeValidator, ConversationNode awaitingResponseNode, string message)
     {
-        AwaitingResponseNodeId = id;
+        DateTimeLastMessage = DateTime.UtcNow;
+
+        if (Status == ConversationStatus.JustCreated)
+        {
+            Status = ConversationStatus.Open;
+            AwaitingResponseNodeId = awaitingResponseNode.Id;
+            return [awaitingResponseNode.Message];
+        }
+
+        NodeResult result = nodeValidator.Validate(awaitingResponseNode, message);
+
+        AwaitingResponseNodeId = result.NextStepId;
+        return [result.Message];
     }
 
     public void Close()
