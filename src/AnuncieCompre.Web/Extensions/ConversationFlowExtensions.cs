@@ -14,12 +14,7 @@ public static class ConversationFlowExtensions
             Id = conversationFlow.Id,
             Name = conversationFlow.Name.Value,
             Description = conversationFlow.Description ?? "",
-            Status = conversationFlow.Status switch
-            {
-                FlowStatus.Published => "published",
-                FlowStatus.Draft => "draft",
-                _ => "draft",
-            },
+            Status = conversationFlow.Status.ToString().ToLower(),
             Steps = conversationFlow.Nodes.Count,
             UpdatedAt = conversationFlow.UpdateAt,
             Nodes = conversationFlow.Nodes.ToNodeDTO(),
@@ -33,7 +28,7 @@ public static class ConversationFlowExtensions
             Id = cf.Id,
             Name = cf.Name.Value,
             Description = cf.Description,
-            Status = cf.Status.ToString(),
+            Status = cf.Status.ToString().ToLower(),
             Steps = cf.Nodes.Count > 0 ? cf.Nodes.Count : 0,
             UpdatedAt = cf.UpdateAt,
         }).ToList();

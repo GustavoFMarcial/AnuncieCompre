@@ -2,25 +2,25 @@ import { api } from "../../../shared/lib/api";
 import type { Conversation, ConversationDTO, ConversationStatusFilter, GetConversationsResponse, Message } from "../types/conversation";
 
 const STATUS_MAP: Record<string, Conversation["status"]> = {
-    Nova: "JustCreated",
-    Aberta: "Open",
-    Encerrada: "Closed",
+    Nova: "justcreated",
+    Aberta: "open",
+    Encerrada: "closed",
 };
 
 const ATTENDANT_MAP: Record<string, Conversation["attendant"]> = {
-    Bot: "Bot",
-    Operador: "Operator",
+    Bot: "bot",
+    Operador: "operator",
 };
 
 const SENDER_TYPE_MAP: Record<string, Message["senderType"]> = {
-    Bot: "Bot",
-    Operador: "Operator",
-    Client: "Customer",
+    Bot: "bot",
+    Operador: "operator",
+    Client: "customer",
 };
 
 const DIRECTION_MAP: Record<string, Message["direction"]> = {
-    Entrada: "Incoming",
-    "Saída": "Outgoing",
+    Entrada: "incoming",
+    Saída: "outgoing",
 };
 
 function mapConversation(dto: ConversationDTO): Conversation {
@@ -28,8 +28,8 @@ function mapConversation(dto: ConversationDTO): Conversation {
         id: `${dto.conversationId}_${index}`,
         conversationId: dto.conversationId,
         text: m.text,
-        senderType: SENDER_TYPE_MAP[m.senderType] ?? "Customer",
-        direction: DIRECTION_MAP[m.direction] ?? "Outgoing",
+        senderType: SENDER_TYPE_MAP[m.senderType] ?? "customer",
+        direction: DIRECTION_MAP[m.direction] ?? "outgoing",
         createdAt: new Date(m.createdAt),
     }));
 
@@ -40,8 +40,8 @@ function mapConversation(dto: ConversationDTO): Conversation {
         userId: dto.userId,
         userName: dto.userName,
         userPhone: dto.userPhone,
-        status: STATUS_MAP[dto.status] ?? "Open",
-        attendant: ATTENDANT_MAP[dto.attendant] ?? "Bot",
+        status: STATUS_MAP[dto.status] ?? "open",
+        attendant: ATTENDANT_MAP[dto.attendant] ?? "bot",
         awaitingResponseNodeId: "",
         lastMessageAt: lastMessage ? new Date(lastMessage.createdAt) : new Date(),
         messages,

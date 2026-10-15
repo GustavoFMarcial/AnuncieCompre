@@ -53,7 +53,7 @@ export function ConversationListItem({
                     {last ? last.text : "Sem mensagens"}
                 </span>
                 <div className="mt-1.5 flex items-center gap-1.5">
-                    {conversation.attendant === "Operator" ? (
+                    {conversation.attendant === "operator" ? (
                         <Badge variant="secondary" className="gap-1">
                             <Headset className="h-3 w-3" />
                             Operador
@@ -64,13 +64,13 @@ export function ConversationListItem({
                             Bot
                         </Badge>
                     )}
-                    {conversation.status === "Open" && (
+                    {conversation.status === "open" && (
                         <Badge variant="success">Aberta</Badge>
                     )}
-                    {conversation.status === "JustCreated" && (
+                    {conversation.status === "justcreated" && (
                         <Badge variant="warning">Nova</Badge>
                     )}
-                    {conversation.status === "Closed" && (
+                    {conversation.status === "closed" && (
                         <Badge variant="destructive">Encerrada</Badge>
                     )}
                 </div>

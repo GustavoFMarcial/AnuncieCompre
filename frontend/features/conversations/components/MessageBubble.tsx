@@ -6,23 +6,23 @@ interface MessageBubbleProps {
 }
 
 function isOwn(message: Message): boolean {
-    return message.direction === "Outgoing";
+    return message.direction === "outgoing";
 }
 
 function senderLabel(message: Message): string {
     switch (message.senderType) {
-        case "Bot":
+        case "bot":
             return "Bot";
-        case "Customer":
+        case "customer":
             return "Cliente";
-        case "Operator":
+        case "operator":
             return "Você";
     }
 }
 
 export function MessageBubble({ message }: MessageBubbleProps) {
     const own = isOwn(message);
-    const isOperator = message.senderType === "Operator";
+    const isOperator = message.senderType === "operator";
 
     return (
         <div className={cn("flex", own ? "justify-end" : "justify-start")}>
@@ -32,7 +32,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                     own ? "rounded-br-sm" : "rounded-bl-sm",
                     isOperator
                         ? "bg-neutral-900 text-white"
-                        : message.senderType === "Customer"
+                        : message.senderType === "customer"
                             ? "bg-white text-neutral-900"
                             : "bg-neutral-100 text-neutral-900"
                 )}
