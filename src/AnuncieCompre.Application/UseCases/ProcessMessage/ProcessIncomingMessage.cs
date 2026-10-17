@@ -10,6 +10,7 @@ using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Services.NodeValidatorFactories;
 using AnuncieCompre.Domain.Conversation.Nodes;
+using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Application.UseCases.ProcessMessageUseCase;
 
@@ -48,23 +49,24 @@ public class ProcessIncomingMessageUseCase(
 
         ConversationNode awaitingResponseNode = await conversationNodeRepository.GetNodeOrMenuWithTransitionsByIdAsync(conversation.AwaitingResponseNodeId);
         INodeValidator nodeValidator = NodeValidatorFactory.Generate(awaitingResponseNode);
-        (bool conversationResult, string message) = conversation.HandleMessage(nodeValidator, awaitingResponseNode, incomingMessage.Content);
+        Result result = conversation.HandleMessage(nodeValidator, awaitingResponseNode, incomingMessage.Content);
 
-        if (conversationResult)
+        if (result.IsSuccess)
         {
             ConversationNode? targetNode = await conversationNodeRepository.GetByIdAsync(conversation.AwaitingResponseNodeId);
 
             if (targetNode is null)
             {
                 response.Add("TargetNode não encontrado");
-                return response.AsReadOnly();
             }
-            
-            response.Add(targetNode.Message);
+            else
+            {
+                response.Add(targetNode.Message);
+            }
         }
         else
         {
-            response.Add(message);
+            response.Add(result.Message);
         }
 
         Message customerMessage = Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming);
