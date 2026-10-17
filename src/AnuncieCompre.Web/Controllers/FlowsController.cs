@@ -124,4 +124,16 @@ public class FlowsController : ControllerBase
 
         return Ok();
     }
+
+    [HttpPut("{flowId:guid}/nodes/{nodeId:guid}/position")]
+    public async Task<ActionResult> UpdateConversationNodePosition([FromRoute] Guid flowId, [FromRoute] Guid nodeId, [FromBody] UpdateConversationNodePositionRequest request, [FromServices] UpdateConversationNodePosition service)
+    {
+        UpdateConversationNodePositionInput input = request.ToUpdateConversationNodePositionInput();
+
+        Result result = await service.Handle(input, nodeId);
+
+        if (!result.IsSuccess) return BadRequest(result.Message);
+
+        return Ok();
+    }
 }

@@ -67,6 +67,11 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
             cn.HasMany(cn => cn.Transitions)
             .WithOne(t => t.ConversationNode)
             .HasForeignKey(t => t.ConversationNodeId);
+            cn.ComplexProperty(cn => cn.Position, b =>
+            {
+               b.Property(e => e.PositionX).HasColumnName("PositionX"); 
+               b.Property(e => e.PositionY).HasColumnName("PositionY"); 
+            });
         });
 
         modelBuilder.Entity<MessageProviderReference>(mpf =>

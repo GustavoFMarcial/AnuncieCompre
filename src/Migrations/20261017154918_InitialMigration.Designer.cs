@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20261015011801_InitialMigration")]
+    [Migration("20261017154918_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -211,6 +211,19 @@ namespace AnuncieCompre.Migrations
 
                     b.Property<int>("ValueObjectValidator")
                         .HasColumnType("integer");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Position", "AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode.Position#Position", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<double?>("PositionX")
+                                .HasColumnType("double precision")
+                                .HasColumnName("PositionX");
+
+                            b1.Property<double?>("PositionY")
+                                .HasColumnType("double precision")
+                                .HasColumnName("PositionY");
+                        });
 
                     b.HasKey("Id");
 

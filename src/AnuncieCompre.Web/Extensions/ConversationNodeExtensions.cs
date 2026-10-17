@@ -45,6 +45,8 @@ public static class ConversationNodeExtensions
             IsFinal = c.IsFinal,
             IsInitial = c.IsInitial,
             Number = c.Number,
+            PositionX = c.Position.PositionX,
+            PositionY = c.Position.PositionY,
 
         }).ToList();
 

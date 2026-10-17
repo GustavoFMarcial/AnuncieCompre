@@ -57,6 +57,8 @@ namespace AnuncieCompre.Migrations
                     IsInitial = table.Column<bool>(type: "boolean", nullable: false),
                     IsFinal = table.Column<bool>(type: "boolean", nullable: false),
                     IsMenu = table.Column<bool>(type: "boolean", nullable: false),
+                    PositionX = table.Column<double>(type: "double precision", nullable: true),
+                    PositionY = table.Column<double>(type: "double precision", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
