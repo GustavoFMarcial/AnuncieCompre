@@ -34,16 +34,14 @@ function FlowNodeCardBase({ data, selected }: NodeProps<FlowRFNode>) {
                 data.isFinal && "border-blue-300 bg-blue-50",
             )}
         >
-            {!data.isFinal && !data.isInitial && (
-                <Handle type="target" position={Position.Top} className="!h-3 !w-3 !bg-neutral-400" />
-            )}
+            <Handle type="target" position={Position.Top} className="!h-3 !w-3 !bg-neutral-400" />
 
             <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-neutral-900 px-1 text-[11px] font-semibold text-white shadow-sm">
                 #{data.nodeNumber}
             </span>
 
             <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-500">
-                {data.validationKind === "Final" ? (
+                {data.validationKind === "final" ? (
                     <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
                 ) : (
                     <Bot className="h-3.5 w-3.5" />
@@ -56,13 +54,11 @@ function FlowNodeCardBase({ data, selected }: NodeProps<FlowRFNode>) {
                 <span className="line-clamp-3">{preview || "Node vazio"}</span>
             </p>
 
-            {!data.isFinal && !data.isInitial && (
-                <Handle
-                    type="source"
-                    position={Position.Bottom}
-                    className="!h-3 !w-3 !bg-neutral-900"
-                />
-            )}
+            <Handle
+                type="source"
+                position={Position.Bottom}
+                className="!h-3 !w-3 !bg-neutral-900"
+            />
         </div>
     );
 }
