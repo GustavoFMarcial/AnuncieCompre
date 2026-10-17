@@ -30,6 +30,7 @@ public class ProcessIncomingMessageUseCase(
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
         Conversation? conversation = await conversationRepository.GetNotClosedConversationBySenderPhoneWithCustomerAsync(incomingMessage.SenderPhone);
+        Collection<string> response = [];
 
         if (conversation is null)
         {
@@ -47,7 +48,24 @@ public class ProcessIncomingMessageUseCase(
 
         ConversationNode awaitingResponseNode = await conversationNodeRepository.GetNodeOrMenuWithTransitionsByIdAsync(conversation.AwaitingResponseNodeId);
         INodeValidator nodeValidator = NodeValidatorFactory.Generate(awaitingResponseNode);
-        ReadOnlyCollection<string> response = conversation.HandleMessage(nodeValidator, awaitingResponseNode, incomingMessage.Content);
+        (bool conversationResult, string message) = conversation.HandleMessage(nodeValidator, awaitingResponseNode, incomingMessage.Content);
+
+        if (conversationResult)
+        {
+            ConversationNode? targetNode = await conversationNodeRepository.GetByIdAsync(conversation.AwaitingResponseNodeId);
+
+            if (targetNode is null)
+            {
+                response.Add("TargetNode não encontrado");
+                return response.AsReadOnly();
+            }
+            
+            response.Add(targetNode.Message);
+        }
+        else
+        {
+            response.Add(message);
+        }
 
         Message customerMessage = Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming);
         Message botMessage = Message.Create(conversation, response[0], MessageSenderType.Bot, MessageDirection.Outgoing);
@@ -55,6 +73,6 @@ public class ProcessIncomingMessageUseCase(
         messageRepository.Add(botMessage);
 
         await unitOfWork.SaveChangesAsync();
-        return response;
+        return response.AsReadOnly();
     }
 }

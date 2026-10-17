@@ -33,7 +33,7 @@ public class Conversation : BaseEntity
         return new Conversation(user);
     }
 
-    public ReadOnlyCollection<string> HandleMessage(INodeValidator nodeValidator, ConversationNode awaitingResponseNode, string message)
+    public (bool result, string message) HandleMessage(INodeValidator nodeValidator, ConversationNode awaitingResponseNode, string message)
     {
         DateTimeLastMessage = DateTime.UtcNow;
 
@@ -41,13 +41,20 @@ public class Conversation : BaseEntity
         {
             Status = ConversationStatus.Open;
             AwaitingResponseNodeId = awaitingResponseNode.Id;
-            return [awaitingResponseNode.Message];
+            return (true, "");
         }
 
         NodeResult result = nodeValidator.Validate(awaitingResponseNode, message);
-
         AwaitingResponseNodeId = result.NextStepId;
-        return [result.Message];
+
+        if (result.IsSuccess)
+        {
+            return (true, "");
+        }
+        else
+        {
+            return (false, result.Message);
+        }
     }
 
     public void Close()
