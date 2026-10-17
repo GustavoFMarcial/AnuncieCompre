@@ -6,6 +6,7 @@ using AnuncieCompre.Domain.Aggregates.MessageAggregate;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
+using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
@@ -33,7 +34,7 @@ public class Conversation : BaseEntity
         return new Conversation(user);
     }
 
-    public (bool result, string message) HandleMessage(INodeValidator nodeValidator, ConversationNode awaitingResponseNode, string message)
+    public Result HandleMessage(INodeValidator nodeValidator, ConversationNode awaitingResponseNode, string message)
     {
         DateTimeLastMessage = DateTime.UtcNow;
 
@@ -41,7 +42,7 @@ public class Conversation : BaseEntity
         {
             Status = ConversationStatus.Open;
             AwaitingResponseNodeId = awaitingResponseNode.Id;
-            return (true, "");
+            return Result.Success("");
         }
 
         NodeResult result = nodeValidator.Validate(awaitingResponseNode, message);
@@ -49,11 +50,11 @@ public class Conversation : BaseEntity
 
         if (result.IsSuccess)
         {
-            return (true, "");
+            return Result.Success("");
         }
         else
         {
-            return (false, result.Message);
+            return Result.Failure(result.Message);
         }
     }
 
