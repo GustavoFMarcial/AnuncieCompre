@@ -14,4 +14,6 @@ public record Node
     public bool IsFinal { get; set; }
     public bool IsInitial { get; set; }
     public int Number { get; set; }
+    public double? PositionX { get; set; }
+    public double? PositionY { get; set; }
  }

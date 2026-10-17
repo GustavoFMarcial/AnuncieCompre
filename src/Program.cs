@@ -72,6 +72,7 @@ builder.Services.AddScoped<MenuService>();
 builder.Services.AddScoped<MessageFailurePolicy>();
 builder.Services.AddScoped<MessageFailureHandler>();
 builder.Services.AddScoped<ProcessMessageStatus>();
+builder.Services.AddScoped<UpdateConversationNodePosition>();
 
 //Hosted
 builder.Services.AddHostedService<CloseInactiveConversations>();

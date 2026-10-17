@@ -6,6 +6,7 @@ import type {
     UpdateFlowMetaInput,
     UpdateFlowStatusInput,
     UpdateNodeInput,
+    UpdateNodePositionInput,
     UpdateTransitionsInput,
 } from "../types/conversation-flow";
 
@@ -48,5 +49,9 @@ export const conversationFlowService = {
 
     async updateTransitions(flowId: string, nodeId: string, input: UpdateTransitionsInput): Promise<void> {
         await api.patch(`/api/flows/${flowId}/nodes/${nodeId}/transitions`,input);
+    },
+
+    async updateNodePosition(flowId: string, nodeId: string, input: UpdateNodePositionInput): Promise<void> {
+        await api.put(`/api/flows/${flowId}/nodes/${nodeId}/position`, input);
     },
 };

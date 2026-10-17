@@ -33,6 +33,8 @@ export interface ConversationNode {
     isFinal: boolean;
     isInitial: boolean;
     number: number;
+    positionX: number | null;
+    positionY: number | null;
 }
 
 export interface ConversationFlow {
@@ -83,6 +85,11 @@ export interface CreateNodeInput {
 }
 
 export type UpdateNodeInput = CreateNodeInput;
+
+export interface UpdateNodePositionInput {
+    positionX: number;
+    positionY: number;
+}
 
 export interface UpdateTransitionsInput {
     transitions: NodeTransition[];
