@@ -19,6 +19,7 @@ public class ConversationNode : BaseEntity
     public bool IsInitial { get; private set; } = false;
     public bool IsFinal { get; private set; } = false;
     public bool IsMenu { get; private set; } = false;
+    public Position Position { get; private set; } = default!;
 
     private ConversationNode() { }
 
@@ -144,5 +145,15 @@ public class ConversationNode : BaseEntity
         {
             nodes[i].Number = i + 1;
         }
+    }
+
+    public void UpdatePosition(UpdateConversationNodePositionInput input)
+    {
+        Position position = Position;
+
+        position.PositionX = input.PositionX;
+        position.PositionY = input.PositionY;
+
+        Position = position;
     }
 }

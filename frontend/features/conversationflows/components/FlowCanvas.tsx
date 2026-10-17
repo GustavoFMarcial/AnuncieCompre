@@ -4,6 +4,7 @@ import {
     MiniMap,
     ReactFlow,
     useNodesState,
+    type OnNodeDrag,
 } from "@xyflow/react";
 import { useEffect, useMemo, useRef } from "react";
 import "@xyflow/react/dist/style.css";
@@ -14,6 +15,7 @@ import {
     useConversationFlow,
     useCreateNode,
     useDeleteNode,
+    useUpdateNodePosition,
 } from "../hooks/useConversationFlows";
 import { FlowNodeCard } from "./FlowNodeCard";
 import { buildGraphData, type FlowRFEdge, type FlowRFNode } from "../utils/dagre-layout";
@@ -30,6 +32,7 @@ export function FlowCanvas({ flowId, selectedNodeId, onSelectNode }: FlowCanvasP
     const { data: flow } = useConversationFlow(flowId);
     const createNode = useCreateNode(flowId);
     const deleteNode = useDeleteNode(flowId);
+    const updateNodePosition = useUpdateNodePosition(flowId);
 
     const { nodes: layoutNodes, edges: layoutEdges } = useMemo(
         () => buildGraphData(flow?.nodes ?? []),
@@ -68,6 +71,27 @@ export function FlowCanvas({ flowId, selectedNodeId, onSelectNode }: FlowCanvasP
         }
     };
 
+    const dragStartPositionsRef = useRef(new Map<string, { x: number; y: number }>());
+
+    const handleNodeDragStart = () => {
+        dragStartPositionsRef.current = new Map(
+            nodes.map((n) => [n.id, { x: n.position.x, y: n.position.y }])
+        );
+    };
+
+    const handleNodeDragStop: OnNodeDrag<FlowRFNode> = (_event, _node, draggedNodes) => {
+        const startPositions = dragStartPositionsRef.current;
+        dragStartPositionsRef.current = new Map();
+        draggedNodes.forEach((n) => {
+            const start = startPositions.get(n.id);
+            if (start && start.x === n.position.x && start.y === n.position.y) return;
+            updateNodePosition.mutate({
+                nodeId: n.id,
+                input: { positionX: n.position.x, positionY: n.position.y },
+            });
+        });
+    };
+
     return (
         <div className="relative flex-1">
             <div className="absolute left-4 top-4 z-10">
@@ -84,6 +108,8 @@ export function FlowCanvas({ flowId, selectedNodeId, onSelectNode }: FlowCanvasP
                 nodesConnectable={false}
                 onNodesChange={onNodesChange}
                 onNodesDelete={handleNodesDelete}
+                onNodeDragStart={handleNodeDragStart}
+                onNodeDragStop={handleNodeDragStop}
                 onNodeClick={(_, node) => onSelectNode(node.id)}
                 onPaneClick={() => onSelectNode(null)}
                 deleteKeyCode={["Delete", "Backspace"]}

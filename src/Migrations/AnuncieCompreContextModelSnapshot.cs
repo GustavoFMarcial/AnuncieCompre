@@ -209,6 +209,19 @@ namespace AnuncieCompre.Migrations
                     b.Property<int>("ValueObjectValidator")
                         .HasColumnType("integer");
 
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Position", "AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode.Position#Position", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<double?>("PositionX")
+                                .HasColumnType("double precision")
+                                .HasColumnName("PositionX");
+
+                            b1.Property<double?>("PositionY")
+                                .HasColumnType("double precision")
+                                .HasColumnName("PositionY");
+                        });
+
                     b.HasKey("Id");
 
                     b.HasIndex("ConversationFlowId");

@@ -2,11 +2,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { conversationFlowService } from "../services/conversation-flow.service";
 import type {
+    ConversationFlow,
     CreateFlowInput,
     CreateNodeInput,
     UpdateFlowMetaInput,
     UpdateFlowStatusInput,
     UpdateNodeInput,
+    UpdateNodePositionInput,
     UpdateTransitionsInput,
 } from "../types/conversation-flow";
 
@@ -118,6 +120,31 @@ export function useUpdateTransitions(flowId: string) {
             conversationFlowService.updateTransitions(flowId, nodeId, input),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: ["conversation-flow", flowId] });
+        },
+    });
+}
+
+export function useUpdateNodePosition(flowId: string) {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: ({ nodeId, input }: { nodeId: string; input: UpdateNodePositionInput }) =>
+            conversationFlowService.updateNodePosition(flowId, nodeId, input),
+        onSuccess: (_, vars) => {
+            qc.setQueryData<ConversationFlow>(["conversation-flow", flowId], (old) =>
+                old
+                    ? {
+                          ...old,
+                          nodes: old.nodes?.map((n) =>
+                              n.id === vars.nodeId
+                                  ? { ...n, positionX: vars.input.positionX, positionY: vars.input.positionY }
+                                  : n
+                          ),
+                      }
+                    : old
+            );
+        },
+        onError: (error) => {
+            console.error(error);
         },
     });
 }

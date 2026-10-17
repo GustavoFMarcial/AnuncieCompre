@@ -37,6 +37,12 @@ export function buildGraphData(nodes: ConversationNode[]) {
     }));
 
     const rfedges: FlowRFEdge[] = [];
+    const savedPositions = new Map<string, { x: number; y: number }>();
+    nodes.forEach((n) => {
+        if (n.positionX != null && n.positionY != null) {
+            savedPositions.set(n.id, { x: n.positionX, y: n.positionY });
+        }
+    });
     nodes.forEach((n) => {
         n.transitions.forEach((t) => {
             if (nodes.some((x) => x.id === t.targetNodeId)) {
@@ -66,10 +72,11 @@ export function buildGraphData(nodes: ConversationNode[]) {
     dagre.layout(g);
 
     const laidOut: FlowRFNode[] = rfnodes.map((n) => {
+        const saved = savedPositions.get(n.id);
         const pos = g.node(n.id);
         return {
             ...n,
-            position: {
+            position: saved ?? {
                 x: pos.x - NODE_WIDTH / 2,
                 y: pos.y - NODE_HEIGHT / 2,
             },
