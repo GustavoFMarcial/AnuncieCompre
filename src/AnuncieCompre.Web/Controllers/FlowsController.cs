@@ -31,7 +31,7 @@ public class FlowsController : ControllerBase
         CreateConversationFlowInput input = request.ToCreateConversationFlowRequest();
         Result<ConversationFlow> result = await service.Handle(input);
 
-        if (!result.IsSuccess) return BadRequest(result.Message);
+        if (!result.IsSuccess) return BadRequest(new { success = false, errors = result.Message });
 
         CreateConversationFlowResponse response = result.ToCreateConversationFlowResponse();
         return CreatedAtAction(nameof(GetConversationFlowById), new { flowId = response.Id }, response);
