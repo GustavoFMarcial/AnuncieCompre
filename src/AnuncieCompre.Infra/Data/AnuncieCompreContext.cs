@@ -66,7 +66,8 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
         {
             cn.HasMany(cn => cn.Transitions)
             .WithOne(t => t.ConversationNode)
-            .HasForeignKey(t => t.ConversationNodeId);
+            .HasForeignKey(t => t.ConversationNodeId)
+            .OnDelete(DeleteBehavior.Cascade);
             cn.ComplexProperty(cn => cn.Position, b =>
             {
                b.Property(e => e.PositionX).HasColumnName("PositionX"); 

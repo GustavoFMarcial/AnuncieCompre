@@ -6,7 +6,7 @@ namespace AnuncieCompre.Web.Extensions;
 
 public static class EditConversationFlowRequestExtensions
 {
-    public static EditConversationFlowInput ToConversationEditFlowInout(this EditConversationFlowRequest request)
+    public static EditConversationFlowInput ToConversationEditFlowInput(this EditConversationFlowRequest request)
     {
         return new EditConversationFlowInput
         {

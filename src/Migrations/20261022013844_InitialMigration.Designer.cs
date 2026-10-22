@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20261017154918_InitialMigration")]
+    [Migration("20261022013844_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
