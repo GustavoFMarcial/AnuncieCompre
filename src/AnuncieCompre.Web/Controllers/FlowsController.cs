@@ -51,7 +51,7 @@ public class FlowsController : ControllerBase
     [HttpPut("{flowId:guid}")]
     public async Task<ActionResult> EditConversationFlow([FromRoute] Guid flowId, [FromBody] EditConversationFlowRequest request, [FromServices] EditConversationFlow service)
     {
-        EditConversationFlowInput editFlowInput = request.ToConversationEditFlowInout();
+        EditConversationFlowInput editFlowInput = request.ToConversationEditFlowInput();
         Result result = await service.Handle(flowId, editFlowInput);
 
         if (!result.IsSuccess) return BadRequest(result.Message);
