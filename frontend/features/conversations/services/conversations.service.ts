@@ -2,25 +2,25 @@ import { api } from "../../../shared/lib/api";
 import type { Conversation, ConversationDTO, ConversationStatusFilter, GetConversationsResponse, Message } from "../types/conversation";
 
 const STATUS_MAP: Record<string, Conversation["status"]> = {
-    Nova: "justcreated",
-    Aberta: "open",
-    Encerrada: "closed",
+    justcreated: "justcreated",
+    open: "open",
+    closed: "closed",
 };
 
 const ATTENDANT_MAP: Record<string, Conversation["attendant"]> = {
-    Bot: "bot",
-    Operador: "operator",
+    operator: "operator",
+    bot: "bot",
 };
 
 const SENDER_TYPE_MAP: Record<string, Message["senderType"]> = {
-    Bot: "bot",
-    Operador: "operator",
-    Client: "customer",
+    operator: "operator",
+    bot: "bot",
+    customer: "customer",
 };
 
 const DIRECTION_MAP: Record<string, Message["direction"]> = {
-    Entrada: "incoming",
-    Saída: "outgoing",
+    incoming: "incoming",
+    outgoing: "outgoing",
 };
 
 function mapConversation(dto: ConversationDTO): Conversation {

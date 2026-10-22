@@ -38,14 +38,14 @@ export function useSendMessage(conversationId: string) {
                             id: `optimistic_${Date.now()}`,
                             conversationId,
                             text,
-                            senderType: "Operator" as const,
-                            direction: "Outgoing" as const,
+                            senderType: "operator" as const,
+                            direction: "outgoing" as const,
                             createdAt: new Date(),
                         },
                     ],
                     lastMessageAt: new Date(),
-                    attendant: "Operator" as const,
-                    status: "Open" as const,
+                    attendant: "operator" as const,
+                    status: "open" as const,
                 };
                 qc.setQueryData(key, optimistic);
             }
