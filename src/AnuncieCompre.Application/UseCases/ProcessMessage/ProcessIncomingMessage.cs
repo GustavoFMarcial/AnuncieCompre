@@ -30,7 +30,7 @@ public class ProcessIncomingMessageUseCase(
 
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
-        Conversation? conversation = await conversationRepository.GetNotClosedConversationBySenderPhoneWithCustomerAsync(incomingMessage.SenderPhone);
+        Conversation? conversation = await conversationRepository.GetOpenConversationBySenderPhoneAsync(incomingMessage.SenderPhone);
         Collection<string> response = [];
 
         if (conversation is null)
@@ -45,6 +45,13 @@ public class ProcessIncomingMessageUseCase(
 
             conversation = Conversation.Create(customer);
             conversationRepository.Add(conversation);
+        }
+        else if (conversation.Attendant == ConversationAttendant.Operator)
+        {
+            messageRepository.Add(Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming));
+
+            await unitOfWork.SaveChangesAsync();
+            return response.AsReadOnly();
         }
 
         ConversationNode awaitingResponseNode = await conversationNodeRepository.GetNodeOrMenuWithTransitionsByIdAsync(conversation.AwaitingResponseNodeId);
@@ -61,7 +68,15 @@ public class ProcessIncomingMessageUseCase(
             }
             else
             {
-                response.Add(targetNode.Message);
+                Result resultNextNode = conversation.HandleNextNode(targetNode);
+                if (resultNextNode.IsSuccess)
+                {
+                    response.Add(resultNextNode.Message);
+                }
+                else
+                {
+                    response.Add(targetNode.Message);
+                }
             }
         }
         else
@@ -69,10 +84,8 @@ public class ProcessIncomingMessageUseCase(
             response.Add(result.Message);
         }
 
-        Message customerMessage = Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming);
-        Message botMessage = Message.Create(conversation, response[0], MessageSenderType.Bot, MessageDirection.Outgoing);
-        messageRepository.Add(customerMessage);
-        messageRepository.Add(botMessage);
+        messageRepository.Add(Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming));
+        messageRepository.Add(Message.Create(conversation, response[0], MessageSenderType.Bot, MessageDirection.Outgoing));
 
         await unitOfWork.SaveChangesAsync();
         return response.AsReadOnly();

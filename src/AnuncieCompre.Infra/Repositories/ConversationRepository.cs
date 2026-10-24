@@ -42,8 +42,10 @@ public class ConversationRepository(AnuncieCompreContext _context) : BaseReposit
         return await context.Set<Conversation>().Include(c => c.Customer).FirstOrDefaultAsync(c => c.Id == id);
     }
 
-    public async Task<Conversation?> GetNotClosedConversationBySenderPhoneWithCustomerAsync(string phone)
+    public async Task<Conversation?> GetOpenConversationBySenderPhoneAsync(string phone)
     {
-        return await context.Set<Conversation>().Include(c => c.Customer).FirstOrDefaultAsync(c => c.Customer.Phone.Value == phone && c.Status != ConversationStatus.Closed);
+        return await context.Set<Conversation>()
+            .Include(c => c.Customer)
+            .FirstOrDefaultAsync(c => c.Customer.Phone.Value == phone && c.Status != ConversationStatus.Closed);
     }
 }

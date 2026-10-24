@@ -58,6 +58,17 @@ public class Conversation : BaseEntity
         }
     }
 
+    public Result HandleNextNode(ConversationNode conversationNode)
+    {
+        if (conversationNode.IsFinal)
+        {
+            Attendant = ConversationAttendant.Operator;
+            return Result.Success(conversationNode.Message);
+        }
+
+        return Result.Failure("");
+    }
+
     public void Close()
     {
         EndedAt = DateTime.UtcNow;

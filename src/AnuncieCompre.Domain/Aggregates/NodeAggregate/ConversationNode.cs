@@ -57,12 +57,12 @@ public class ConversationNode : BaseEntity
     {
         List<string> errors = [];
         if (IsMenu is true) return Result.Failure("Esse método só pode ser usado por ConversationNodes que não são menu");
-        if (string.IsNullOrWhiteSpace(input.Message)) errors.Add($"Node: {Number} - Mensagem não pode ser em branco");
-        if (input.ValidationKind is not ValidationKind.Final && input.IsFinal is true) errors.Add($"Node: {Number} - Apenas node com validação final pode ser marcado como final");
-        if (input.ValidationKind is ValidationKind.Validation && input.ValueObjectValidator is ValueObjectValidator.None) errors.Add($"Node: {Number} - Node de validação deve possuir um validador");
-        if (input.ValueObjectValidator is not ValueObjectValidator.None && input.ValidationKind is not ValidationKind.Validation) errors.Add($"Node: {Number} - Apenas node de validação deve possuir um validador");
-        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Final) errors.Add($"Node: {Number} - Apenas nodes de confirmação ou opção podem ter opções");
-        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Validation) errors.Add($"Node: {Number} - Apenas nodes de confirmação ou validação podem ter opções");
+        if (string.IsNullOrWhiteSpace(input.Message)) errors.Add($"Node n°{Number}: Mensagem não pode ser em branco");
+        if (input.ValidationKind is not ValidationKind.Final && input.IsFinal is true) errors.Add($"Node n°{Number}: Apenas node com validação final pode ser marcado como final");
+        if (input.ValidationKind is ValidationKind.Validation && input.ValueObjectValidator is ValueObjectValidator.None) errors.Add($"Node n°{Number}: Node de validação deve possuir um validador");
+        if (input.ValueObjectValidator is not ValueObjectValidator.None && input.ValidationKind is not ValidationKind.Validation) errors.Add($"Node n°{Number}: Apenas node de validação deve possuir um validador");
+        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Final) errors.Add($"Node n°{Number}: Apenas nodes de confirmação ou opção podem ter opções");
+        if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Validation) errors.Add($"Node n°{Number}: Apenas nodes de confirmação ou validação podem ter opções");
 
         if (errors.Count > 0) return Result.Failure(errors);
 
@@ -102,11 +102,10 @@ public class ConversationNode : BaseEntity
     {
         List<string> errors = [];
         if (IsMenu is true) return Result.Failure("Esse método só pode ser usado por ConversationNodes que não são mennu");
-        if (Transitions.Count <= 0) errors.Add($"Node: {Number} - Todo node deve ter ao menos uma transição");
-        if (ValidationKind is ValidationKind.Final && Transitions.Count != 1) errors.Add($"Node: {Number} - Node final só pode ter uma transição");
-        if (ValidationKind is ValidationKind.Validation && Transitions.Count != 1) errors.Add($"Node: {Number} - Node de validação só pode ter uma transição");
-        if (ValidationKind is ValidationKind.Option && Transitions.Count <= 1) errors.Add($"Node: {Number} - Node de opção não pode ter menos de uma transição");
-        if (ValidationKind is ValidationKind.Confirmation && Transitions.Count <= 1) errors.Add($"Node: {Number} - Node de confirmação não pode ter só uma transição");
+        if (Transitions.Count <= 0 && !IsFinal) errors.Add($"Node n°{Number}: Deve ter ao menos uma transição");
+        if (ValidationKind is ValidationKind.Validation && Transitions.Count != 1) errors.Add($"Node n°{Number}: Node de validação só pode ter uma transição");
+        if (ValidationKind is ValidationKind.Option && Transitions.Count <= 1) errors.Add($"Node n°{Number}: Node de opção não pode ter menos de duas transições");
+        if (ValidationKind is ValidationKind.Confirmation && Transitions.Count <= 1) errors.Add($"Node n°{Number}: Node de confirmação não pode ter só uma transição");
 
         if (errors.Count > 0) return Result.Failure(errors);
 
@@ -117,10 +116,10 @@ public class ConversationNode : BaseEntity
     {
         List<string> errors = [];
         if (IsMenu is true) return Result.Failure("Esse método só pode ser usado por ConversationNodes que não são menu");
-        if (string.IsNullOrWhiteSpace(Message)) errors.Add($"Node: {Number} - Mensagem não pode ser em branco");
-        if (ValidationKind is not ValidationKind.Final && IsFinal is true) errors.Add($"Node: {Number} - Apenas node com validação final pode ser marcado como final");
-        if (ValidationKind is ValidationKind.Validation && ValueObjectValidator is ValueObjectValidator.None) errors.Add($"Node: {Number} - Node de validação deve possuir um validador");
-        if (ValueObjectValidator is not ValueObjectValidator.None && ValidationKind is not ValidationKind.Validation) errors.Add($"Node: {Number} - Apenas node de validação deve possuir um validador");
+        if (string.IsNullOrWhiteSpace(Message)) errors.Add($"Node n°{Number}: Mensagem não pode ser em branco");
+        if (ValidationKind is not ValidationKind.Final && IsFinal is true) errors.Add($"Node n°{Number}: Apenas node com validação final pode ser marcado como final");
+        if (ValidationKind is ValidationKind.Validation && ValueObjectValidator is ValueObjectValidator.None) errors.Add($"Node n°{Number}: Node de validação deve possuir um validador");
+        if (ValueObjectValidator is not ValueObjectValidator.None && ValidationKind is not ValidationKind.Validation) errors.Add($"Node n°{Number}: Apenas node de validação deve possuir um validador");
 
         if (errors.Count > 0) return Result.Failure(errors);
 
