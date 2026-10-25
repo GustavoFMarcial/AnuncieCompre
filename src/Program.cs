@@ -10,21 +10,19 @@ using AnuncieCompre.Application.UseCases.ProcessMessageUseCase;
 using Microsoft.EntityFrameworkCore;
 using Twilio;
 using AnuncieCompre.Application.UseCases.Flows;
-using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Application.UseCases;
 using AnuncieCompre.Application.UseCases.Conversations;
 using AnuncieCompre.Application.Services;
 using StackExchange.Redis;
 using Microsoft.AspNetCore.Mvc;
 using AnuncieCompre.Web.DTO;
+using AnuncieCompre.Infra.Notifiers;
+using AnuncieCompre.Web.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
@@ -35,6 +33,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+builder.Services.AddSignalR();
 
 //Scoped
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -73,6 +72,7 @@ builder.Services.AddScoped<MessageFailurePolicy>();
 builder.Services.AddScoped<MessageFailureHandler>();
 builder.Services.AddScoped<ProcessMessageStatus>();
 builder.Services.AddScoped<UpdateConversationNodePosition>();
+builder.Services.AddScoped<IRealtimeNotifier, SignalRRealtimeNotifier>();
 
 //Hosted
 builder.Services.AddHostedService<CloseInactiveConversations>();
@@ -134,6 +134,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.MapHub<ChatHub>("/hubs/chathub").RequireCors("Frontend");
 
 app.UseHttpsRedirection();
 

@@ -33,6 +33,17 @@ export interface MessageDTO {
     createdAt: string;
 }
 
+// Payload cru do evento "ReceiveMessage" do SignalR. O protocolo JSON do hub
+// (System.Text.Json) serializa os enums como números:
+// MessageSenderType: 0=operator, 1=bot, 2=customer; MessageDirection: 0=incoming, 1=outgoing.
+export interface RealtimeMessageDTO {
+    conversationId: string;
+    senderType: number;
+    direction: number;
+    createdAt: string;
+    text: string;
+}
+
 export interface ConversationDTO {
     conversationId: string;
     userId: string;

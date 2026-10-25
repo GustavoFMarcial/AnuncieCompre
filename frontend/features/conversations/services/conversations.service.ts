@@ -1,5 +1,5 @@
 import { api } from "../../../shared/lib/api";
-import type { Conversation, ConversationDTO, ConversationStatusFilter, GetConversationsResponse, Message } from "../types/conversation";
+import type { Conversation, ConversationDTO, ConversationStatusFilter, GetConversationsResponse, Message, RealtimeMessageDTO } from "../types/conversation";
 
 const STATUS_MAP: Record<string, Conversation["status"]> = {
     justcreated: "justcreated",
@@ -22,6 +22,20 @@ const DIRECTION_MAP: Record<string, Message["direction"]> = {
     incoming: "incoming",
     outgoing: "outgoing",
 };
+
+// O protocolo JSON do hub (System.Text.Json) serializa os enums como números.
+const REALTIME_SENDER_TYPE_MAP: Record<number, Message["senderType"]> = {
+    0: "operator",
+    1: "bot",
+    2: "customer",
+};
+
+const REALTIME_DIRECTION_MAP: Record<number, Message["direction"]> = {
+    0: "incoming",
+    1: "outgoing",
+};
+
+let realtimeMessageSequence = 0;
 
 function mapConversation(dto: ConversationDTO): Conversation {
     const messages: Message[] = dto.messages.map((m, index) => ({
@@ -63,5 +77,17 @@ export const conversationsService = {
 
     async sendMessage(id: string, text: string): Promise<void> {
         await api.post(`/api/conversations/${id}/messages`, JSON.stringify(text));
+    },
+
+    mapRealtimeMessage(dto: RealtimeMessageDTO): Message {
+        realtimeMessageSequence += 1;
+        return {
+            id: `realtime_${realtimeMessageSequence}`,
+            conversationId: dto.conversationId,
+            text: dto.text,
+            senderType: REALTIME_SENDER_TYPE_MAP[dto.senderType] ?? "customer",
+            direction: REALTIME_DIRECTION_MAP[dto.direction] ?? "outgoing",
+            createdAt: new Date(dto.createdAt),
+        };
     },
 }
