@@ -42,7 +42,7 @@ public class MenuService(IConversationFlowRepository _conversationFlowRepository
 
         for (int i = 0; i <= initialNodes.Count - 1; i++)
         {
-            Result<ConversationNodeTransition> result = ConversationNodeTransition.Create(menuNode, (i + 1).ToString(), initialNodes[i].Id, i + 1);
+            Result<ConversationNodeTransition> result = ConversationNodeTransition.Create(menuNode, (i + 1).ToString(), initialNodes[i], i + 1);
             if (!result.IsSuccess) return Result.Failure(result.Message);
             nodeTransitions.Add(result.Value);
         }

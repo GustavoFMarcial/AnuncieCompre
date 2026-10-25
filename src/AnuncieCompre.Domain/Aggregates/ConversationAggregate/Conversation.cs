@@ -7,6 +7,7 @@ using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Common;
+using AnuncieCompre.Domain.Aggregates.TransitionAggregate;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
@@ -42,31 +43,30 @@ public class Conversation : BaseEntity
         {
             Status = ConversationStatus.Open;
             AwaitingResponseNodeId = awaitingResponseNode.Id;
-            return Result.Success("");
+            return Result.Success(awaitingResponseNode.Message);
         }
 
         NodeResult result = nodeValidator.Validate(awaitingResponseNode, message);
-        AwaitingResponseNodeId = result.NextStepId;
 
         if (result.IsSuccess)
         {
-            return Result.Success("");
+            ConversationNode? nextNode = awaitingResponseNode.Transitions.FirstOrDefault(t => t.TargetNodeId == result.NextStepId)?.TargetNode;
+
+            if (nextNode is null) return Result.Failure("Próximo node não encontrado");
+
+            AwaitingResponseNodeId = nextNode.Id;
+
+            if (nextNode.IsFinal)
+            {
+                Attendant = ConversationAttendant.Operator;
+            }
+
+            return Result.Success(nextNode.Message);
         }
         else
         {
             return Result.Failure(result.Message);
         }
-    }
-
-    public Result HandleNextNode(ConversationNode conversationNode)
-    {
-        if (conversationNode.IsFinal)
-        {
-            Attendant = ConversationAttendant.Operator;
-            return Result.Success(conversationNode.Message);
-        }
-
-        return Result.Failure("");
     }
 
     public void Close()

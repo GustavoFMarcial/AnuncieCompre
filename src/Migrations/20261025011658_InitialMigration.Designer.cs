@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20261022013844_InitialMigration")]
+    [Migration("20261025011658_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -308,6 +308,8 @@ namespace AnuncieCompre.Migrations
 
                     b.HasIndex("ConversationNodeId");
 
+                    b.HasIndex("TargetNodeId");
+
                     b.ToTable("ConversationNodeTransition");
                 });
 
@@ -414,7 +416,15 @@ namespace AnuncieCompre.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AnuncieCompre.Domain.Aggregates.NodeAggregate.ConversationNode", "TargetNode")
+                        .WithMany()
+                        .HasForeignKey("TargetNodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ConversationNode");
+
+                    b.Navigation("TargetNode");
                 });
 
             modelBuilder.Entity("AnuncieCompre.Domain.Aggregates.ConversationAggregate.Conversation", b =>
