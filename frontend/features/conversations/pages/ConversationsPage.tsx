@@ -6,12 +6,14 @@ import { ConversationList } from "../components/ConversationList";
 import { ConversationThread } from "../components/ConversationThread";
 import { FlowPageHeader } from "../../conversationflows/components/FlowPageHeader";
 import { useConversations } from "../hooks/useConversations";
+import { useRealtimeMessages } from "../hooks/useRealtimeMessages";
 import type { ConversationStatusFilter } from "../types/conversation";
 
 export function ConversationsPage() {
     const [status, setStatus] = useState<ConversationStatusFilter>("all");
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const { data, isLoading, isError } = useConversations(status);
+    useRealtimeMessages(data?.map((c) => c.id) ?? []);
 
     const selected = data?.find((c) => c.id === selectedId) ?? null;
     const sorted = [...(data ?? [])].sort(

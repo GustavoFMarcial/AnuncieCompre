@@ -19,18 +19,20 @@ public class ProcessIncomingMessageUseCase(
     IConversationRepository _conversationRepository,
     IConversationNodeRepository _conversationNodeRepository,
     IMessageRepository _messageRepository,
-    // EventDispatcher _dispatcher, 
+    IRealtimeNotifier _realmTimeNotifier,
     IUnitOfWork _unitOfWork) : IProcessIncomingMessage
 {
     private readonly ICustomerRepository customerRepository = _customerRepository;
     private readonly IConversationRepository conversationRepository = _conversationRepository;
     private readonly IConversationNodeRepository conversationNodeRepository = _conversationNodeRepository;
     private readonly IMessageRepository messageRepository = _messageRepository;
+    private readonly IRealtimeNotifier realtimeNotifier = _realmTimeNotifier;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
         Conversation? conversation = await conversationRepository.GetOpenConversationBySenderPhoneAsync(incomingMessage.SenderPhone);
+        Message customerMessage;
         Collection<string> response = [];
 
         if (conversation is null)
@@ -48,9 +50,11 @@ public class ProcessIncomingMessageUseCase(
         }
         else if (conversation.Attendant == ConversationAttendant.Operator)
         {
-            messageRepository.Add(Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming));
+            customerMessage = Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming);
+            messageRepository.Add(customerMessage);
 
             await unitOfWork.SaveChangesAsync();
+            await realtimeNotifier.NotifyNewMessageAsync(conversation.Id, customerMessage);
             return response.AsReadOnly();
         }
 
@@ -60,10 +64,14 @@ public class ProcessIncomingMessageUseCase(
 
         response.Add(result.Message);
 
-        messageRepository.Add(Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming));
-        messageRepository.Add(Message.Create(conversation, response[0], MessageSenderType.Bot, MessageDirection.Outgoing));
+        Message botMessage = Message.Create(conversation, response[0], MessageSenderType.Bot, MessageDirection.Outgoing);
+        customerMessage = Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming);
+        messageRepository.Add(customerMessage);
+        messageRepository.Add(botMessage);
 
         await unitOfWork.SaveChangesAsync();
+        await realtimeNotifier.NotifyNewMessageAsync(conversation.Id, customerMessage);
+        await realtimeNotifier.NotifyNewMessageAsync(conversation.Id, botMessage);
         return response.AsReadOnly();
     }
 }

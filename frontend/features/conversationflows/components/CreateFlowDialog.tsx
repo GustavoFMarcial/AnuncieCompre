@@ -3,7 +3,7 @@ import { Dialog, DialogDescription, DialogTitle } from "../../../shared/componen
 import { useCreateFlow } from "../hooks/useConversationFlows";
 import { ErrorsDialog } from "./ErrorsDialog";
 import { FlowForm } from "./FlowForm";
-import { FlowValidationErrors } from "../types/conversation-flow";
+import type { FlowValidationErrors } from "../types/conversation-flow";
 import { AxiosError } from "axios";
 
 interface CreateFlowDialogProps {

@@ -13,12 +13,14 @@ public class SendMessage(
     IMessageRepository _messageRepository, 
     IMessageSender _messageSender, 
     IMessageProviderReferenceRepository _messageProvicerReferenceRepository,
+    IRealtimeNotifier _realTimeNotifier,
     IUnitOfWork _unitOfWork)
 {
     private readonly IConversationRepository conversationRepository = _conversationRepository;
     private readonly IMessageRepository messageRepository = _messageRepository;
     private readonly IMessageSender messageSender = _messageSender;
     private readonly IMessageProviderReferenceRepository messageProviderReferenceRepository = _messageProvicerReferenceRepository;
+    private readonly IRealtimeNotifier realTimeNotifier = _realTimeNotifier;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
     public async Task<Result> Handle(Guid id, string text)
@@ -26,6 +28,7 @@ public class SendMessage(
         Conversation? conversation = await conversationRepository.GetConversationByIdWithCustomerAsync(id);
 
         if (conversation is null) return Result.Failure("Conversation não encontrada");
+        
         Message message = Message.Create(conversation, text, MessageSenderType.Operator, MessageDirection.Outgoing);
         messageRepository.Add(message);
 
@@ -37,6 +40,7 @@ public class SendMessage(
         }
 
         await unitOfWork.SaveChangesAsync();
+        await realTimeNotifier.NotifyNewMessageAsync(conversation.Id, message);
         return Result.Success(result.Message);
     }
 }
