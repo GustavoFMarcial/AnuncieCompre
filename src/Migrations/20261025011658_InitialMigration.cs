@@ -143,6 +143,12 @@ namespace AnuncieCompre.Migrations
                         principalTable: "ConversationNodes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ConversationNodeTransition_ConversationNodes_TargetNodeId",
+                        column: x => x.TargetNodeId,
+                        principalTable: "ConversationNodes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -203,6 +209,11 @@ namespace AnuncieCompre.Migrations
                 name: "IX_ConversationNodeTransition_ConversationNodeId",
                 table: "ConversationNodeTransition",
                 column: "ConversationNodeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ConversationNodeTransition_TargetNodeId",
+                table: "ConversationNodeTransition",
+                column: "TargetNodeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Conversations_CustomerId",

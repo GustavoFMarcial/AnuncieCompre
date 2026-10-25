@@ -30,7 +30,7 @@ public class EditConversationNodeTransitions(IConversationFlowRepository _conver
         {
             ConversationNode? targetNode = flowNodes.FirstOrDefault(n => n.Id == t.TargetNodeId);
             if (targetNode is null) return Result.Failure("ConversationNode para transição não encontrado");
-            Result<ConversationNodeTransition> result = ConversationNodeTransition.Create(node, t.Option, targetNode.Id, targetNode.Number);
+            Result<ConversationNodeTransition> result = ConversationNodeTransition.Create(node, t.Option, targetNode, targetNode.Number);
             if (!result.IsSuccess) return Result.Failure(result.Message);
             transitions.Add(result.Value);
         }
