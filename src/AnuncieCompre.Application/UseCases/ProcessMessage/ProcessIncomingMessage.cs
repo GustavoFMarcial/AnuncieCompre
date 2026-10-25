@@ -54,35 +54,11 @@ public class ProcessIncomingMessageUseCase(
             return response.AsReadOnly();
         }
 
-        ConversationNode awaitingResponseNode = await conversationNodeRepository.GetNodeOrMenuWithTransitionsByIdAsync(conversation.AwaitingResponseNodeId);
+        ConversationNode awaitingResponseNode = await conversationNodeRepository.GetNodeWithTransitionsAndTargetNodesByIdAsync(conversation.AwaitingResponseNodeId);
         INodeValidator nodeValidator = NodeValidatorFactory.Generate(awaitingResponseNode);
         Result result = conversation.HandleMessage(nodeValidator, awaitingResponseNode, incomingMessage.Content);
 
-        if (result.IsSuccess)
-        {
-            ConversationNode? targetNode = await conversationNodeRepository.GetByIdAsync(conversation.AwaitingResponseNodeId);
-
-            if (targetNode is null)
-            {
-                response.Add("TargetNode não encontrado");
-            }
-            else
-            {
-                Result resultNextNode = conversation.HandleNextNode(targetNode);
-                if (resultNextNode.IsSuccess)
-                {
-                    response.Add(resultNextNode.Message);
-                }
-                else
-                {
-                    response.Add(targetNode.Message);
-                }
-            }
-        }
-        else
-        {
-            response.Add(result.Message);
-        }
+        response.Add(result.Message);
 
         messageRepository.Add(Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming));
         messageRepository.Add(Message.Create(conversation, response[0], MessageSenderType.Bot, MessageDirection.Outgoing));

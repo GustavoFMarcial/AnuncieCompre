@@ -34,13 +34,13 @@ public class ConversationNodeRepository(AnuncieCompreContext _context) : BaseRep
         return await context.Set<ConversationNode>().Where(cn => cn.IsInitial == true).ToListAsync();
     }
 
-    public async Task<ConversationNode> GetNodeOrMenuWithTransitionsByIdAsync(Guid id)
+    public async Task<ConversationNode> GetNodeWithTransitionsAndTargetNodesByIdAsync(Guid id)
     {
-        ConversationNode? node = await context.Set<ConversationNode>().Include(n => n.Transitions).FirstOrDefaultAsync(cn => cn.Id == id);
+        ConversationNode? node = await context.Set<ConversationNode>().Include(n => n.Transitions).ThenInclude(t => t.TargetNode).FirstOrDefaultAsync(cn => cn.Id == id);
 
         if (node is null)
         {
-            return await context.Set<ConversationNode>().Include(n => n.Transitions).FirstAsync(cn => cn.IsMenu == true);
+            return await context.Set<ConversationNode>().Include(n => n.Transitions).ThenInclude(t => t.TargetNode).FirstAsync(cn => cn.IsMenu == true);
         }
 
         return node;
