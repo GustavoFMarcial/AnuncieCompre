@@ -13,6 +13,7 @@ public class Message : BaseEntity
     public int MaxRetryAttempts { get; private set; } = 5;
     public MessageSenderType SenderType { get; private set; }
     public MessageDirection Direction { get; private set; }
+    public bool IsRead { get; private set; } = false;
 
     private Message() { }
 
@@ -44,5 +45,10 @@ public class Message : BaseEntity
     public void SetMessageStatus(MessageStatus status)
     {
         MessageStatus = status;
+    }
+
+    public void MarkAsRead()
+    {
+        IsRead = true;
     }
 }

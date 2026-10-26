@@ -13,14 +13,14 @@ public class SendMessage(
     IMessageRepository _messageRepository, 
     IMessageSender _messageSender, 
     IMessageProviderReferenceRepository _messageProvicerReferenceRepository,
-    IRealtimeNotifier _realTimeNotifier,
+    IRealtimeNotifier _realtimeNotifier,
     IUnitOfWork _unitOfWork)
 {
     private readonly IConversationRepository conversationRepository = _conversationRepository;
     private readonly IMessageRepository messageRepository = _messageRepository;
     private readonly IMessageSender messageSender = _messageSender;
     private readonly IMessageProviderReferenceRepository messageProviderReferenceRepository = _messageProvicerReferenceRepository;
-    private readonly IRealtimeNotifier realTimeNotifier = _realTimeNotifier;
+    private readonly IRealtimeNotifier realtimeNotifier = _realtimeNotifier;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
     public async Task<Result> Handle(Guid id, string text)
@@ -40,7 +40,7 @@ public class SendMessage(
         }
 
         await unitOfWork.SaveChangesAsync();
-        await realTimeNotifier.NotifyNewMessageAsync(conversation.Id, message);
+        await realtimeNotifier.NotifyNewMessageAsync(conversation.Id, message);
         return Result.Success(result.Message);
     }
 }

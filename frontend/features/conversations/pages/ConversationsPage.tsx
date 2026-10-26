@@ -13,7 +13,7 @@ export function ConversationsPage() {
     const [status, setStatus] = useState<ConversationStatusFilter>("all");
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const { data, isLoading, isError } = useConversations(status);
-    useRealtimeMessages(data?.map((c) => c.id) ?? []);
+    useRealtimeMessages(data?.map((c) => c.id) ?? [], selectedId);
 
     const selected = data?.find((c) => c.id === selectedId) ?? null;
     const sorted = [...(data ?? [])].sort(

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import type { QueryClient } from "@tanstack/react-query";
 import { HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
 import type { HubConnection } from "@microsoft/signalr";
 
@@ -9,7 +10,9 @@ import type { Conversation, Message, RealtimeMessageDTO } from "../types/convers
 
 const CHAT_HUB_URL = `${API_BASE_URL}/hubs/chathub`;
 const RECEIVE_MESSAGE_EVENT = "ReceiveMessage";
+const RECEIVE_CONVERSATION_EVENT = "ReceiveConversation";
 const JOIN_CONVERSATION_METHOD = "JoinConversation";
+const MARK_MESSAGES_AS_READ_METHOD = "MarkMessagesAsRead";
 const START_RETRY_DELAY_MS = 5_000;
 
 // A mesma mensagem pode chegar pelo SignalR e por um refetch (ex.: invalidação do
@@ -29,6 +32,43 @@ function withAppendedMessage(conversation: Conversation, message: Message): Conv
         messages: [...conversation.messages, message],
         lastMessageAt: message.createdAt,
     };
+}
+
+// Zera o contador de não lidas de uma conversa no cache: apenas mensagens do
+// cliente contam para o badge.
+function withConversationRead(conversation: Conversation): Conversation {
+    return {
+        ...conversation,
+        messages: conversation.messages.map((m) =>
+            m.senderType === "customer" && !m.isRead ? { ...m, isRead: true } : m,
+        ),
+    };
+}
+
+function markConversationAsReadInCache(qc: QueryClient, conversationId: string): void {
+    const listEntries = qc.getQueriesData<Conversation[]>({ queryKey: ["conversations"] });
+    for (const [queryKey, conversations] of listEntries) {
+        if (!conversations) continue;
+        const index = conversations.findIndex((c) => c.id === conversationId);
+        if (index === -1) continue;
+
+        const updated = [...conversations];
+        updated[index] = withConversationRead(conversations[index]);
+        qc.setQueryData(queryKey, updated);
+    }
+
+    const detail = qc.getQueryData<Conversation>(["conversation", conversationId]);
+    if (detail) {
+        qc.setQueryData(["conversation", conversationId], withConversationRead(detail));
+    }
+}
+
+async function markMessagesAsReadOnHub(connection: HubConnection, conversationId: string): Promise<void> {
+    await connection.invoke(MARK_MESSAGES_AS_READ_METHOD, conversationId).catch((error: unknown) => {
+        if (import.meta.env.DEV) {
+            console.error("[realtime] falha ao marcar mensagens como lidas", conversationId, error);
+        }
+    });
 }
 
 async function joinConversations(
@@ -51,10 +91,11 @@ async function joinConversations(
     );
 }
 
-export function useRealtimeMessages(conversationIds: string[]) {
+export function useRealtimeMessages(conversationIds: string[], selectedId: string | null) {
     const qc = useQueryClient();
     const connectionRef = useRef<HubConnection | null>(null);
     const conversationIdsRef = useRef<string[]>(conversationIds);
+    const selectedIdRef = useRef<string | null>(selectedId);
     const joinedIdsRef = useRef<Set<string>>(new Set());
 
     useEffect(() => {
@@ -68,7 +109,14 @@ export function useRealtimeMessages(conversationIds: string[]) {
         connectionRef.current = connection;
 
         connection.on(RECEIVE_MESSAGE_EVENT, (dto: RealtimeMessageDTO) => {
-            const message = conversationsService.mapRealtimeMessage(dto);
+            let message = conversationsService.mapRealtimeMessage(dto);
+
+            // Mensagem do cliente chegando na conversa aberta: entra no cache já
+            // como lida e o backend persiste o IsRead.
+            if (message.conversationId === selectedIdRef.current && message.senderType === "customer") {
+                message = { ...message, isRead: true };
+                void markMessagesAsReadOnHub(connection, message.conversationId);
+            }
 
             const listEntries = qc.getQueriesData<Conversation[]>({ queryKey: ["conversations"] });
             let knownConversation = false;
@@ -97,9 +145,23 @@ export function useRealtimeMessages(conversationIds: string[]) {
             }
         });
 
-        connection.onreconnected(() => {
+        // Conversa recém-criada: o backend notifica depois de persistir, então um
+        // refetch da lista já a traz com cliente e mensagens completas.
+        connection.on(RECEIVE_CONVERSATION_EVENT, () => {
+            void qc.invalidateQueries({ queryKey: ["conversations"] });
+        });
+
+        connection.onreconnected(async () => {
             joinedIds.clear();
             void joinConversations(connection, conversationIdsRef.current, joinedIds);
+
+            // Mensagens enviadas ao hub durante a desconexão não são recuperadas
+            // (o SignalR não faz replay): a conversa aberta é marcada como lida
+            // antes do refetch, para a lista já voltar com o IsRead atualizado.
+            if (selectedIdRef.current) {
+                await markMessagesAsReadOnHub(connection, selectedIdRef.current);
+            }
+            void qc.invalidateQueries({ queryKey: ["conversations"] });
         });
 
         let stopped = false;
@@ -111,6 +173,11 @@ export function useRealtimeMessages(conversationIds: string[]) {
                 .then(() => {
                     if (stopped) return;
                     void joinConversations(connection, conversationIdsRef.current, joinedIds);
+                    // Caso o operador tenha aberto a conversa antes da conexão ser
+                    // estabelecida, o mark as read pendente é enviado agora.
+                    if (selectedIdRef.current) {
+                        void markMessagesAsReadOnHub(connection, selectedIdRef.current);
+                    }
                 })
                 .catch((error: unknown) => {
                     if (stopped) return;
@@ -139,4 +206,20 @@ export function useRealtimeMessages(conversationIds: string[]) {
             void joinConversations(connection, conversationIds, joinedIdsRef.current);
         }
     }, [conversationIds]);
+
+    useEffect(() => {
+        selectedIdRef.current = selectedId;
+    }, [selectedId]);
+
+    useEffect(() => {
+        if (!selectedId) return;
+
+        // Abrir a conversa marca as mensagens do cliente como lidas: o backend
+        // persiste e o contador zera otimisticamente no cache local.
+        const connection = connectionRef.current;
+        if (connection && connection.state === HubConnectionState.Connected) {
+            void markMessagesAsReadOnHub(connection, selectedId);
+        }
+        markConversationAsReadInCache(qc, selectedId);
+    }, [selectedId, qc]);
 }

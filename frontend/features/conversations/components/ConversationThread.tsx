@@ -26,13 +26,13 @@ export function ConversationThread({ conversation }: ConversationThreadProps) {
             <div className="flex items-center justify-between border-b border-neutral-200 bg-white px-5 py-3">
                 <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 font-semibold text-neutral-700">
-                        {conversation.userName.charAt(0).toUpperCase()}
+                        {conversation.customerName.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                        <h3 className="font-semibold text-neutral-900">{conversation.userName}</h3>
+                        <h3 className="font-semibold text-neutral-900">{conversation.customerName}</h3>
                         <div className="flex items-center gap-1 text-xs text-neutral-400">
                             <Phone className="h-3 w-3" />
-                            {conversation.userPhone}
+                            {conversation.customerPhone}
                         </div>
                     </div>
                 </div>
