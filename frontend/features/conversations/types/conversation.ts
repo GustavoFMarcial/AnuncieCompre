@@ -11,14 +11,15 @@ export interface Message {
     text: string;
     senderType: MessageSenderType;
     direction: MessageDirection;
+    isRead: boolean;
     createdAt: Date;
 }
 
 export interface Conversation {
     id: string;
-    userId: string;
-    userName: string;
-    userPhone: string;
+    customerId: string;
+    customerName: string;
+    customerPhone: string;
     status: ConversationStatus;
     attendant: ConversationAttendant;
     awaitingResponseNodeId: string;
@@ -30,6 +31,7 @@ export interface MessageDTO {
     text: string;
     senderType: string;
     direction: string;
+    isRead: boolean;
     createdAt: string;
 }
 
@@ -40,15 +42,16 @@ export interface RealtimeMessageDTO {
     conversationId: string;
     senderType: number;
     direction: number;
+    isRead: boolean;
     createdAt: string;
     text: string;
 }
 
 export interface ConversationDTO {
     conversationId: string;
-    userId: string;
-    userPhone: string;
-    userName: string;
+    customerId: string;
+    customerPhone: string;
+    customerName: string;
     status: string;
     attendant: string;
     messages: MessageDTO[];

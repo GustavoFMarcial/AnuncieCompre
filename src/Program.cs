@@ -73,6 +73,7 @@ builder.Services.AddScoped<MessageFailureHandler>();
 builder.Services.AddScoped<ProcessMessageStatus>();
 builder.Services.AddScoped<UpdateConversationNodePosition>();
 builder.Services.AddScoped<IRealtimeNotifier, SignalRRealtimeNotifier>();
+builder.Services.AddScoped<MarkMessagesAsRead>();
 
 //Hosted
 builder.Services.AddHostedService<CloseInactiveConversations>();

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AnuncieCompre.Migrations
 {
     [DbContext(typeof(AnuncieCompreContext))]
-    [Migration("20261025011658_InitialMigration")]
+    [Migration("20261026003058_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -115,6 +115,9 @@ namespace AnuncieCompre.Migrations
 
                     b.Property<int>("FailureType")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("MaxRetryAttempts")
                         .HasColumnType("integer");

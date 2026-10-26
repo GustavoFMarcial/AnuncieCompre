@@ -14,6 +14,17 @@ public static class MessageExtensions
             Direction = message.Direction,
             CreatedAt = message.CreatedAt,
             Text = message.Text,
+            IsRead = message.IsRead,
         };
+    }
+
+    public static List<RealTimeMarkAsReadMessageDTO> ToMarkAsReadMessageDto(this List<Message> messages)
+    {
+        return messages.Select(m => new RealTimeMarkAsReadMessageDTO
+        {
+            MessageId = m.Id,
+            IsRead = m.IsRead,
+        }).ToList();
+        
     }
 }

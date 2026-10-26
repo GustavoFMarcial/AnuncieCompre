@@ -9,7 +9,6 @@ using AnuncieCompre.Domain.Aggregates.MessageAggregate;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Services.NodeValidatorFactories;
-using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Common;
 
 namespace AnuncieCompre.Application.UseCases.ProcessMessageUseCase;
@@ -32,6 +31,7 @@ public class ProcessIncomingMessageUseCase(
     public async Task<ReadOnlyCollection<string>> ExecuteAsync(IncomingMessageRequest incomingMessage)
     {
         Conversation? conversation = await conversationRepository.GetOpenConversationBySenderPhoneAsync(incomingMessage.SenderPhone);
+        bool isNewConversation = false;
         Message customerMessage;
         Collection<string> response = [];
 
@@ -47,6 +47,7 @@ public class ProcessIncomingMessageUseCase(
 
             conversation = Conversation.Create(customer);
             conversationRepository.Add(conversation);
+            isNewConversation = true;
         }
         else if (conversation.Attendant == ConversationAttendant.Operator)
         {
@@ -64,12 +65,17 @@ public class ProcessIncomingMessageUseCase(
 
         response.Add(result.Message);
 
-        Message botMessage = Message.Create(conversation, response[0], MessageSenderType.Bot, MessageDirection.Outgoing);
         customerMessage = Message.Create(conversation, incomingMessage.Content, MessageSenderType.Customer, MessageDirection.Incoming);
+        Message botMessage = Message.Create(conversation, response[0], MessageSenderType.Bot, MessageDirection.Outgoing);
         messageRepository.Add(customerMessage);
         messageRepository.Add(botMessage);
 
         await unitOfWork.SaveChangesAsync();
+        
+        if (isNewConversation)
+        {
+            await realtimeNotifier.NotifyNewConversationAsync(conversation);
+        }
         await realtimeNotifier.NotifyNewMessageAsync(conversation.Id, customerMessage);
         await realtimeNotifier.NotifyNewMessageAsync(conversation.Id, botMessage);
         return response.AsReadOnly();
