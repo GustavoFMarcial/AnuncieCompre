@@ -23,7 +23,6 @@ const DIRECTION_MAP: Record<string, Message["direction"]> = {
     outgoing: "outgoing",
 };
 
-// O protocolo JSON do hub (System.Text.Json) serializa os enums como números.
 const REALTIME_SENDER_TYPE_MAP: Record<number, Message["senderType"]> = {
     0: "operator",
     1: "bot",
