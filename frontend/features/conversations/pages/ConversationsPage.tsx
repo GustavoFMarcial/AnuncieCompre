@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MessagesSquare } from "lucide-react";
 
 import { StatusFilter } from "../components/StatusFilter";
@@ -6,16 +6,23 @@ import { ConversationList } from "../components/ConversationList";
 import { ConversationThread } from "../components/ConversationThread";
 import { FlowPageHeader } from "../../conversationflows/components/FlowPageHeader";
 import { useConversations } from "../hooks/useConversations";
-import { useRealtimeMessages } from "../hooks/useRealtimeMessages";
+import { useConversationsRealtime } from "../hooks/useConversationsRealtime";
 import type { ConversationStatusFilter } from "../types/conversation";
 
 export function ConversationsPage() {
     const [status, setStatus] = useState<ConversationStatusFilter>("all");
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const { data, isLoading, isError } = useConversations(status);
-    useRealtimeMessages(data?.map((c) => c.id) ?? [], selectedId);
+    const { setSelectedConversation } = useConversationsRealtime();
 
     const selected = data?.find((c) => c.id === selectedId) ?? null;
+    const selectedConversationId = selected?.id ?? null;
+
+    useEffect(() => {
+        setSelectedConversation(selectedConversationId);
+        return () => setSelectedConversation(null);
+    }, [selectedConversationId, setSelectedConversation]);
+
     const sorted = [...(data ?? [])].sort(
         (a, b) => b.lastMessageAt.getTime() - a.lastMessageAt.getTime()
     );
