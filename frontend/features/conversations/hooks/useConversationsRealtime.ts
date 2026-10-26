@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { QueryClient } from "@tanstack/react-query";
 import { HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
@@ -6,6 +6,7 @@ import type { HubConnection } from "@microsoft/signalr";
 
 import { API_BASE_URL } from "../../../shared/lib/api";
 import { conversationsService } from "../services/conversations.service";
+import { useConversations } from "./useConversations";
 import type { Conversation, Message, RealtimeMessageDTO } from "../types/conversation";
 
 const CHAT_HUB_URL = `${API_BASE_URL}/hubs/chathub`;
@@ -15,8 +16,6 @@ const JOIN_CONVERSATION_METHOD = "JoinConversation";
 const MARK_MESSAGES_AS_READ_METHOD = "MarkMessagesAsRead";
 const START_RETRY_DELAY_MS = 5_000;
 
-// A mesma mensagem pode chegar pelo SignalR e por um refetch (ex.: invalidação do
-// useSendMessage), então o append só acontece se ela ainda não estiver em cache.
 function containsMessage(messages: Message[], candidate: Message): boolean {
     return messages.some(
         (m) =>
@@ -34,8 +33,6 @@ function withAppendedMessage(conversation: Conversation, message: Message): Conv
     };
 }
 
-// Zera o contador de não lidas de uma conversa no cache: apenas mensagens do
-// cliente contam para o badge.
 function withConversationRead(conversation: Conversation): Conversation {
     return {
         ...conversation,
@@ -91,11 +88,24 @@ async function joinConversations(
     );
 }
 
-export function useRealtimeMessages(conversationIds: string[], selectedId: string | null) {
+export interface ConversationsRealtimeContextValue {
+    setSelectedConversation: (id: string | null) => void;
+    unreadConversations: number;
+}
+
+export const ConversationsRealtimeContext = createContext<ConversationsRealtimeContextValue | null>(null);
+
+export function useConversationsRealtimeCore(): ConversationsRealtimeContextValue {
     const qc = useQueryClient();
+    const { data } = useConversations("all");
+    const conversationIds = useMemo(
+        () => data?.map((c) => c.id) ?? [],
+        [data],
+    );
+
     const connectionRef = useRef<HubConnection | null>(null);
     const conversationIdsRef = useRef<string[]>(conversationIds);
-    const selectedIdRef = useRef<string | null>(selectedId);
+    const selectedIdRef = useRef<string | null>(null);
     const joinedIdsRef = useRef<Set<string>>(new Set());
 
     useEffect(() => {
@@ -111,8 +121,6 @@ export function useRealtimeMessages(conversationIds: string[], selectedId: strin
         connection.on(RECEIVE_MESSAGE_EVENT, (dto: RealtimeMessageDTO) => {
             let message = conversationsService.mapRealtimeMessage(dto);
 
-            // Mensagem do cliente chegando na conversa aberta: entra no cache já
-            // como lida e o backend persiste o IsRead.
             if (message.conversationId === selectedIdRef.current && message.senderType === "customer") {
                 message = { ...message, isRead: true };
                 void markMessagesAsReadOnHub(connection, message.conversationId);
@@ -145,8 +153,6 @@ export function useRealtimeMessages(conversationIds: string[], selectedId: strin
             }
         });
 
-        // Conversa recém-criada: o backend notifica depois de persistir, então um
-        // refetch da lista já a traz com cliente e mensagens completas.
         connection.on(RECEIVE_CONVERSATION_EVENT, () => {
             void qc.invalidateQueries({ queryKey: ["conversations"] });
         });
@@ -155,9 +161,6 @@ export function useRealtimeMessages(conversationIds: string[], selectedId: strin
             joinedIds.clear();
             void joinConversations(connection, conversationIdsRef.current, joinedIds);
 
-            // Mensagens enviadas ao hub durante a desconexão não são recuperadas
-            // (o SignalR não faz replay): a conversa aberta é marcada como lida
-            // antes do refetch, para a lista já voltar com o IsRead atualizado.
             if (selectedIdRef.current) {
                 await markMessagesAsReadOnHub(connection, selectedIdRef.current);
             }
@@ -173,8 +176,6 @@ export function useRealtimeMessages(conversationIds: string[], selectedId: strin
                 .then(() => {
                     if (stopped) return;
                     void joinConversations(connection, conversationIdsRef.current, joinedIds);
-                    // Caso o operador tenha aberto a conversa antes da conexão ser
-                    // estabelecida, o mark as read pendente é enviado agora.
                     if (selectedIdRef.current) {
                         void markMessagesAsReadOnHub(connection, selectedIdRef.current);
                     }
@@ -207,19 +208,31 @@ export function useRealtimeMessages(conversationIds: string[], selectedId: strin
         }
     }, [conversationIds]);
 
-    useEffect(() => {
-        selectedIdRef.current = selectedId;
-    }, [selectedId]);
+    const setSelectedConversation = useCallback(
+        (id: string | null) => {
+            selectedIdRef.current = id;
+            if (!id) return;
+            const connection = connectionRef.current;
+            if (connection && connection.state === HubConnectionState.Connected) {
+                void markMessagesAsReadOnHub(connection, id);
+            }
+            markConversationAsReadInCache(qc, id);
+        },
+        [qc],
+    );
 
-    useEffect(() => {
-        if (!selectedId) return;
+    const unreadConversations = (data ?? []).filter(
+        (conversation) =>
+            conversation.messages.some((m) => m.senderType === "customer" && !m.isRead),
+    ).length;
 
-        // Abrir a conversa marca as mensagens do cliente como lidas: o backend
-        // persiste e o contador zera otimisticamente no cache local.
-        const connection = connectionRef.current;
-        if (connection && connection.state === HubConnectionState.Connected) {
-            void markMessagesAsReadOnHub(connection, selectedId);
-        }
-        markConversationAsReadInCache(qc, selectedId);
-    }, [selectedId, qc]);
+    return { setSelectedConversation, unreadConversations };
+}
+
+export function useConversationsRealtime(): ConversationsRealtimeContextValue {
+    const context = useContext(ConversationsRealtimeContext);
+    if (!context) {
+        throw new Error("useConversationsRealtime deve ser usado dentro de ConversationsRealtimeProvider");
+    }
+    return context;
 }

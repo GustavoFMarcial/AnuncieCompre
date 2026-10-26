@@ -7,9 +7,10 @@ interface SidebarItemProps extends Omit<LinkProps, "to"> {
     title: string;
     to: string;
     icon?: ReactNode;
+    trailing?: ReactNode;
 }
 
-export function SidebarItem({ title, to, icon, ...rest }: SidebarItemProps) {
+export function SidebarItem({ title, to, icon, trailing, ...rest }: SidebarItemProps) {
     return (
         <NavLink
             to={to}
@@ -24,7 +25,8 @@ export function SidebarItem({ title, to, icon, ...rest }: SidebarItemProps) {
             }
         >
             {icon && <span className="flex h-4 w-4 items-center justify-center">{icon}</span>}
-            <span>{title}</span>
+            <span className="flex-1">{title}</span>
+            {trailing}
         </NavLink>
     );
 }

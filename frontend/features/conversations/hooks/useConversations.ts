@@ -7,6 +7,7 @@ export function useConversations(status: ConversationStatusFilter) {
     return useQuery({
         queryKey: ["conversations", status] as const,
         queryFn: () => conversationsService.list(status),
+        refetchOnMount: "always",
     });
 }
 
