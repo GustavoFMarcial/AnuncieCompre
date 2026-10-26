@@ -164,6 +164,7 @@ namespace AnuncieCompre.Migrations
                     MaxRetryAttempts = table.Column<int>(type: "integer", nullable: false),
                     SenderType = table.Column<int>(type: "integer", nullable: false),
                     Direction = table.Column<int>(type: "integer", nullable: false),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },

@@ -40,6 +40,7 @@ export function useSendMessage(conversationId: string) {
                             text,
                             senderType: "operator" as const,
                             direction: "outgoing" as const,
+                            isRead: true,
                             createdAt: new Date(),
                         },
                     ],

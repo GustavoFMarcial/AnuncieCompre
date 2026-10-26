@@ -44,6 +44,7 @@ function mapConversation(dto: ConversationDTO): Conversation {
         text: m.text,
         senderType: SENDER_TYPE_MAP[m.senderType] ?? "customer",
         direction: DIRECTION_MAP[m.direction] ?? "outgoing",
+        isRead: m.isRead,
         createdAt: new Date(m.createdAt),
     }));
 
@@ -51,9 +52,9 @@ function mapConversation(dto: ConversationDTO): Conversation {
 
     return {
         id: dto.conversationId,
-        userId: dto.userId,
-        userName: dto.userName,
-        userPhone: dto.userPhone,
+        customerId: dto.customerId,
+        customerName: dto.customerName,
+        customerPhone: dto.customerPhone,
         status: STATUS_MAP[dto.status] ?? "open",
         attendant: ATTENDANT_MAP[dto.attendant] ?? "bot",
         awaitingResponseNodeId: "",
@@ -87,6 +88,7 @@ export const conversationsService = {
             text: dto.text,
             senderType: REALTIME_SENDER_TYPE_MAP[dto.senderType] ?? "customer",
             direction: REALTIME_DIRECTION_MAP[dto.direction] ?? "outgoing",
+            isRead: dto.isRead,
             createdAt: new Date(dto.createdAt),
         };
     },

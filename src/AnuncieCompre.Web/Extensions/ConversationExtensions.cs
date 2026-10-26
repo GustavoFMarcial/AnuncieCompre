@@ -1,4 +1,5 @@
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
+using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Web.DTO;
 
@@ -11,9 +12,9 @@ public static class ConversationExtensions
         List<ConversationDTO> conversations = conversationList.Select(c => new ConversationDTO
         {
             ConversationId = c.Id,
-            UserId = c.CustomerId,
-            UserPhone = c.Customer.Phone.Value,
-            UserName = c.Customer.Name?.Value ?? "",
+            CustomerId = c.CustomerId,
+            CustomerPhone = c.Customer.Phone.Value,
+            CustomerName = c.Customer.Name?.Value ?? "",
             Status = c.Status.ToString().ToLower(),
             Attendant = c.Attendant.ToString().ToLower(),
             Messages = c.Messages.Select(m => new MessageDTO
@@ -21,6 +22,7 @@ public static class ConversationExtensions
                 Text = m.Text,
                 SenderType = m.SenderType.ToString().ToLower(),
                 Direction = m.Direction.ToString().ToLower(),
+                IsRead = m.IsRead,
                 CreatedAt = m.CreatedAt,
             }).ToList(),
         }).ToList();
@@ -31,14 +33,14 @@ public static class ConversationExtensions
         };
     }
 
-    public static ConversationDTO ToConversationDTO (this Conversation conversation)
+    public static ConversationDTO ToConversationDTO(this Conversation conversation)
     {
         return new ConversationDTO
         {
             ConversationId = conversation.Id,
-            UserId = conversation.CustomerId,
-            UserPhone = conversation.Customer.Phone.Value,
-            UserName = conversation.Customer.Name?.Value ?? "",
+            CustomerId = conversation.CustomerId,
+            CustomerPhone = conversation.Customer.Phone.Value,
+            CustomerName = conversation.Customer.Name?.Value ?? "",
             Status = conversation.Status.ToString().ToLower(),
             Attendant = conversation.Attendant.ToString().ToLower(),
             Messages = conversation.Messages.Select(m => new MessageDTO
@@ -46,8 +48,20 @@ public static class ConversationExtensions
                 Text = m.Text,
                 SenderType = m.SenderType.ToString().ToLower(),
                 Direction = m.Direction.ToString().ToLower(),
+                IsRead = m.IsRead,
                 CreatedAt = m.CreatedAt,
             }).ToList(), 
+        };
+    }
+
+    public static RealTimeConversationDTO ToRealTimeConversationDTO(this Conversation conversation)
+    {
+        return new RealTimeConversationDTO
+        {
+            ConversationId = conversation.Id,
+            Attendant = conversation.Attendant,
+            Status = conversation.Status,
+            CreatedAt = conversation.CreatedAt,
         };
     }
 }

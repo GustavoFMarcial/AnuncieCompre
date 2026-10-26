@@ -27,6 +27,9 @@ export function ConversationListItem({
     onSelect,
 }: ConversationListItemProps) {
     const last = conversation.messages[conversation.messages.length - 1];
+    const unreadCount = conversation.messages.filter(
+        (m) => m.senderType === "customer" && !m.isRead,
+    ).length;
 
     return (
         <button
@@ -37,21 +40,28 @@ export function ConversationListItem({
             )}
         >
             <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-200 text-sm font-semibold text-neutral-700">
-                {conversation.userName.charAt(0).toUpperCase()}
+                {conversation.customerName.charAt(0).toUpperCase()}
             </div>
             <div className="flex min-w-0 flex-1 flex-col">
                 <div className="flex items-center justify-between gap-2">
                     <span className="truncate font-medium text-neutral-900">
-                        {conversation.userName}
+                        {conversation.customerName}
                     </span>
                     <span className="shrink-0 text-xs text-neutral-400">
                         {formatTime(conversation.lastMessageAt)}
                     </span>
                 </div>
-                <span className="truncate text-xs text-neutral-400">{conversation.userPhone}</span>
-                <span className="mt-1 truncate text-sm text-neutral-500">
-                    {last ? last.text : "Sem mensagens"}
-                </span>
+                <span className="truncate text-xs text-neutral-400">{conversation.customerPhone}</span>
+                <div className="mt-1 flex items-center justify-between gap-2">
+                    <span className="truncate text-sm text-neutral-500">
+                        {last ? last.text : "Sem mensagens"}
+                    </span>
+                    {unreadCount > 0 && (
+                        <Badge variant="success" className="shrink-0 bg-green-600 px-2 text-white">
+                            {unreadCount > 99 ? "99+" : unreadCount}
+                        </Badge>
+                    )}
+                </div>
                 <div className="mt-1.5 flex items-center gap-1.5">
                     {conversation.attendant === "operator" ? (
                         <Badge variant="secondary" className="gap-1">

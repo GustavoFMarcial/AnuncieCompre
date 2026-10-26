@@ -113,6 +113,9 @@ namespace AnuncieCompre.Migrations
                     b.Property<int>("FailureType")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("MaxRetryAttempts")
                         .HasColumnType("integer");
 
