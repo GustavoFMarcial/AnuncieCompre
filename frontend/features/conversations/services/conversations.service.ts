@@ -79,6 +79,10 @@ export const conversationsService = {
         await api.post(`/api/conversations/${id}/messages`, JSON.stringify(text));
     },
 
+    async markMessagesAsRead(id: string): Promise<void> {
+        await api.post(`/api/conversations/${id}/messages:markAsRead`);
+    },
+
     mapRealtimeMessage(dto: RealtimeMessageDTO): Message {
         realtimeMessageSequence += 1;
         return {
