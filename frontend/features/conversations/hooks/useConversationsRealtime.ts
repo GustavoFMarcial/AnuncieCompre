@@ -13,7 +13,6 @@ const CHAT_HUB_URL = `${API_BASE_URL}/hubs/chathub`;
 const RECEIVE_MESSAGE_EVENT = "ReceiveMessage";
 const RECEIVE_CONVERSATION_EVENT = "ReceiveConversation";
 const JOIN_CONVERSATION_METHOD = "JoinConversation";
-const MARK_MESSAGES_AS_READ_METHOD = "MarkMessagesAsRead";
 const START_RETRY_DELAY_MS = 5_000;
 
 function containsMessage(messages: Message[], candidate: Message): boolean {
@@ -60,8 +59,8 @@ function markConversationAsReadInCache(qc: QueryClient, conversationId: string):
     }
 }
 
-async function markMessagesAsReadOnHub(connection: HubConnection, conversationId: string): Promise<void> {
-    await connection.invoke(MARK_MESSAGES_AS_READ_METHOD, conversationId).catch((error: unknown) => {
+async function markMessagesAsRead(conversationId: string): Promise<void> {
+    await conversationsService.markMessagesAsRead(conversationId).catch((error: unknown) => {
         if (import.meta.env.DEV) {
             console.error("[realtime] falha ao marcar mensagens como lidas", conversationId, error);
         }
@@ -123,7 +122,7 @@ export function useConversationsRealtimeCore(): ConversationsRealtimeContextValu
 
             if (message.conversationId === selectedIdRef.current && message.senderType === "customer") {
                 message = { ...message, isRead: true };
-                void markMessagesAsReadOnHub(connection, message.conversationId);
+                void markMessagesAsRead(message.conversationId);
             }
 
             const listEntries = qc.getQueriesData<Conversation[]>({ queryKey: ["conversations"] });
@@ -162,7 +161,7 @@ export function useConversationsRealtimeCore(): ConversationsRealtimeContextValu
             void joinConversations(connection, conversationIdsRef.current, joinedIds);
 
             if (selectedIdRef.current) {
-                await markMessagesAsReadOnHub(connection, selectedIdRef.current);
+                await markMessagesAsRead(selectedIdRef.current);
             }
             void qc.invalidateQueries({ queryKey: ["conversations"] });
         });
@@ -177,7 +176,7 @@ export function useConversationsRealtimeCore(): ConversationsRealtimeContextValu
                     if (stopped) return;
                     void joinConversations(connection, conversationIdsRef.current, joinedIds);
                     if (selectedIdRef.current) {
-                        void markMessagesAsReadOnHub(connection, selectedIdRef.current);
+                        void markMessagesAsRead(selectedIdRef.current);
                     }
                 })
                 .catch((error: unknown) => {
@@ -212,10 +211,7 @@ export function useConversationsRealtimeCore(): ConversationsRealtimeContextValu
         (id: string | null) => {
             selectedIdRef.current = id;
             if (!id) return;
-            const connection = connectionRef.current;
-            if (connection && connection.state === HubConnectionState.Connected) {
-                void markMessagesAsReadOnHub(connection, id);
-            }
+            void markMessagesAsRead(id);
             markConversationAsReadInCache(qc, id);
         },
         [qc],

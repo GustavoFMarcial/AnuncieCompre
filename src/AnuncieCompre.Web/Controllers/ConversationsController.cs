@@ -43,4 +43,12 @@ public class ConversationsController : ControllerBase
         
         return Ok();
     }
+
+    [HttpPost("{conversationId:guid}/messages:markAsRead")]
+    public async Task<ActionResult> MarkMessagesAsRead([FromRoute] Guid conversationId, [FromServices] MarkMessagesAsRead service)
+    {
+        await service.Handle(conversationId);
+
+        return Ok();
+    }
 }
