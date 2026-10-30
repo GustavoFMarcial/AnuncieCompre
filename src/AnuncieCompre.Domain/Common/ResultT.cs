@@ -32,7 +32,7 @@ public class Result<T> : Result
         return result;
     }
 
-    public static new Result<T> Failure(List<string> messages)
+    public static new Result<T> Failures(List<string> messages)
     {
         Result<T> result = new()
         {

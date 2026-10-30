@@ -44,7 +44,7 @@ public class EditConversationFlowStatus(IConversationFlowRepository _conversatio
             errors.AddRange(flowResult.Messages);
         }
 
-        if (errors.Count > 0) return Result.Failure(errors);
+        if (errors.Count > 0) return Result.Failures(errors);
 
         await using IDbContextTransaction transaction = await unitOfWork.BeginTransactionAsync();
         try

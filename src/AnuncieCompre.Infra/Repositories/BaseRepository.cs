@@ -23,4 +23,8 @@ public class BaseRepository<T>(AnuncieCompreContext _context) : IBaseRepository<
     {
         context.Set<T>().Remove(entity);
     }
+    public async Task<List<T>> ToListAsync()
+    {
+        return await context.Set<T>().ToListAsync();
+    }
 }

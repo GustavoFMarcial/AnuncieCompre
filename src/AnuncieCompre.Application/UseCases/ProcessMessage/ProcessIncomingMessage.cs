@@ -3,13 +3,13 @@ using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.Application.Interfaces;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Domain.Aggregates.MessageAggregate;
 using AnuncieCompre.Domain.Enums;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Services.NodeValidatorFactories;
 using AnuncieCompre.Domain.Common;
+using AnuncieCompre.Domain.Aggregates.CustomerAggregate;
 
 namespace AnuncieCompre.Application.UseCases.ProcessMessageUseCase;
 
