@@ -34,8 +34,6 @@ public partial record Quantity : ValueObject
         return value > 0;
     }
 
-    // [GeneratedRegex(@"^(?!0(?:[.,]0+)?(?:\s|$))\d+(?:[.,]\d+)?(?:\s*.+)?$")]
-    // private static partial Regex MyRegex();
     [GeneratedRegex(@"^\d+(?:[.,]\d+)?")]
     private static partial Regex MyRegex1();
 }

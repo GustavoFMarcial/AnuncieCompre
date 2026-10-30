@@ -1,18 +1,17 @@
-using System.Collections.ObjectModel;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using AnuncieCompre.Domain.Interfaces;
 using AnuncieCompre.Domain.Conversation.Nodes;
 using AnuncieCompre.Domain.Aggregates.MessageAggregate;
 using AnuncieCompre.Domain.Enums;
-using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Common;
-using AnuncieCompre.Domain.Aggregates.TransitionAggregate;
+using AnuncieCompre.Domain.Aggregates.CustomerAggregate;
 
 namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
 public class Conversation : BaseEntity
 {
+    public Guid CompanyId { get; private set; }
+    public Company Company { get; private set; } = default!;
     public Guid CustomerId { get; private set; }
     public Customer Customer { get; private set; } = default!;
     public Guid AwaitingResponseNodeId { get; private set; } = Guid.Empty;

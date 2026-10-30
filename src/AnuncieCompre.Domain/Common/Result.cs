@@ -25,12 +25,13 @@ public class Result
         {
             IsSuccess = false,
             Message = message,
+            Messages = [message],
         };
 
         return result;
     }
 
-    public static Result Failure(List<string> messages)
+    public static Result Failures(List<string> messages)
     {
         Result result = new()
         {

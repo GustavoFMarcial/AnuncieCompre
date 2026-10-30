@@ -64,7 +64,7 @@ public class ConversationNode : BaseEntity
         if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Final) errors.Add($"Node n°{Number}: Apenas nodes de confirmação ou opção podem ter opções");
         if (input.Options.Count > 0 && input.ValidationKind is ValidationKind.Validation) errors.Add($"Node n°{Number}: Apenas nodes de confirmação ou validação podem ter opções");
 
-        if (errors.Count > 0) return Result.Failure(errors);
+        if (errors.Count > 0) return Result.Failures(errors);
 
         Message = input.Message;
         ValidationKind = input.ValidationKind;
@@ -107,7 +107,7 @@ public class ConversationNode : BaseEntity
         if (ValidationKind is ValidationKind.Option && Transitions.Count <= 1) errors.Add($"Node n°{Number}: Node de opção não pode ter menos de duas transições");
         if (ValidationKind is ValidationKind.Confirmation && Transitions.Count <= 1) errors.Add($"Node n°{Number}: Node de confirmação não pode ter só uma transição");
 
-        if (errors.Count > 0) return Result.Failure(errors);
+        if (errors.Count > 0) return Result.Failures(errors);
 
         return Result.Success("Transações validadas com sucesso");
     }
@@ -121,7 +121,7 @@ public class ConversationNode : BaseEntity
         if (ValidationKind is ValidationKind.Validation && ValueObjectValidator is ValueObjectValidator.None) errors.Add($"Node n°{Number}: Node de validação deve possuir um validador");
         if (ValueObjectValidator is not ValueObjectValidator.None && ValidationKind is not ValidationKind.Validation) errors.Add($"Node n°{Number}: Apenas node de validação deve possuir um validador");
 
-        if (errors.Count > 0) return Result.Failure(errors);
+        if (errors.Count > 0) return Result.Failures(errors);
 
         return Result.Success("ConversationNode validado com sucesso");
     }

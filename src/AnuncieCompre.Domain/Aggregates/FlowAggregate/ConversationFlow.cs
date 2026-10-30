@@ -1,14 +1,14 @@
-using System.Diagnostics;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
-using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.Domain.Enums;
 
 namespace AnuncieCompre.Domain.Aggregates.FlowAggregate;
 
 public class ConversationFlow : BaseEntity
 {
+    public Guid CompanyId { get; private set; }
+    public Company Company { get; private set; } = default!;
     public Name Name { get; private set; } = default!;
     public string? Description { get; private set; }
     public FlowStatus Status { get; private set; } = default;
@@ -64,7 +64,7 @@ public class ConversationFlow : BaseEntity
             if (initialNodes.Count > 1) errors.Add("ConversationFlow deve ter apenas um node inicial");
             if (initialNodes.Count < 1) errors.Add("ConversationFlow deve ter um node inicial");
 
-            if (errors.Count > 0) return Result.Failure(errors);
+            if (errors.Count > 0) return Result.Failures(errors);
 
             Status = status;
         }

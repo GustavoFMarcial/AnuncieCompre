@@ -1,13 +1,12 @@
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 using AnuncieCompre.Domain.Aggregates.MessageAggregate;
-using AnuncieCompre.Domain.Aggregates.OrderAggregate;
 using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using Microsoft.EntityFrameworkCore;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
-using System.Text.Json;
 using AnuncieCompre.Domain.Aggregates.MessageProviderReferenceAggregate;
 using AnuncieCompre.Domain.Aggregates;
+using AnuncieCompre.Domain.Aggregates.CustomerAggregate;
 
 namespace AnuncieCompre.Infra.Data;
 
@@ -16,10 +15,11 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
     public DbSet<Customer> Customers { get; set; } = default!;
     public DbSet<Conversation> Conversations { get; set; } = default!;
     public DbSet<Message> Messages { get; set; } = default!;
-    public DbSet<Order> Orders { get; set; } = default!;
     public DbSet<ConversationFlow> ConversationFlows { get; set; } = default!;
     public DbSet<ConversationNode> ConversationNodes { get; set; } = default!;
     public DbSet<MessageProviderReference> MessageProviderReferences { get; set; } = default!;
+    public DbSet<Company> Companies { get; set; } = default!;
+    public DbSet<User> Users { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,7 +32,6 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<Conversation>(c =>
         {
-            // c.ComplexProperty(cp => cp.Customer);
             c.HasOne(c => c.Customer)
             .WithMany(c => c.Conversations);
             c.HasMany(cp => cp.Messages)
@@ -42,15 +41,6 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<Message>(m =>
         {
-            // m.ComplexProperty(cp => cp.Conversation);
-        });
-
-        modelBuilder.Entity<Order>(o =>
-        {
-            o.HasOne(cp => cp.Customer);
-            o.ComplexProperty(cp => cp.Product);
-            o.ComplexProperty(cp => cp.Quantity);
-            o.ComplexProperty(cp => cp.Category);
         });
 
         modelBuilder.Entity<ConversationFlow>(cf =>
@@ -83,6 +73,13 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
                 .HasForeignKey<MessageProviderReference>(x => x.MessageId);
             mpf.HasIndex(x => new { x.Provider, x.ProviderMessageId })
                 .IsUnique();
+        });
+
+        modelBuilder.Entity<Company>(c =>
+        {
+           c.HasMany(c => c.Users)
+           .WithOne(u => u.Company)
+           .HasForeignKey(u => u.CompanyId);
         });
     }
 
