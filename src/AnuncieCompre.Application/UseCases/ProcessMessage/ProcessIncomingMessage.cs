@@ -41,7 +41,7 @@ public class ProcessIncomingMessageUseCase(
 
             if (customer is null)
             {
-                customer = Customer.Create(Phone.Create(incomingMessage.SenderPhone).Value);
+                customer = Customer.Create(Phone.Create(incomingMessage.SenderPhone).Value).Value;
                 customerRepository.Add(customer);
             }
 
