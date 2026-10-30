@@ -5,6 +5,7 @@ import { DashboardPage } from "../features/dashboard/pages/DashboardPage";
 import { ConversationFlowsPage } from "../features/conversationflows/pages/ConversationFlowsPage";
 import { FlowEditorPage } from "../features/conversationflows/pages/FlowEditorPage";
 import { ConversationsPage } from "../features/conversations/pages/ConversationsPage";
+import { CustomersPage } from "../features/customers/pages/CustomersPage";
 import { ConversationsRealtimeProvider } from "../features/conversations/components/ConversationsRealtimeProvider";
 import { ConversationsSidebarBadge } from "../features/conversations/components/ConversationsSidebarBadge";
 
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
             {
                 path: "/conversations",
                 element: <ConversationsPage />
+            },
+            {
+                path: "/customers",
+                element: <CustomersPage />
             }
         ]
     }

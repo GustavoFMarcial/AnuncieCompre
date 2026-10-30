@@ -5,8 +5,8 @@ namespace AnuncieCompre.Domain.Aggregates.CustomerAggregate;
 
 public class Customer : BaseEntity
 {
-    public Guid CompanyId { get; private set; }
-    public Company Company { get; private set; } = default!;
+    // public Guid CompanyId { get; private set; }
+    // public Company Company { get; private set; } = default!;
     public Phone Phone { get; private set; } = default!;
     public Name? Name { get; private set; }
     public Email? Email { get; private set; }

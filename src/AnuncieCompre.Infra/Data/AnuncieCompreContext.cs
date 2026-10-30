@@ -77,9 +77,15 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
         modelBuilder.Entity<Company>(c =>
         {
-           c.HasMany(c => c.Users)
-           .WithOne(u => u.Company)
-           .HasForeignKey(u => u.CompanyId);
+            c.ComplexProperty(cp => cp.Name);
+            // c.HasMany(c => c.Users)
+            // .WithOne(u => u.Company)
+            // .HasForeignKey(u => u.CompanyId);
+        });
+
+        modelBuilder.Entity<User>(u =>
+        {
+            u.ComplexProperty(cp => cp.Name);
         });
     }
 

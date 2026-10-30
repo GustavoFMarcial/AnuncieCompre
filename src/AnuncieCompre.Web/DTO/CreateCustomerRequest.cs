@@ -7,6 +7,5 @@ public record CreateCustomerRequest
     public string Name { get; set; } = default!;
     public string Email { get; set; } = default!;
     [Required(ErrorMessage = "Telefone é obrigatório")]
-    [Phone]
     public string Phone { get; set; } = default!;
 }

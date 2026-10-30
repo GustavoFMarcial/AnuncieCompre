@@ -1,7 +1,8 @@
-import { Bot, Headset } from "lucide-react";
+import { Bot, Headset, UserRound } from "lucide-react";
 
 import { Badge } from "../../../shared/components/ui";
 import { cn } from "../../../shared/utils/cn";
+import { formatPhoneForDisplay } from "../../../shared/utils/phone";
 import type { Conversation } from "../types/conversation";
 
 interface ConversationListItemProps {
@@ -31,6 +32,9 @@ export function ConversationListItem({
         (m) => m.senderType === "customer" && !m.isRead,
     ).length;
 
+    const displayName =
+        conversation.customerName || formatPhoneForDisplay(conversation.customerPhone);
+
     return (
         <button
             onClick={onSelect}
@@ -40,18 +44,24 @@ export function ConversationListItem({
             )}
         >
             <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-200 text-sm font-semibold text-neutral-700">
-                {conversation.customerName.charAt(0).toUpperCase()}
+                {conversation.customerName ? (
+                    conversation.customerName.charAt(0).toUpperCase()
+                ) : (
+                    <UserRound className="h-5 w-5" />
+                )}
             </div>
             <div className="flex min-w-0 flex-1 flex-col">
                 <div className="flex items-center justify-between gap-2">
-                    <span className="truncate font-medium text-neutral-900">
-                        {conversation.customerName}
-                    </span>
+                    <span className="truncate font-medium text-neutral-900">{displayName}</span>
                     <span className="shrink-0 text-xs text-neutral-400">
                         {formatTime(conversation.lastMessageAt)}
                     </span>
                 </div>
-                <span className="truncate text-xs text-neutral-400">{conversation.customerPhone}</span>
+                {conversation.customerName && (
+                    <span className="truncate text-xs text-neutral-400">
+                        {formatPhoneForDisplay(conversation.customerPhone)}
+                    </span>
+                )}
                 <div className="mt-1 flex items-center justify-between gap-2">
                     <span className="truncate text-sm text-neutral-500">
                         {last ? last.text : "Sem mensagens"}
