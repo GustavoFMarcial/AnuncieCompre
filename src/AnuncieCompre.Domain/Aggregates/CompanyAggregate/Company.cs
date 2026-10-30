@@ -7,4 +7,6 @@ public class Company : BaseEntity
 {
     public Name Name { get; private set; } = default!;
     public List<User> Users { get; private set; } = [];
+
+    private Company(){}
 }

@@ -7,8 +7,8 @@ namespace AnuncieCompre.Domain.Aggregates.FlowAggregate;
 
 public class ConversationFlow : BaseEntity
 {
-    public Guid CompanyId { get; private set; }
-    public Company Company { get; private set; } = default!;
+    // public Guid CompanyId { get; private set; }
+    // public Company Company { get; private set; } = default!;
     public Name Name { get; private set; } = default!;
     public string? Description { get; private set; }
     public FlowStatus Status { get; private set; } = default;

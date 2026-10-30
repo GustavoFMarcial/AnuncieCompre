@@ -10,8 +10,8 @@ namespace AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 
 public class Conversation : BaseEntity
 {
-    public Guid CompanyId { get; private set; }
-    public Company Company { get; private set; } = default!;
+    // public Guid CompanyId { get; private set; }
+    // public Company Company { get; private set; } = default!;
     public Guid CustomerId { get; private set; }
     public Customer Customer { get; private set; } = default!;
     public Guid AwaitingResponseNodeId { get; private set; } = Guid.Empty;

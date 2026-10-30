@@ -34,6 +34,9 @@ public class EditCustomer(ICustomerRepository _customerRepository, IUnitOfWork _
 
         if (errors.Count > 0) return Result.Failures(errors);
 
+        customer.SetName(nameResult.Value);
+        customer.SetEmail(emailResult.Value);
+
         await unitOfWork.SaveChangesAsync();
         return Result.Success("Customer editado com sucesso");
     }

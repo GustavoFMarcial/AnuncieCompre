@@ -31,6 +31,7 @@ frontend/
 ├── features/   → fatias verticais por funcionalidade de domínio
 │   ├── conversationflows/   → editor de fluxos de conversa
 │   ├── conversations/       → painel de atendimento
+│   ├── customers/           → cadastro de clientes
 │   └── dashboard/           → página inicial
 └── shared/    → código transversal, reutilizável e sem conhecimento de domínio
 
@@ -53,6 +54,7 @@ utils/	helpers puros específicos da feature
 ### 3.3. shared/ — camada transversal
 - components/ui/: primitivos no padrão shadcn/ui, com barrel export em index.ts.
 - components/navigation/: Header e Sidebar.
+- components/PageHeader.tsx: cabeçalho genérico de página (título, descrição, ação).
 - layouts/: DashboardLayout (Sidebar + Header + <Outlet />).
 - lib/api.ts: instância axios (baseURL via VITE_API_URL, timeout, interceptor de erro).
 - lib/queryClient.ts: configuração global do React Query.
@@ -68,7 +70,7 @@ services → shared/lib/api + types
 - Components não importam services. Pages também não — o acesso a dados passa pelos hooks.
 - Services são a única camada que fala com a API. Ninguém usa axios direto; sempre via shared/lib/api a partir de um service.
 - features/ pode importar de shared/; shared/ nunca importa de features/.
-- Evite imports cruzados entre features. Existe hoje uma exceção (ConversationsPage usa FlowPageHeader de conversationflows): mantenha-a, mas não crie novas. Se um componente for necessário em duas features, mova-o para shared/.
+- Evite imports cruzados entre features. Existe hoje uma exceção (ConversationThread, em conversations, usa EditCustomerDialog de customers): mantenha-a, mas não crie novas. Se um componente for necessário em duas features, mova-o para shared/ (ex.: PageHeader).
 
 ## 5. Dados, DTOs e cache
 - types/ mantém dois contratos: tipos de domínio (unions em minúsculas, createdAt: Date) e DTOs (forma crua do backend, sufixo DTO, datas em string). Não misture os dois.

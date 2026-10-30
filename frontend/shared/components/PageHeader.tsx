@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 
-interface FlowPageHeaderProps {
+interface PageHeaderProps {
     title: string;
     description?: string;
     action?: ReactNode;
 }
 
-export function FlowPageHeader({ title, description, action }: FlowPageHeaderProps) {
+export function PageHeader({ title, description, action }: PageHeaderProps) {
     return (
         <div className="flex items-start justify-between gap-4">
             <div>
