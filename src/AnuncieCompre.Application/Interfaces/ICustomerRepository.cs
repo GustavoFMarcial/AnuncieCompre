@@ -1,6 +1,5 @@
 using AnuncieCompre.Domain.Interfaces;
-using AnuncieCompre.Domain.Aggregates;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
+using AnuncieCompre.Domain.Aggregates.CustomerAggregate;
 
 namespace AnuncieCompre.Application.Interfaces;
 

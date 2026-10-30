@@ -1,9 +1,12 @@
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
+using AnuncieCompre.Domain.Common;
 
-namespace AnuncieCompre.Domain.Aggregates.UserAggregate;
+namespace AnuncieCompre.Domain.Aggregates.CustomerAggregate;
 
 public class Customer : BaseEntity
 {
+    // public Guid CompanyId { get; private set; }
+    // public Company Company { get; private set; } = default!;
     public Phone Phone { get; private set; } = default!;
     public Name? Name { get; private set; }
     public Email? Email { get; private set; }
@@ -16,9 +19,10 @@ public class Customer : BaseEntity
         Phone = phone;
     }
 
-    public static Customer Create(Phone phone)
+    public static Result<Customer> Create(Phone phone)
     {
-        return new Customer(phone);
+        Customer customer = new Customer(phone);
+        return Result<Customer>.Success(customer, "Customer criado com sucesso");
     }
 
     public Customer SetName(Name name)

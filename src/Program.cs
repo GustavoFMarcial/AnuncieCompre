@@ -1,10 +1,7 @@
-using AnuncieCompre.Domain.Aggregates.ConversationAggregate.DomainEvents;
 using AnuncieCompre.Infra.Data;
 using AnuncieCompre.Infra.MessageSender;
 using AnuncieCompre.Infra.Repositories;
 using AnuncieCompre.Application.BackgroundServices;
-using AnuncieCompre.Application.Dispatchers;
-using AnuncieCompre.Application.DomainEventHandler.Conversation;
 using AnuncieCompre.Application.Interfaces;
 using AnuncieCompre.Application.UseCases.ProcessMessageUseCase;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using AnuncieCompre.Web.DTO;
 using AnuncieCompre.Infra.Notifiers;
 using AnuncieCompre.Web.Hubs;
+using AnuncieCompre.Application.UseCases.Customers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +35,6 @@ builder.Services.AddSignalR();
 
 //Scoped
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
@@ -46,14 +43,6 @@ builder.Services.AddScoped<IConversationNodeRepository, ConversationNodeReposito
 builder.Services.AddScoped<IMessageProviderReferenceRepository, MessageProviderReferenceRepository>();
 builder.Services.AddScoped<IProcessIncomingMessage, ProcessIncomingMessageUseCase>();
 builder.Services.AddScoped<IMessageSender, TwilioMessageSender>();
-builder.Services.AddScoped<IDomainEventHandler<CustomerDoesNotConfirmedRegistrationDomainEvent>, CustomerDoesNotConfirmedRegistrationDomainEventHandler>();
-builder.Services.AddScoped<IDomainEventHandler<CustomerSentCompanyCategoryDomainEvent>, CustomerSentCompanyCategoryDomainEventHandler>();
-builder.Services.AddScoped<IDomainEventHandler<CustomerSentProductDomainEvent>, CustomerSentProductDomainEventHandler>();
-builder.Services.AddScoped<IDomainEventHandler<CustomerSentQuantityDomainEvent>, CustomerSentQuantityDomainEventHandler>();
-builder.Services.AddScoped<IDomainEventHandler<CustomerFinishedConversationDomainEvent>, CustomerFinishedConversationDomainEventHandler>();
-builder.Services.AddScoped<IDomainEventHandler<CustomerSentEmailDomainEvent>, CustomerSentEmailDomainEventHandler>();
-builder.Services.AddScoped<IDomainEventHandler<CustomerSentNameDomainEvent>, CustomerSentNameDomainEventHandler>();
-builder.Services.AddScoped<EventDispatcher>();
 builder.Services.AddScoped<GetConversationFlows>();
 builder.Services.AddScoped<CreateConversationFlow>();
 builder.Services.AddScoped<GetConversationFlowById>();
@@ -74,6 +63,10 @@ builder.Services.AddScoped<ProcessMessageStatus>();
 builder.Services.AddScoped<UpdateConversationNodePosition>();
 builder.Services.AddScoped<IRealtimeNotifier, SignalRRealtimeNotifier>();
 builder.Services.AddScoped<MarkMessagesAsRead>();
+builder.Services.AddScoped<GetCustomers>();
+builder.Services.AddScoped<EditCustomer>();
+builder.Services.AddScoped<CreateCustomer>();
+builder.Services.AddScoped<GetCustomerById>();
 
 //Hosted
 builder.Services.AddHostedService<CloseInactiveConversations>();
@@ -130,7 +123,6 @@ TwilioClient.Init(
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

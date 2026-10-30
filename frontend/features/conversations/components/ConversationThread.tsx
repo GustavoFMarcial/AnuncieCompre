@@ -1,11 +1,13 @@
-import { useEffect, useRef } from "react";
-import { Bot, Headset, Phone } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Bot, Headset, Phone, SquarePen, UserRound } from "lucide-react";
 
-import { Badge, ScrollArea } from "../../../shared/components/ui";
+import { Badge, Button, ScrollArea } from "../../../shared/components/ui";
+import { formatPhoneForDisplay } from "../../../shared/utils/phone";
 import type { Conversation } from "../types/conversation";
 import { MessageBubble } from "./MessageBubble";
 import { MessageComposer } from "./MessageComposer";
 import { useSendMessage } from "../hooks/useConversations";
+import { EditCustomerDialog } from "../../customers/components/EditCustomerDialog";
 
 interface ConversationThreadProps {
     conversation: Conversation;
@@ -14,6 +16,10 @@ interface ConversationThreadProps {
 export function ConversationThread({ conversation }: ConversationThreadProps) {
     const bottomRef = useRef<HTMLDivElement>(null);
     const sendMessage = useSendMessage(conversation.id);
+    const [editCustomerOpen, setEditCustomerOpen] = useState(false);
+
+    const customerName = conversation.customerName;
+    const displayName = customerName || formatPhoneForDisplay(conversation.customerPhone);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -26,15 +32,28 @@ export function ConversationThread({ conversation }: ConversationThreadProps) {
             <div className="flex items-center justify-between border-b border-neutral-200 bg-white px-5 py-3">
                 <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 font-semibold text-neutral-700">
-                        {conversation.customerName.charAt(0).toUpperCase()}
+                        {customerName ? (
+                            customerName.charAt(0).toUpperCase()
+                        ) : (
+                            <UserRound className="h-5 w-5" />
+                        )}
                     </div>
                     <div>
-                        <h3 className="font-semibold text-neutral-900">{conversation.customerName}</h3>
+                        <h3 className="font-semibold text-neutral-900">{displayName}</h3>
                         <div className="flex items-center gap-1 text-xs text-neutral-400">
                             <Phone className="h-3 w-3" />
-                            {conversation.customerPhone}
+                            {formatPhoneForDisplay(conversation.customerPhone)}
                         </div>
                     </div>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setEditCustomerOpen(true)}
+                        title="Editar dados do cliente"
+                        aria-label="Editar dados do cliente"
+                    >
+                        <SquarePen className="h-4 w-4" />
+                    </Button>
                 </div>
                 <div className="flex items-center gap-2">
                     {conversation.attendant === "operator" ? (
@@ -75,6 +94,12 @@ export function ConversationThread({ conversation }: ConversationThreadProps) {
                     sending={sendMessage.isPending}
                 />
             )}
+
+            <EditCustomerDialog
+                customerId={conversation.customerId}
+                open={editCustomerOpen}
+                onOpenChange={setEditCustomerOpen}
+            />
         </div>
     );
 }

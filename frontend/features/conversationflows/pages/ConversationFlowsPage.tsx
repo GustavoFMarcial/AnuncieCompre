@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Plus, RefreshCw } from "lucide-react";
 
 import { Button } from "../../../shared/components/ui";
+import { PageHeader } from "../../../shared/components/PageHeader";
 import { useConversationFlows } from "../hooks/useConversationFlows";
 import { FlowGrid } from "../components/FlowGrid";
-import { FlowPageHeader } from "../components/FlowPageHeader";
 import { CreateFlowDialog } from "../components/CreateFlowDialog";
 
 export function ConversationFlowsPage() {
@@ -15,7 +15,7 @@ export function ConversationFlowsPage() {
 
     return (
         <div className="flex flex-col gap-6">
-            <FlowPageHeader
+            <PageHeader
                 title="Fluxos de conversa"
                 description="Crie e edite os fluxos de atendimento do bot."
                 action={

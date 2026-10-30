@@ -4,7 +4,7 @@ import { MessagesSquare } from "lucide-react";
 import { StatusFilter } from "../components/StatusFilter";
 import { ConversationList } from "../components/ConversationList";
 import { ConversationThread } from "../components/ConversationThread";
-import { FlowPageHeader } from "../../conversationflows/components/FlowPageHeader";
+import { PageHeader } from "../../../shared/components/PageHeader";
 import { useConversations } from "../hooks/useConversations";
 import { useConversationsRealtime } from "../hooks/useConversationsRealtime";
 import type { ConversationStatusFilter } from "../types/conversation";
@@ -29,7 +29,7 @@ export function ConversationsPage() {
 
     return (
         <div className="flex flex-col gap-4">
-            <FlowPageHeader
+            <PageHeader
                 title="Conversas"
                 description="Veja e continue os atendimentos iniciados pelo bot."
             />
