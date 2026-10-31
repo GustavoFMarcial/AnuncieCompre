@@ -1,16 +1,18 @@
 using AnuncieCompre.Domain.Aggregates.ConversationAggregate;
 using AnuncieCompre.Domain.Aggregates.MessageAggregate;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
 using Microsoft.EntityFrameworkCore;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.NodeAggregate;
 using AnuncieCompre.Domain.Aggregates.MessageProviderReferenceAggregate;
 using AnuncieCompre.Domain.Aggregates;
 using AnuncieCompre.Domain.Aggregates.CustomerAggregate;
+using Microsoft.AspNetCore.Identity;
+using AnuncieCompre.Infra.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace AnuncieCompre.Infra.Data;
 
-public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options) : DbContext(options)
+public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options) : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
 {
     public DbSet<Customer> Customers { get; set; } = default!;
     public DbSet<Conversation> Conversations { get; set; } = default!;
@@ -19,7 +21,6 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
     public DbSet<ConversationNode> ConversationNodes { get; set; } = default!;
     public DbSet<MessageProviderReference> MessageProviderReferences { get; set; } = default!;
     public DbSet<Company> Companies { get; set; } = default!;
-    public DbSet<User> Users { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -81,11 +82,6 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
             // c.HasMany(c => c.Users)
             // .WithOne(u => u.Company)
             // .HasForeignKey(u => u.CompanyId);
-        });
-
-        modelBuilder.Entity<User>(u =>
-        {
-            u.ComplexProperty(cp => cp.Name);
         });
     }
 

@@ -2,7 +2,6 @@ using AnuncieCompre.Infra.Data;
 using AnuncieCompre.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AnuncieCompre.Domain.Aggregates;
-using AnuncieCompre.Domain.Aggregates.UserAggregate;
 
 namespace AnuncieCompre.Infra.Repositories;
 

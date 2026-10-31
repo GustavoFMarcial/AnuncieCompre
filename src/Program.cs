@@ -16,6 +16,8 @@ using AnuncieCompre.Web.DTO;
 using AnuncieCompre.Infra.Notifiers;
 using AnuncieCompre.Web.Hubs;
 using AnuncieCompre.Application.UseCases.Customers;
+using AnuncieCompre.Infra.Identity;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +35,7 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddSignalR();
 
-//Scoped
+#region Scoped
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
@@ -67,12 +69,14 @@ builder.Services.AddScoped<GetCustomers>();
 builder.Services.AddScoped<EditCustomer>();
 builder.Services.AddScoped<CreateCustomer>();
 builder.Services.AddScoped<GetCustomerById>();
+#endregion
 
-//Hosted
+#region Hosted
 builder.Services.AddHostedService<CloseInactiveConversations>();
 builder.Services.AddHostedService<MessageRetry>();
+#endregion
 
-//Singleton 
+#region Singleton 
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
@@ -90,6 +94,14 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 
     return ConnectionMultiplexer.Connect(options);
 });
+#endregion
+
+#region Identity
+builder.Services
+    .AddIdentityCore<ApplicationUser>()
+    .AddRoles<IdentityRole<Guid>>()
+    .AddEntityFrameworkStores<AnuncieCompreContext>();
+#endregion
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
@@ -128,14 +140,14 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.MapHub<ChatHub>("/hubs/chathub").RequireCors("Frontend");
-
 app.UseHttpsRedirection();
 
 app.UseCors();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHub<ChatHub>("/hubs/chathub").RequireCors("Frontend");
 app.MapControllers();
 
 app.Run();
