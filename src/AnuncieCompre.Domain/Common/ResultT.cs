@@ -26,6 +26,7 @@ public class Result<T> : Result
         {
             IsSuccess = false,
             Message = message,
+            Messages = [message],
             Value = default!,
         };
 
