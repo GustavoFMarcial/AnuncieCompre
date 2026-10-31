@@ -6,10 +6,15 @@ import { ConversationFlowsPage } from "../features/conversationflows/pages/Conve
 import { FlowEditorPage } from "../features/conversationflows/pages/FlowEditorPage";
 import { ConversationsPage } from "../features/conversations/pages/ConversationsPage";
 import { CustomersPage } from "../features/customers/pages/CustomersPage";
+import { RegisterCompanyPage } from "../features/companies/pages/RegisterCompanyPage";
 import { ConversationsRealtimeProvider } from "../features/conversations/components/ConversationsRealtimeProvider";
 import { ConversationsSidebarBadge } from "../features/conversations/components/ConversationsSidebarBadge";
 
 export const router = createBrowserRouter([
+    {
+        path: "/register",
+        element: <RegisterCompanyPage />
+    },
     {
         element: (
             <ConversationsRealtimeProvider>

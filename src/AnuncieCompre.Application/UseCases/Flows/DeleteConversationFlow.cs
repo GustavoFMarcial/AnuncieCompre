@@ -2,7 +2,6 @@ using AnuncieCompre.Application.Interfaces;
 using AnuncieCompre.Application.Services;
 using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Common;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AnuncieCompre.Application.UseCases;
 
@@ -18,7 +17,7 @@ public class DeleteConversationFlow(IConversationFlowRepository _flowRepository,
 
         if (flow is null) return Result.Failure("ConversationFlow não encontrado");
 
-        await using IDbContextTransaction transaction = await unitOfWork.BeginTransactionAsync();
+        await using IApplicationTransaction transaction = await unitOfWork.BeginTransactionAsync();
         try
         {
             flowRepository.Delete(flow);
@@ -33,7 +32,7 @@ public class DeleteConversationFlow(IConversationFlowRepository _flowRepository,
             }
 
             await unitOfWork.SaveChangesAsync();
-            await unitOfWork.CommitTransactionAsync();
+            await transaction.CommitTransactionAsync();
             return Result.Success("ConversationFlow deletado com sucesso");
         }
         catch (Exception ex)

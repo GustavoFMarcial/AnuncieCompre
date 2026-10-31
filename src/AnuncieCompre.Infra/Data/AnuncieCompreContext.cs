@@ -24,6 +24,8 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Customer>(u =>
         {
             u.ComplexProperty(cp => cp.Phone);
@@ -79,9 +81,15 @@ public class AnuncieCompreContext(DbContextOptions<AnuncieCompreContext> options
         modelBuilder.Entity<Company>(c =>
         {
             c.ComplexProperty(cp => cp.Name);
-            // c.HasMany(c => c.Users)
-            // .WithOne(u => u.Company)
-            // .HasForeignKey(u => u.CompanyId);
+            c.ComplexProperty(cp => cp.Cnpj);
+            c.ComplexProperty(cp => cp.Email);
+            c.ComplexProperty(cp => cp.Phone);
+        });
+
+        modelBuilder.Entity<ApplicationUser>(au =>
+        {
+            au.ComplexProperty(cp => cp.Name);
+            au.ComplexProperty(cp => cp.Cpf);
         });
     }
 

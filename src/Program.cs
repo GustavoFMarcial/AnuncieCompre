@@ -18,6 +18,7 @@ using AnuncieCompre.Web.Hubs;
 using AnuncieCompre.Application.UseCases.Customers;
 using AnuncieCompre.Infra.Identity;
 using Microsoft.AspNetCore.Identity;
+using AnuncieCompre.Application.UseCases.Companies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +70,10 @@ builder.Services.AddScoped<GetCustomers>();
 builder.Services.AddScoped<EditCustomer>();
 builder.Services.AddScoped<CreateCustomer>();
 builder.Services.AddScoped<GetCustomerById>();
+builder.Services.AddScoped<CreateCompany>();
+builder.Services.AddScoped<GetCompanyById>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<IUserService, ApplicationUserService>();
 #endregion
 
 #region Hosted
