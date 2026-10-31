@@ -35,18 +35,29 @@ public class CreateCompany(ICompanyRepository _companyRepository, IUserService _
         if (!userNameResult.IsSuccess) errors.Add(userNameResult.Message);
         if (!cpfResult.IsSuccess) errors.Add(cpfResult.Message);
 
-        Result<Company> companyResult = Company.Create(companyNameResult.Value, cnpjResult.Value, emailResult.Value, companyPhoneResult.Value);
-
-        if (!companyResult.IsSuccess) return Result<Company>.Failure(companyResult.Message);
-
-        Result userResult = await userService.CreateUserAsync(companyResult.Value.Id, emailResult.Value, userNameResult.Value, cpfResult.Value, userInput.Login, userInput.Password);
-
-        if (!userResult.IsSuccess) errors.AddRange(userResult.Messages);
-
         if (errors.Count > 0) return Result<Company>.Failures(errors);
 
-        companyRepository.Add(companyResult.Value);
-        await unitOfWork.SaveChangesAsync();
-        return Result<Company>.Success(companyResult.Value, "Company criado com sucesso");
+        await using IApplicationTransaction transaction = await unitOfWork.BeginTransactionAsync();
+        try
+        {
+            Result<Company> companyResult = Company.Create(companyNameResult.Value, cnpjResult.Value, emailResult.Value, companyPhoneResult.Value);
+
+            if (!companyResult.IsSuccess) return Result<Company>.Failure(companyResult.Message);
+
+            companyRepository.Add(companyResult.Value);
+            await unitOfWork.SaveChangesAsync();
+
+            Result userResult = await userService.CreateUserAsync(companyResult.Value.Id, emailResult.Value, companyPhoneResult.Value, userNameResult.Value, cpfResult.Value, userInput.Login, userInput.Password);
+
+            if (!userResult.IsSuccess) return Result<Company>.Failures(userResult.Messages);       
+
+            await transaction.CommitTransactionAsync();
+            return Result<Company>.Success(companyResult.Value, "Company criado com sucesso");
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return Result<Company>.Failure(ex.Message);
+        }
     }
 }

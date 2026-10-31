@@ -13,13 +13,9 @@ public class UnitOfWork(AnuncieCompreContext _context) : IUnitOfWork
         await context.SaveChangesAsync();
     }
 
-    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    public async Task<IApplicationTransaction> BeginTransactionAsync()
     {
-        return await context.Database.BeginTransactionAsync();
-    }
-
-    public async Task CommitTransactionAsync()
-    {
-        await context.Database.CommitTransactionAsync();
+        IDbContextTransaction transaction = await context.Database.BeginTransactionAsync();
+        return new ApplicationTransaction(transaction); 
     }
 }
