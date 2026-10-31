@@ -4,7 +4,6 @@ using AnuncieCompre.Domain.Aggregates.FlowAggregate;
 using AnuncieCompre.Domain.Aggregates.ValueObjects;
 using AnuncieCompre.Domain.Common;
 using AnuncieCompre.Domain.DTO;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AnuncieCompre.Application.UseCases;
 
@@ -24,7 +23,7 @@ public class EditConversationFlow(IConversationFlowRepository _flowRepository, I
 
         if (!nameResult.IsSuccess) return Result.Failure(nameResult.Message);
 
-        await using IDbContextTransaction transaction = await unitOfWork.BeginTransactionAsync();
+        await using IApplicationTransaction transaction = await unitOfWork.BeginTransactionAsync();
         try
         {
             Result flowResult = flow.EditFlow(nameResult.Value, input.Description);
@@ -45,7 +44,7 @@ public class EditConversationFlow(IConversationFlowRepository _flowRepository, I
             }
 
             await unitOfWork.SaveChangesAsync();
-            await unitOfWork.CommitTransactionAsync();
+            await transaction.CommitTransactionAsync();
             return Result.Success(flowResult.Message);
         }
         catch (Exception ex)

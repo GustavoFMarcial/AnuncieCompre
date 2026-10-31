@@ -10,7 +10,7 @@ public class ApplicationUserService(UserManager<ApplicationUser> _userManager) :
 {
     private readonly UserManager<ApplicationUser> userManager = _userManager;
 
-    public async Task<Result> CreateUserAsync(Guid companyId, Email email, Name name, CPF cpf, string login, string password)
+    public async Task<Result> CreateUserAsync(Guid companyId, Email email, Phone phone, Name name, CPF cpf, string login, string password)
     {
         List<string> errors = [];
 
@@ -21,6 +21,7 @@ public class ApplicationUserService(UserManager<ApplicationUser> _userManager) :
             Name = name,
             Email = email.Value,
             Cpf = cpf,
+            PhoneNumber = phone.Value,
         };
 
         IdentityResult result = await userManager.CreateAsync(user, password);
@@ -32,7 +33,7 @@ public class ApplicationUserService(UserManager<ApplicationUser> _userManager) :
                 errors.Add(e.Description);       
             }
 
-            Result.Failures(errors);
+            return Result.Failures(errors);
         }
 
         return Result.Success("User criado com sucesso");

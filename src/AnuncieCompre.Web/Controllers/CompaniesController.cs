@@ -5,11 +5,13 @@ using AnuncieCompre.Domain.DTO;
 using AnuncieCompre.Web.DTO;
 using AnuncieCompre.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnuncieCompre.Web.Controllers;
 
 [ApiController]
+[EnableCors("Frontend")]
 [AllowAnonymous]
 [Route("api/[controller]")]
 public class CompaniesController : ControllerBase
