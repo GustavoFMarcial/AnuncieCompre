@@ -27,14 +27,8 @@ public class CreateCustomer(ICustomerRepository _customerRepository, IUnitOfWork
 
         if (customer is not null) return Result<Customer>.Failure("Customer já cadastrado");
 
-        if (!nameResult.IsSuccess)
-        {
-            errors.Add(nameResult.Message);
-        }
-        if (!emailResult.IsSuccess)
-        {
-            errors.Add(emailResult.Message);
-        }
+        if (!nameResult.IsSuccess) errors.Add(nameResult.Message);
+        if (!emailResult.IsSuccess) errors.Add(emailResult.Message);
 
         if (errors.Count > 0) return Result<Customer>.Failures(errors);
 
