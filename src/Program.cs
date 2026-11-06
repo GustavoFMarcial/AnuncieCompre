@@ -19,6 +19,7 @@ using AnuncieCompre.Application.UseCases.Customers;
 using AnuncieCompre.Infra.Identity;
 using Microsoft.AspNetCore.Identity;
 using AnuncieCompre.Application.UseCases.Companies;
+using AnuncieCompre.Application.UseCases.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,7 +74,10 @@ builder.Services.AddScoped<GetCustomerById>();
 builder.Services.AddScoped<CreateCompany>();
 builder.Services.AddScoped<GetCompanyById>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
-builder.Services.AddScoped<IUserService, ApplicationUserService>();
+builder.Services.AddScoped<IIdentityUserService, IdentityUserService>();
+builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+builder.Services.AddScoped<GetUserById>();
+builder.Services.AddScoped<GetUsers>();
 #endregion
 
 #region Hosted
@@ -139,6 +143,20 @@ TwilioClient.Init(
 );
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    var roles = new[] { "Admin", "Gestor", "Comprador" };
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {

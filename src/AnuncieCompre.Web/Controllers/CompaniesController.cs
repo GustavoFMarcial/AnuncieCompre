@@ -28,7 +28,7 @@ public class CompaniesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateCompany([FromBody] CreateCompanyRequest request, [FromServices] CreateCompany service)
+    public async Task<ActionResult> RegisterCompany([FromBody] CreateCompanyRequest request, [FromServices] CreateCompany service)
     {
         CreateCompanyInput companyInput = request.ToCreateCompanyInput();
         CreateUserInput userInput = request.ToCreateUserInput();
