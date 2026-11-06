@@ -6,10 +6,10 @@ using AnuncieCompre.Domain.DTO;
 
 namespace AnuncieCompre.Application.UseCases.Companies;
 
-public class CreateCompany(ICompanyRepository _companyRepository, IApplicationUserService _applicationUserService, IUnitOfWork _unitOfWork)
+public class CreateCompany(ICompanyRepository _companyRepository, IIdentityUserService _applicationUserService, IUnitOfWork _unitOfWork)
 {
     private readonly ICompanyRepository companyRepository = _companyRepository;
-    private readonly IApplicationUserService applicationUserService = _applicationUserService;
+    private readonly IIdentityUserService applicationUserService = _applicationUserService;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
     public async Task<Result<Company>> Handle(CreateCompanyInput companyInput, CreateUserInput userInput)
