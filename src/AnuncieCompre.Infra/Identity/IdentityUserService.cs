@@ -47,10 +47,30 @@ public class IdentityUserService(UserManager<ApplicationUser> _userManager, IRol
                 if (!roleExist)
                 {
                     await transaction.RollbackAsync();
-                    return Result.Failure("Função admin não existe para criar conta admin");
+                    return Result.Failure("Função Admin não existe para criar conta admin");
                 }
 
                 Result roleResult = await AddToRoleAsync(user.Id, "Admin");
+
+                if (!roleResult.IsSuccess)
+                {
+                    errors.AddRange(roleResult.Messages);
+
+                    await transaction.RollbackAsync();
+                    return Result.Failures(errors);
+                }
+            }
+            else
+            {
+                bool roleExist = await roleService.RoleExistAsync("Operador");
+
+                if (!roleExist)
+                {
+                    await transaction.RollbackAsync();
+                    return Result.Failure("Função Operador não existe para criar conta operador");
+                }
+
+                Result roleResult = await AddToRoleAsync(user.Id, "Operador");
 
                 if (!roleResult.IsSuccess)
                 {

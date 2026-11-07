@@ -1,6 +1,3 @@
-using AnuncieCompre.Domain.Aggregates;
-using AnuncieCompre.Domain.Aggregates.ValueObjects;
-
 namespace AnuncieCompre.Domain.DTO;
 
 public record ApplicationUserDTO
@@ -12,5 +9,6 @@ public record ApplicationUserDTO
     public string? Phone { get; set; } = default!;
     public string Name { get; set; } = default!;
     public string Cpf { get; set; } = default!;
+    public IList<string> Roles { get; set; } = default!;
     public DateTime CreatedAt { get; set; }
 }
