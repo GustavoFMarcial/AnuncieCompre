@@ -6,10 +6,10 @@ using AnuncieCompre.Domain.DTO;
 
 namespace AnuncieCompre.Application.UseCases.Companies;
 
-public class CreateCompany(ICompanyRepository _companyRepository, IIdentityUserService _applicationUserService, IUnitOfWork _unitOfWork)
+public class CreateCompany(ICompanyRepository _companyRepository, IIdentityUserService _identityUserService, IUnitOfWork _unitOfWork)
 {
     private readonly ICompanyRepository companyRepository = _companyRepository;
-    private readonly IIdentityUserService applicationUserService = _applicationUserService;
+    private readonly IIdentityUserService identityUserService = _identityUserService;
     private readonly IUnitOfWork unitOfWork = _unitOfWork;
 
     public async Task<Result<Company>> Handle(CreateCompanyInput companyInput, CreateUserInput userInput)
@@ -47,7 +47,7 @@ public class CreateCompany(ICompanyRepository _companyRepository, IIdentityUserS
             companyRepository.Add(companyResult.Value);
             await unitOfWork.SaveChangesAsync();
 
-            Result userResult = await applicationUserService.CreateUserAsync(companyResult.Value.Id, emailResult.Value, companyPhoneResult.Value, userNameResult.Value, cpfResult.Value, userInput.Login, userInput.Password, true);
+            Result userResult = await identityUserService.CreateUserAsync(companyResult.Value.Id, emailResult.Value, companyPhoneResult.Value, userNameResult.Value, cpfResult.Value, userInput.Login, userInput.Password, true);
 
             if (!userResult.IsSuccess) return Result<Company>.Failures(userResult.Messages);
 
